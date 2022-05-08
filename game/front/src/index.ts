@@ -1,7 +1,8 @@
 import './styles/style.scss';
 
-console.log('hello, world');
-
-const testMessage: string = 'TypeScript works';
-
-console.log(testMessage);
+import Game from "./Game";
+const game = new Game(window.innerHeight, window.innerWidth);
+document.body.appendChild(game.renderer.domElement);
+window.addEventListener('resize', () => { game.setSize(window.innerHeight, window.innerWidth) })
+game.drawAxis();
+game.demo();
