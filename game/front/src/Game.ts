@@ -16,13 +16,12 @@ import {
 import Lights from "./Lights";
 import Controls from "./Controls";
 import Ship from "./Ship";
-
-
+import MovingCamera from "./MovingCamera";
 
 export default class Game {
 
     public scene = new Scene();
-    private camera: PerspectiveCamera = new PerspectiveCamera(60, window.innerWidth / window.innerHeight);
+    private camera: MovingCamera = new MovingCamera(60, window.innerWidth / window.innerHeight);
     public renderer = new WebGLRenderer({ antialias: true });
     public ship:Ship = new Ship();
     public controls = new Controls(this.ship, this.camera, this.renderer.domElement);
@@ -42,7 +41,7 @@ export default class Game {
 
     public demo() {
         // Temp
-        const geometry = new BoxGeometry(1,1,1);
+        const geometry = new BoxGeometry(0.1, 0.1, 0.1);
         const material = new MeshPhongMaterial({ color: 0x00ff00 });
         material.opacity = 0.5;
         material.transparent = true;
