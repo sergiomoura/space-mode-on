@@ -11,16 +11,24 @@ import {
     Line,
 } from "three";
 import Lights from "./Lights";
+import Cameras from "./Cameras";
 import Ship from "./Ship";
 import { DesktopShipControls } from "./DesktopShipControls";
+import DesktopGameControls from "./DesktopGameControls";
 
 export default class Game {
 
     public scene = new Scene();
     public ship:Ship = new Ship(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
-    
     public renderer = new WebGLRenderer({ antialias: true });
     public controls = new DesktopShipControls(this.ship, this.renderer.domElement);
+    public gameControls = new DesktopGameControls(this);
+    public cameras:PerspectiveCamera[] = [
+        this.ship.camera,
+        ...Cameras   
+    ]
+    private showingCamera:PerspectiveCamera = this.cameras[0];
+    
 
     constructor(height:number, width:number) {
         this.setSize(height, width);
@@ -87,6 +95,24 @@ export default class Game {
 
     public renderContinuous(){
         requestAnimationFrame(()=>{this.renderContinuous()});
-        this.renderer.render(this.scene, this.ship.camera)
+        this.renderer.render(this.scene, this.showingCamera)
+    }
+
+    switchNextCamera() {
+        let pos = this.cameras.indexOf(this.showingCamera);
+        if(pos == this.cameras.length - 1){
+            this.showingCamera = this.cameras[0]
+        } else {
+            this.showingCamera = this.cameras[pos + 1];
+        }
+    }
+    
+    switchToPreviousCamera() {
+        let pos = this.cameras.indexOf(this.showingCamera);
+        if(pos == 0){
+            this.showingCamera = this.cameras[this.cameras.length - 1]
+        } else {
+            this.showingCamera = this.cameras[pos - 1];
+        }
     }
 }
