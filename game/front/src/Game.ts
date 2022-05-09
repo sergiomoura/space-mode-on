@@ -1,28 +1,24 @@
 import {
-    Camera,
     BoxGeometry,
     MeshPhongMaterial,
     Mesh,
     PerspectiveCamera,
     WebGLRenderer,
     Scene,
-    MeshBasicMaterial,
     LineBasicMaterial,
     Vector3,
     BufferGeometry,
     Line,
-    LineDashedMaterial
 } from "three";
 import Lights from "./Lights";
 import Ship from "./Ship";
-import MovingCamera from "./MovingCamera";
 import { DesktopShipControls } from "./DesktopShipControls";
 
 export default class Game {
 
     public scene = new Scene();
     public ship:Ship = new Ship(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
-    private camera: MovingCamera = new MovingCamera(60, window.innerWidth / window.innerHeight);
+    
     public renderer = new WebGLRenderer({ antialias: true });
     public controls = new DesktopShipControls(this.ship, this.renderer.domElement);
 
@@ -31,10 +27,6 @@ export default class Game {
         this.scene.add(...Lights);
         this.scene.add(this.ship);
         this.ship.position.z = 10;
-        this.camera.position.x = 1;
-        this.camera.position.y = 1;
-        this.camera.position.z = 3;
-        this.camera.lookAt(0,0,0)
     }
 
     public setSize(height: number, width: number) {
