@@ -26,16 +26,18 @@ export default class Game {
         this.setSize(height, width);
         this.scene.add(...Lights);
         this.scene.add(this.ship);
-        this.ship.position.z = 10;
+        this.ship.position.z = 15;
+        this.addSpiningCube();
+        this.renderContinuous();
     }
 
     public setSize(height: number, width: number) {
         this.renderer.setSize(width, height);
     }
 
-    public demo() {
-        // Temp
-        const geometry = new BoxGeometry(0.1, 0.1, 0.1);
+    public addSpiningCube() {
+
+        const geometry = new BoxGeometry(1, 1, 1);
         const material = new MeshPhongMaterial({ color: 0x00ff00 });
         material.opacity = 0.5;
         material.transparent = true;
@@ -44,17 +46,12 @@ export default class Game {
         cube.castShadow = true;
         cube.receiveShadow = true;
         this.scene.add(cube);
-        
-        this.renderer.render(this.scene, this.ship.camera);
 
         const animate = () => {
             requestAnimationFrame(animate);
-
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.02;
-            cube.rotation.z += 0.01;
-
-            this.renderer.render(this.scene, this.ship.camera);
+            cube.rotation.x += 0.03;
+            cube.rotation.y += 0.06;
+            cube.rotation.z += 0.03;
         };
 
         animate();
@@ -86,5 +83,10 @@ export default class Game {
 
         this.scene.add(line);
         
+    }
+
+    public renderContinuous(){
+        requestAnimationFrame(()=>{this.renderContinuous()});
+        this.renderer.render(this.scene, this.ship.camera)
     }
 }

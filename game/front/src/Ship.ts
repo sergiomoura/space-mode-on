@@ -28,14 +28,14 @@ export default class Ship extends Group{
     private rightIntervalId: NodeJS.Timeout;
     private leftIntervalId: NodeJS.Timeout;
 
-    private readonly maxSpeed = 0.008;
+    private readonly maxSpeed = 0.01;
 
     constructor(camera:PerspectiveCamera){
         // Chamando contrutor do pai
         super();
 
         // Definindo e desenhando hitBox
-        this.hitBox = new BoxGeometry(2,2,3);
+        this.hitBox = new BoxGeometry(1,1,2);
         this.drawHitBox();
         this.hitBoxMesh.position.z = -7;
         this.hitBoxMesh.position.y = -2;
