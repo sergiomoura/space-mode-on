@@ -1,13 +1,13 @@
-import { PerspectiveCamera } from "three";
-import MovingCamera from "./MovingCamera";
-import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
+// import MovingCamera from "./MovingCamera";
+// import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
+import { DesktopShipControls } from "./DesktopShipControls";
 import Ship from "./Ship";
 
-export default class Controls extends PointerLockControls{
+export default class Controls extends DesktopShipControls{
 
-    constructor(private ship:Ship, private camera:MovingCamera, private canvas: HTMLCanvasElement) {
+    constructor(private ship:Ship,  canvas: HTMLCanvasElement) {
         
-        super(camera, canvas);
+        super(ship, canvas);
 
         canvas.addEventListener(
             'click',
@@ -43,10 +43,10 @@ export default class Controls extends PointerLockControls{
 
         
         let moveCamera = ()=>{
-            keys.w ? this.camera.startMovingForward() : this.camera.stopMovingForward();
-            keys.s ? this.camera.startMovingBackwards() : this.camera.stopMovingBackwards();
-            keys.d ? this.camera.startMovingRight() : this.camera.stopMovingRight();
-            keys.a ? this.camera.startMovingLeft() : this.camera.stopMovingLeft();
+            keys.w ? this.ship.startMovingForward() : this.ship.stopMovingForward();
+            keys.s ? this.ship.startMovingBackwards() : this.ship.stopMovingBackwards();
+            keys.d ? this.ship.startMovingRight() : this.ship.stopMovingRight();
+            keys.a ? this.ship.startMovingLeft() : this.ship.stopMovingLeft();
         }
 
         document.body.addEventListener('keydown', onKeyDown, false);

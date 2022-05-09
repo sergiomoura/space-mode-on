@@ -21,14 +21,16 @@ import MovingCamera from "./MovingCamera";
 export default class Game {
 
     public scene = new Scene();
+    public ship:Ship = new Ship(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
     private camera: MovingCamera = new MovingCamera(60, window.innerWidth / window.innerHeight);
     public renderer = new WebGLRenderer({ antialias: true });
-    public ship:Ship = new Ship();
-    public controls = new Controls(this.ship, this.camera, this.renderer.domElement);
+    public controls = new Controls(this.ship, this.renderer.domElement);
 
     constructor(height:number, width:number) {
         this.setSize(height, width);
-        this.scene.add(...Lights)
+        this.scene.add(...Lights);
+        this.scene.add(this.ship);
+        this.ship.position.z = 10;
         this.camera.position.x = 1;
         this.camera.position.y = 1;
         this.camera.position.z = 3;
@@ -51,7 +53,7 @@ export default class Game {
         cube.receiveShadow = true;
         this.scene.add(cube);
         
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.ship.camera);
 
         const animate = () => {
             requestAnimationFrame(animate);
@@ -60,7 +62,7 @@ export default class Game {
             cube.rotation.y += 0.02;
             cube.rotation.z += 0.01;
 
-            this.renderer.render(this.scene, this.camera);
+            this.renderer.render(this.scene, this.ship.camera);
         };
 
         animate();
