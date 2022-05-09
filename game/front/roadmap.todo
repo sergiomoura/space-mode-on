@@ -1,0 +1,14 @@
+Fase 1 - Jogabilidade:
+    ☐ Dar Dash
+    ☐ Atirar
+    ☐ Criar e adicionar alvos movendo aleatoriamente
+    ☐ Fazer tiro colidir com alvo
+    ☐ Limitar o movimento de uma nave (esfera)
+    ☐ Fazer naves serem alvos
+    ☐ Adicionar naves
+
+Fase 2 - Gráficos:
+    ☐ Trazer Voxels de Nave
+    ☐ Fazer Voxels de Tiros
+    ☐ Fazer ambiente
+    ☐ Ajustar Iluminação

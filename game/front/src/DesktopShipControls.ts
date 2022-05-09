@@ -84,14 +84,7 @@ class DesktopShipControls extends EventDispatcher {
 		const movementX = evt.movementX || 0;
 		const movementY = evt.movementY || 0;
 		
-		_euler.setFromQuaternion( this._ship.quaternion );
-
-		_euler.y -= movementX * 0.002 * this.pointerSpeed;
-		_euler.x -= movementY * 0.002 * this.pointerSpeed;
-
-		_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
-
-		this._ship.quaternion.setFromEuler( _euler );
+		this._ship.pointTo(movementX, movementY)
 
 		this.dispatchEvent( _changeEvent );
 

@@ -4,8 +4,12 @@ import {
     PerspectiveCamera,
     MeshPhongMaterial,
     Mesh,
-    Vector3
+    Vector3,
+    Euler
 } from "three";
+
+const _euler = new Euler( 0, 0, 0, 'YXZ' );
+const _PI_2 = Math.PI / 2;
 
 export default class Ship extends Group{
     
@@ -22,6 +26,9 @@ export default class Ship extends Group{
     private bwSpeed:number = 0;
     private rSpeed:number = 0;
     private lSpeed:number = 0;
+	private minPolarAngle:number = 0;
+	private maxPolarAngle:number = Math.PI;
+    private pointerSpeed:number = 1;
 
     private forwardIntervalId:NodeJS.Timeout;
     private backwardIntervalId:NodeJS.Timeout;
@@ -157,6 +164,17 @@ export default class Ship extends Group{
 
     private moveLeft(){
         this.translateOnAxis(this.left, this.lSpeed);
+    }
+
+    pointTo(x:number, y:number){
+        _euler.setFromQuaternion( this.quaternion );
+
+		_euler.y -= x * 0.002 * this.pointerSpeed;
+		_euler.x -= y * 0.002 * this.pointerSpeed;
+
+		_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
+
+		this.quaternion.setFromEuler( _euler );
     }
 
 
