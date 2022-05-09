@@ -9,6 +9,7 @@ import {
     Vector3,
     BufferGeometry,
     Line,
+    ColorRepresentation,
 } from "three";
 import Lights from "./Lights";
 import Cameras from "./Cameras";
@@ -33,13 +34,29 @@ export default class Game {
     
 
     constructor(height:number, width:number) {
+        // Determinando dimensões do renderer principal
         this.setSize(height, width);
+
+        // Adicionando Iluminação
         this.scene.add(...Lights);
+
+        // Adicionando Nave
         this.scene.add(this.ship);
-        this.ship.position.z = 15;
-        this.addSpiningCube();
-        this.renderContinuous();
+        this.ship.position.x = 5;
+        this.ship.position.y = 5;
+        this.ship.position.z = 10;
+        this.ship.rotateX(-0.3)
+        this.ship.rotateY(0.3)
+
+        // Configurando renderizadores
         this.auxRenderer.setClearColor(0x333333,0.5)
+
+        // Extras
+        this.addSpiningCube();
+        this.drawAxis();
+
+        // Renderizando continuamente
+        this.renderContinuous();
     }
 
     public setSize(height: number, width: number) {
@@ -70,30 +87,46 @@ export default class Game {
 
     public drawAxis(){
 
-        const blueMaterial = new LineBasicMaterial( { color: 0x0000FF } );
-        const greenMaterial = new LineBasicMaterial( { color: 0x006600 } );
-        const redMaterial = new LineBasicMaterial( { color: 0xFF0000 } );
+        this.drawLine(0x0000FF,new Vector3( - 10, 0, 0 ), new Vector3( 10, 0, 0 ));
+        this.drawLine(0x00FF00,new Vector3( 0, -10, 0 ), new Vector3( 0, 10, 0 ));
+        this.drawLine(0xFF0000,new Vector3( 0, 0, -10 ), new Vector3( 0, 0, 10 ));
+        
+    }
+
+    public drawLine(color:ColorRepresentation, start:Vector3, end:Vector3){
+        const material = new LineBasicMaterial( { color } );
         
         let geometry:BufferGeometry;
         let line:Line;
-        let points:Vector3[];
+        let points:Vector3[] = [start, end];
 
-        points = [new Vector3( - 10, 0, 0 ), new Vector3( 10, 0, 0 )];
-        geometry = new BufferGeometry().setFromPoints(points);
-        line = new Line( geometry, blueMaterial );
-        this.scene.add(line);
-
-        points = [new Vector3( 0, -10, 0 ), new Vector3( 0, 10, 0 )];
-        geometry = new BufferGeometry().setFromPoints(points);
-        line = new Line( geometry, greenMaterial );
-        this.scene.add(line);
-
-        points = [new Vector3( 0, 0, -10 ), new Vector3( 0, 0, 10 )];
-        geometry = new BufferGeometry().setFromPoints(points);
-        line = new Line( geometry, redMaterial );
-
-        this.scene.add(line);
         
+        geometry = new BufferGeometry().setFromPoints(points);
+        line = new Line( geometry, material );
+        this.scene.add(line);
+
+    }
+
+    public drawGrid(){
+        for (let i = -10; i <= 10; i+=0.5) {
+            this.drawLine(0x003300,new Vector3( - 10, i, 0 ), new Vector3( 10, i, 0 ));
+            this.drawLine(0x003300,new Vector3( i, -10, 0 ), new Vector3( i, 10, 0 ));
+
+            this.drawLine(0x330000,new Vector3( 0, i, -10 ), new Vector3( 0, i, 10 ));
+            this.drawLine(0x330000,new Vector3( 0, -10, i ), new Vector3( 0, 10 , i));
+
+            this.drawLine(0x000033,new Vector3( i, 0, -10 ), new Vector3( i, 0, 10 ));
+            this.drawLine(0x000033,new Vector3( -10, 0, i ), new Vector3( 10, 0 , i));
+
+            this.drawLine(0x003300,new Vector3( - 10, i, 0 ), new Vector3( 10, i, 0 ));
+            this.drawLine(0x003300,new Vector3( i, -10, 0 ), new Vector3( i, 10, 0 ));
+
+            this.drawLine(0x330000,new Vector3( 0, i, -10 ), new Vector3( 0, i, 10 ));
+            this.drawLine(0x330000,new Vector3( 0, -10, i ), new Vector3( 0, 10 , i));
+
+            this.drawLine(0x000033,new Vector3( i, 0, -10 ), new Vector3( i, 0, 10 ));
+            this.drawLine(0x000033,new Vector3( -10, 0, i ), new Vector3( 10, 0 , i));
+        }
     }
 
     public renderContinuous(){
