@@ -14,6 +14,13 @@ const _unlockEvent = { type: 'unlock' };
 
 const _PI_2 = Math.PI / 2;
 
+enum Key {
+    w = 'w',
+    s = 's',
+    a = 'a',
+    d = 'd'
+}
+
 class DesktopShipControls extends EventDispatcher {
 	
 	private domElement:HTMLElement;
@@ -21,6 +28,12 @@ class DesktopShipControls extends EventDispatcher {
 	private minPolarAngle:number;
 	private maxPolarAngle:number;
 	private pointerSpeed:number;
+	private pressedKeys = {
+        'w': false,
+        's': false,
+        'a': false,
+        'd': false
+    }
 
 	constructor( private _ship:Ship, domElement:HTMLElement ) {
 
@@ -45,15 +58,24 @@ class DesktopShipControls extends EventDispatcher {
 
 		const scope = this;
 
+		domElement.addEventListener(
+            'click',
+            () => {
+                this.lock();
+            },
+            false
+        )
+
+        document.body.addEventListener('keydown', (evt)=>{this.onKeyDown(evt)}, false);
+        document.body.addEventListener('keyup', (evt)=>{this.onKeyUp(evt)}, false);
+
 		this.connect();
 
 	}
-
 	
 	public get ship() : Ship {
 		return this._ship
 	}
-	
 
 	onMouseMove( evt:MouseEvent ) {
 
@@ -150,6 +172,23 @@ class DesktopShipControls extends EventDispatcher {
 	unlock() {
 		this.domElement.ownerDocument.exitPointerLock();
 	};
+
+	onKeyDown(evt:KeyboardEvent){
+        this.pressedKeys[<Key>evt.key] = true;
+        this.moveShip();
+    };
+    
+    onKeyUp(evt:KeyboardEvent){
+        this.pressedKeys[<Key>evt.key] = false;
+        this.moveShip();
+    };
+
+    moveShip(){
+        this.pressedKeys.w ? this.ship.startMovingForward() : this.ship.stopMovingForward();
+        this.pressedKeys.s ? this.ship.startMovingBackwards() : this.ship.stopMovingBackwards();
+        this.pressedKeys.d ? this.ship.startMovingRight() : this.ship.stopMovingRight();
+        this.pressedKeys.a ? this.ship.startMovingLeft() : this.ship.stopMovingLeft();
+    }
 }
 
 export { DesktopShipControls };

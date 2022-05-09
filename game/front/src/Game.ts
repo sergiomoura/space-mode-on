@@ -14,9 +14,9 @@ import {
     LineDashedMaterial
 } from "three";
 import Lights from "./Lights";
-import Controls from "./Controls";
 import Ship from "./Ship";
 import MovingCamera from "./MovingCamera";
+import { DesktopShipControls } from "./DesktopShipControls";
 
 export default class Game {
 
@@ -24,7 +24,7 @@ export default class Game {
     public ship:Ship = new Ship(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
     private camera: MovingCamera = new MovingCamera(60, window.innerWidth / window.innerHeight);
     public renderer = new WebGLRenderer({ antialias: true });
-    public controls = new Controls(this.ship, this.renderer.domElement);
+    public controls = new DesktopShipControls(this.ship, this.renderer.domElement);
 
     constructor(height:number, width:number) {
         this.setSize(height, width);
