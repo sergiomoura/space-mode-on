@@ -20,13 +20,15 @@ export default class Game {
 
     public scene = new Scene();
     public ship:Ship = new Ship(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
-    public renderer = new WebGLRenderer({ antialias: true });
+    public renderer = new WebGLRenderer({ antialias: true, canvas:document.getElementById('mainCanvas') });
+    public auxRenderer = new WebGLRenderer({
+        canvas:document.getElementById('auxCanvas'),
+        antialias:false,
+    });
+
     public controls = new DesktopShipControls(this.ship, this.renderer.domElement);
     public gameControls = new DesktopGameControls(this);
-    public cameras:PerspectiveCamera[] = [
-        this.ship.camera,
-        ...Cameras   
-    ]
+    public cameras:PerspectiveCamera[] = Cameras;
     private showingCamera:PerspectiveCamera = this.cameras[0];
     
 
@@ -37,6 +39,7 @@ export default class Game {
         this.ship.position.z = 15;
         this.addSpiningCube();
         this.renderContinuous();
+        this.auxRenderer.setClearColor(0x333333,0.5)
     }
 
     public setSize(height: number, width: number) {
@@ -95,7 +98,8 @@ export default class Game {
 
     public renderContinuous(){
         requestAnimationFrame(()=>{this.renderContinuous()});
-        this.renderer.render(this.scene, this.showingCamera)
+        this.renderer.render(this.scene, this.ship.camera);
+        this.auxRenderer.render(this.scene, this.showingCamera);
     }
 
     switchNextCamera() {
