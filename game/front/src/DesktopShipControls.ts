@@ -22,17 +22,7 @@ class DesktopShipControls extends EventDispatcher {
 	private maxPolarAngle:number;
 	private pointerSpeed:number;
 
-	public connect:Function;
-	public dispose:Function;
-	public getObject:Function;
-	public disconnect:Function;
-	public getDirection:Function;
-	public moveForward:Function;
-	public moveRight: Function;
-	public lock: Function;
-	public unlock: Function;
-
-	constructor( ship:Ship, domElement:HTMLElement ) {
+	constructor( private _ship:Ship, domElement:HTMLElement ) {
 
 		super();
 
@@ -55,127 +45,111 @@ class DesktopShipControls extends EventDispatcher {
 
 		const scope = this;
 
-		function onMouseMove( evt:MouseEvent ) {
-
-			if ( scope.isLocked === false ) return;
-
-			const movementX = evt.movementX || 0;
-			const movementY = evt.movementY || 0;
-
-			_euler.setFromQuaternion( ship.quaternion );
-
-			_euler.y -= movementX * 0.002 * scope.pointerSpeed;
-			_euler.x -= movementY * 0.002 * scope.pointerSpeed;
-
-			_euler.x = Math.max( _PI_2 - scope.maxPolarAngle, Math.min( _PI_2 - scope.minPolarAngle, _euler.x ) );
-
-			ship.quaternion.setFromEuler( _euler );
-
-			scope.dispatchEvent( _changeEvent );
-
-		}
-
-		function onPointerlockChange() {
-
-			if ( scope.domElement.ownerDocument.pointerLockElement === scope.domElement ) {
-
-				scope.dispatchEvent( _lockEvent );
-
-				scope.isLocked = true;
-
-			} else {
-
-				scope.dispatchEvent( _unlockEvent );
-
-				scope.isLocked = false;
-
-			}
-
-		}
-
-		function onPointerlockError() {
-
-			console.error( 'THREE.PointerLockControls: Unable to use Pointer Lock API' );
-
-		}
-
-		this.connect = function () {
-
-			scope.domElement.ownerDocument.addEventListener( 'mousemove', onMouseMove );
-			scope.domElement.ownerDocument.addEventListener( 'pointerlockchange', onPointerlockChange );
-			scope.domElement.ownerDocument.addEventListener( 'pointerlockerror', onPointerlockError );
-
-		};
-
-		this.disconnect = function () {
-
-			scope.domElement.ownerDocument.removeEventListener( 'mousemove', onMouseMove );
-			scope.domElement.ownerDocument.removeEventListener( 'pointerlockchange', onPointerlockChange );
-			scope.domElement.ownerDocument.removeEventListener( 'pointerlockerror', onPointerlockError );
-
-		};
-
-		this.dispose = function () {
-
-			this.disconnect();
-
-		};
-
-		this.getObject = function () { // retaining this method for backward compatibility
-
-			return this.ship;
-
-		};
-
-		this.getDirection = function () {
-
-			const direction = new Vector3( 0, 0, - 1 );
-
-			return function ( v:Vector3 ) {
-
-				return v.copy( direction ).applyQuaternion( ship.quaternion );
-
-			};
-
-		}();
-
-		this.moveForward = function ( distance:number ) {
-
-			// move forward parallel to the xz-plane
-			// assumes camera.up is y-up
-
-			_vector.setFromMatrixColumn( ship.matrix, 0 );
-
-			_vector.crossVectors( ship.up, _vector );
-
-			ship.position.addScaledVector( _vector, distance );
-
-		};
-
-		this.moveRight = function ( distance:number ) {
-
-			_vector.setFromMatrixColumn( ship.matrix, 0 );
-
-			ship.position.addScaledVector( _vector, distance );
-
-		};
-
-		this.lock = function () {
-
-			this.domElement.requestPointerLock();
-
-		};
-
-		this.unlock = function () {
-
-			scope.domElement.ownerDocument.exitPointerLock();
-
-		};
-
 		this.connect();
 
 	}
 
+	
+	public get ship() : Ship {
+		return this._ship
+	}
+	
+
+	onMouseMove( evt:MouseEvent ) {
+
+		if ( this.isLocked === false ) return;
+
+		const movementX = evt.movementX || 0;
+		const movementY = evt.movementY || 0;
+		
+		_euler.setFromQuaternion( this._ship.quaternion );
+
+		_euler.y -= movementX * 0.002 * this.pointerSpeed;
+		_euler.x -= movementY * 0.002 * this.pointerSpeed;
+
+		_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
+
+		this._ship.quaternion.setFromEuler( _euler );
+
+		this.dispatchEvent( _changeEvent );
+
+	}
+
+	onPointerlockChange() {
+
+		if ( this.domElement.ownerDocument.pointerLockElement === this.domElement ) {
+			this.dispatchEvent( _lockEvent );
+			this.isLocked = true;
+		} else {
+			this.dispatchEvent( _unlockEvent );
+			this.isLocked = false;
+		}
+
+	}
+
+	onPointerlockError() {
+		console.error( 'THREE.PointerLockControls: Unable to use Pointer Lock API' );
+	}
+
+	connect() {
+
+		this.domElement.ownerDocument.addEventListener( 'mousemove', (evt)=>{this.onMouseMove(evt)} );
+		this.domElement.ownerDocument.addEventListener( 'pointerlockchange', (evt)=>{this.onPointerlockChange()} );
+		this.domElement.ownerDocument.addEventListener( 'pointerlockerror', (evt)=>{this.onPointerlockError} );
+
+	}
+
+	disconnect() {
+
+		this.domElement.ownerDocument.removeEventListener( 'mousemove', this.onMouseMove );
+		this.domElement.ownerDocument.removeEventListener( 'pointerlockchange', this.onPointerlockChange );
+		this.domElement.ownerDocument.removeEventListener( 'pointerlockerror', this.onPointerlockError );
+
+	};
+
+	dispose() {
+
+		this.disconnect();
+
+	};
+
+	getDirection() {
+
+		const direction = new Vector3( 0, 0, - 1 );
+
+		return function ( v:Vector3 ) {
+
+			return v.copy( direction ).applyQuaternion( this.ship.quaternion );
+
+		};
+
+	};
+
+	moveForward( distance:number ) {
+
+		// move forward parallel to the xz-plane
+		// assumes camera.up is y-up
+
+		_vector.setFromMatrixColumn( this._ship.matrix, 0 );
+
+		_vector.crossVectors( this._ship.up, _vector );
+
+		this._ship.position.addScaledVector( _vector, distance );
+
+	};
+
+	moveRight( distance:number ) {
+		_vector.setFromMatrixColumn( this._ship.matrix, 0 );
+		this._ship.position.addScaledVector( _vector, distance );
+	};
+
+	lock() {
+		this.domElement.requestPointerLock();
+	};
+
+	unlock() {
+		this.domElement.ownerDocument.exitPointerLock();
+	};
 }
 
 export { DesktopShipControls };

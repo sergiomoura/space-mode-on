@@ -5,7 +5,7 @@ import Ship from "./Ship";
 
 export default class Controls extends DesktopShipControls{
 
-    constructor(private ship:Ship,  canvas: HTMLCanvasElement) {
+    constructor(ship:Ship,  canvas: HTMLCanvasElement) {
         
         super(ship, canvas);
 
