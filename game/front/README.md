@@ -45,4 +45,7 @@ npm start
 
   4. change default files in styles from sass to stylus (*.styl)
 
+# Credits
+"Cartoon spaceship" (https://skfb.ly/QOyY) by pinguinoconpulgares is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
 --> if u want to use the 'original' loose *.sass syntax just change the files from *.scss to *.sass and update import in index.js line 1
