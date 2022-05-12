@@ -1,0 +1,13 @@
+export default class DashPill {
+    constructor(
+        private _duration: number,
+        private _speed: number
+    ){}
+    public get speed(): number {
+        return this._speed;
+    }
+    public get duration(): number {
+        return this._duration;
+    }
+    
+}

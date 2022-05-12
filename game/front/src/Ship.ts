@@ -7,6 +7,7 @@ import {
     Vector3,
     Euler
 } from "three";
+import DashPill from "./DashPill";
 
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
 const _PI_2 = Math.PI / 2;
@@ -47,6 +48,13 @@ export default class Ship extends Group{
     private lMaxSpeed = 0.08;
 
     private _dashing: boolean;
+    private _dashPills:DashPill[] = [
+        new DashPill(5000, 0.16),
+        new DashPill(5000, 0.16),
+        new DashPill(5000, 0.16),
+        new DashPill(5000, 0.16),
+        new DashPill(5000, 0.16)
+    ]
 
     constructor(camera:PerspectiveCamera){
         // Chamando contrutor do pai
@@ -55,12 +63,15 @@ export default class Ship extends Group{
         // Iniciando movimento perpétuo
         this.move();
 
+        // Criando array de dashPills
+        
+
         // Definindo e desenhando hitBox
         this.hitBox = new BoxGeometry(1,1,2);
         this.drawHitBox();
         this.hitBoxMesh.position.z = -7;
         this.hitBoxMesh.position.y = -2;
-        this.hitBoxMesh.rotateX(0.05)
+        this.hitBoxMesh.rotateX(0.05);
 
         // Definindo camera
         this._camera = camera;
@@ -197,10 +208,12 @@ export default class Ship extends Group{
 
     dash(){
         console.log('dashing...');
+        let dashPill = this._dashPills.pop();
         this._dashing = true;
+        console.log(`setando a velocidade para ${dashPill.speed}`);
         setTimeout(() => {
             this.undash()
-        }, 5000);
+        }, dashPill.duration);
     }
 
     undash(){
