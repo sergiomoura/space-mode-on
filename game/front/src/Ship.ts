@@ -207,13 +207,15 @@ export default class Ship extends Group{
     }
 
     dash(){
-        console.log('dashing...');
-        let dashPill = this._dashPills.pop();
-        this._dashing = true;
-        console.log(`setando a velocidade para ${dashPill.speed}`);
-        setTimeout(() => {
-            this.undash()
-        }, dashPill.duration);
+        if(!this.dashing && this._dashPills.length > 0){
+            console.log('dashing...');
+            let dashPill = this._dashPills.pop();
+            this._dashing = true;
+            console.log(`setando a velocidade para ${dashPill.speed}`);
+            setTimeout(() => {
+                this.undash()
+            }, dashPill.duration);
+        }
     }
 
     undash(){
