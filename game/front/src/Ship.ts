@@ -30,16 +30,23 @@ export default class Ship extends Group{
 	private maxPolarAngle:number = Math.PI;
     private pointerSpeed:number = 1;
 
-    private forwardIntervalId:NodeJS.Timeout;
-    private backwardIntervalId:NodeJS.Timeout;
-    private rightIntervalId: NodeJS.Timeout;
-    private leftIntervalId: NodeJS.Timeout;
+    private readonly maxSpeed = 0.03;
 
-    private readonly maxSpeed = 0.01;
+    private move(){
+        requestAnimationFrame(()=>{this.move()});
+        
+        this.translateOnAxis(this.direction, this.fwSpeed);
+        this.translateOnAxis(this.oposite, this.bwSpeed);
+        this.translateOnAxis(this.right, this.rSpeed);
+        this.translateOnAxis(this.left, this.lSpeed);
+    }
 
     constructor(camera:PerspectiveCamera){
         // Chamando contrutor do pai
         super();
+
+        // Iniciando movimento perpétuo
+        this.move();
 
         // Definindo e desenhando hitBox
         this.hitBox = new BoxGeometry(1,1,2);
@@ -80,90 +87,41 @@ export default class Ship extends Group{
         this.hitBoxMesh.castShadow = true;
         this.hitBoxMesh.receiveShadow = true;
     }
-
     
     public get camera() : PerspectiveCamera {
         return this._camera;
     }
     
     startMovingForward() {
-        if(this.fwSpeed == 0){
-            this.fwSpeed = this.maxSpeed;
-            this.moveForward()
-            this.forwardIntervalId = setInterval(
-                ()=>{this.moveForward()}
-                ,10
-            )
-        }
+        this.fwSpeed = this.maxSpeed;
     }
 
     stopMovingForward(){
         this.fwSpeed = 0;
-        clearInterval(this.forwardIntervalId);
     }
 
     startMovingBackwards() {
-        if(this.bwSpeed == 0){
-            this.bwSpeed = this.maxSpeed;
-            this.moveBackwards()
-            this.backwardIntervalId = setInterval(
-                ()=>{this.moveBackwards()}
-                ,10
-            )
-        }
+        this.bwSpeed = this.maxSpeed;
     }
 
     stopMovingBackwards() {
         this.bwSpeed = 0;
-        clearInterval(this.backwardIntervalId);
     }
 
     startMovingRight() {
-        if(this.rSpeed == 0){
-            this.rSpeed = this.maxSpeed;
-            this.moveRight()
-            this.rightIntervalId = setInterval(
-                ()=>{this.moveRight()}
-                ,10
-            )
-        }
+        this.rSpeed = this.maxSpeed;
     }
 
     stopMovingRight(){
         this.rSpeed = 0;
-        clearInterval(this.rightIntervalId);
     }
 
     startMovingLeft() {
-        if(this.lSpeed == 0){
-            this.lSpeed = this.maxSpeed;
-            this.moveLeft();
-            this.leftIntervalId = setInterval(
-                ()=>{this.moveLeft()}
-                ,10
-            )
-        }
+        this.lSpeed = this.maxSpeed;
     }
 
     stopMovingLeft(){
         this.lSpeed = 0;
-        clearInterval(this.leftIntervalId);
-    }
-
-    private moveForward(){
-        this.translateOnAxis(this.direction, this.fwSpeed);
-    }
-
-    private moveBackwards(){
-        this.translateOnAxis(this.oposite, this.bwSpeed);
-    }
-
-    private moveRight(){
-        this.translateOnAxis(this.right, this.rSpeed);
-    }
-
-    private moveLeft(){
-        this.translateOnAxis(this.left, this.lSpeed);
     }
 
     pointTo(x:number, y:number){
