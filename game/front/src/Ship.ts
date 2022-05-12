@@ -26,11 +26,22 @@ export default class Ship extends Group{
     private bwSpeed:number = 0;
     private rSpeed:number = 0;
     private lSpeed:number = 0;
+
+    private fwAcceleration:number = 0.004;
+    private bwAcceleration:number = 0.004;
+    private rAcceleration:number = 0.004;
+    private lAcceleration:number = 0.004;
+
 	private minPolarAngle:number = 0;
 	private maxPolarAngle:number = Math.PI;
     private pointerSpeed:number = 1;
 
-    private readonly maxSpeed = 0.03;
+    private fwAnimatrionFrameId:number;
+    private bwAnimatrionFrameId:number;
+    private rAnimatrionFrameId:number;
+    private lAnimatrionFrameId:number;
+
+    private readonly maxSpeed = 0.08;
 
     private move(){
         requestAnimationFrame(()=>{this.move()});
@@ -40,6 +51,56 @@ export default class Ship extends Group{
         this.translateOnAxis(this.right, this.rSpeed);
         this.translateOnAxis(this.left, this.lSpeed);
     }
+
+    private fwAccelerate(maxSpeed:number){
+        cancelAnimationFrame(this.fwAnimatrionFrameId);
+        this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwAccelerate(maxSpeed)});
+        if(this.fwSpeed < maxSpeed){this.fwSpeed += this.fwAcceleration}
+    }
+
+    private fwBreak(){
+        cancelAnimationFrame(this.fwAnimatrionFrameId);
+        this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwBreak()});
+        if(this.fwSpeed > 0){this.fwSpeed -= this.fwAcceleration}
+    }
+
+    private bwAccelerate(maxSpeed:number){
+        cancelAnimationFrame(this.bwAnimatrionFrameId);
+        this.bwAnimatrionFrameId = requestAnimationFrame(()=>{this.bwAccelerate(maxSpeed)});
+        if(this.bwSpeed < maxSpeed){this.bwSpeed += this.bwAcceleration}
+    }
+
+    private bwBreak(){
+        cancelAnimationFrame(this.bwAnimatrionFrameId);
+        this.bwAnimatrionFrameId = requestAnimationFrame(()=>{this.bwBreak()});
+        if(this.bwSpeed > 0){this.bwSpeed -= this.bwAcceleration}
+    }
+
+    private rAccelerate(maxSpeed:number){
+        cancelAnimationFrame(this.rAnimatrionFrameId);
+        this.rAnimatrionFrameId = requestAnimationFrame(()=>{this.rAccelerate(maxSpeed)});
+        if(this.rSpeed < maxSpeed){this.rSpeed += this.rAcceleration}
+    }
+
+    private rBreak(){
+        cancelAnimationFrame(this.rAnimatrionFrameId);
+        this.rAnimatrionFrameId = requestAnimationFrame(()=>{this.rBreak()});
+        if(this.rSpeed > 0){this.rSpeed -= this.rAcceleration}
+    }
+
+    private lAccelerate(maxSpeed:number){
+        cancelAnimationFrame(this.lAnimatrionFrameId);
+        this.lAnimatrionFrameId = requestAnimationFrame(()=>{this.lAccelerate(maxSpeed)});
+        if(this.lSpeed < maxSpeed){this.lSpeed += this.lAcceleration}
+    }
+
+    private lBreak(){
+        cancelAnimationFrame(this.lAnimatrionFrameId);
+        this.lAnimatrionFrameId = requestAnimationFrame(()=>{this.lBreak()});
+        if(this.lSpeed > 0){this.lSpeed -= this.lAcceleration}
+    }
+
+    
 
     constructor(camera:PerspectiveCamera){
         // Chamando contrutor do pai
@@ -93,35 +154,35 @@ export default class Ship extends Group{
     }
     
     startMovingForward() {
-        this.fwSpeed = this.maxSpeed;
+        this.fwAccelerate(this.maxSpeed);
     }
 
     stopMovingForward(){
-        this.fwSpeed = 0;
+        this.fwBreak();
     }
 
     startMovingBackwards() {
-        this.bwSpeed = this.maxSpeed;
+        this.bwAccelerate(this.maxSpeed);
     }
 
     stopMovingBackwards() {
-        this.bwSpeed = 0;
+        this.bwBreak()
     }
 
     startMovingRight() {
-        this.rSpeed = this.maxSpeed;
+        this.rAccelerate(this.maxSpeed);
     }
 
     stopMovingRight(){
-        this.rSpeed = 0;
+        this.rBreak();
     }
 
     startMovingLeft() {
-        this.lSpeed = this.maxSpeed;
+        this.lAccelerate(this.maxSpeed)
     }
 
     stopMovingLeft(){
-        this.lSpeed = 0;
+        this.lBreak();
     }
 
     pointTo(x:number, y:number){
