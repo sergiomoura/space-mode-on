@@ -41,7 +41,49 @@ export default class Ship extends Group{
     private rAnimatrionFrameId:number;
     private lAnimatrionFrameId:number;
 
-    private readonly maxSpeed = 0.08;
+    private fwMaxSpeed = 0.08;
+    private bwMaxSpeed = 0.08;
+    private rMaxSpeed = 0.08;
+    private lMaxSpeed = 0.08;
+
+    private _dashing: boolean;
+
+    constructor(camera:PerspectiveCamera){
+        // Chamando contrutor do pai
+        super();
+
+        // Iniciando movimento perpétuo
+        this.move();
+
+        // Definindo e desenhando hitBox
+        this.hitBox = new BoxGeometry(1,1,2);
+        this.drawHitBox();
+        this.hitBoxMesh.position.z = -7;
+        this.hitBoxMesh.position.y = -2;
+        this.hitBoxMesh.rotateX(0.05)
+
+        // Definindo camera
+        this._camera = camera;
+
+        // Adicionando câmera e hitBox
+        this.add(this.hitBoxMesh);
+        this.add(this._camera);
+
+        // Determinando o vetor da direção da câmera
+        this.getWorldDirection(this.direction).multiplyScalar(-1);
+
+        // Determinando o vetor oposto à direção da câmera
+        this.oposite = this.direction.clone().multiplyScalar(-1);
+        
+        // Determinando o vetor da posição;
+        this.getWorldPosition(this.position);
+
+        // Determinando vetor para a direita
+        this.right = this.localToWorld(new Vector3(1,0,0)).sub(this.position);
+
+        // Determinando o vetor para a esquerda;
+        this.left = this.right.clone().multiplyScalar(-1);
+    }
 
     private move(){
         requestAnimationFrame(()=>{this.move()});
@@ -55,7 +97,7 @@ export default class Ship extends Group{
     private fwAccelerate(maxSpeed:number){
         cancelAnimationFrame(this.fwAnimatrionFrameId);
         this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwAccelerate(maxSpeed)});
-        if(this.fwSpeed < maxSpeed){this.fwSpeed += this.fwAcceleration}
+        if(this.fwSpeed < maxSpeed){this.fwSpeed += (this.fwMaxSpeed - this.fwSpeed)/2}
     }
 
     private fwBreak(){
@@ -100,45 +142,6 @@ export default class Ship extends Group{
         if(this.lSpeed > 0){this.lSpeed -= this.lAcceleration}
     }
 
-    
-
-    constructor(camera:PerspectiveCamera){
-        // Chamando contrutor do pai
-        super();
-
-        // Iniciando movimento perpétuo
-        this.move();
-
-        // Definindo e desenhando hitBox
-        this.hitBox = new BoxGeometry(1,1,2);
-        this.drawHitBox();
-        this.hitBoxMesh.position.z = -7;
-        this.hitBoxMesh.position.y = -2;
-        this.hitBoxMesh.rotateX(0.05)
-
-        // Definindo camera
-        this._camera = camera;
-
-        // Adicionando câmera e hitBox
-        this.add(this.hitBoxMesh);
-        this.add(this._camera);
-
-        // Determinando o vetor da direção da câmera
-        this.getWorldDirection(this.direction).multiplyScalar(-1);
-
-        // Determinando o vetor oposto à direção da câmera
-        this.oposite = this.direction.clone().multiplyScalar(-1);
-        
-        // Determinando o vetor da posição;
-        this.getWorldPosition(this.position);
-
-        // Determinando vetor para a direita
-        this.right = this.localToWorld(new Vector3(1,0,0)).sub(this.position);
-
-        // Determinando o vetor para a esquerda;
-        this.left = this.right.clone().multiplyScalar(-1);
-    }
-
     drawHitBox(){
         const material = new MeshPhongMaterial({ color: 0xf0f0f0 });
         material.opacity = 0.5;
@@ -152,17 +155,24 @@ export default class Ship extends Group{
     public get camera() : PerspectiveCamera {
         return this._camera;
     }
+
+    public get dashing() : boolean {
+        return this._dashing;
+    }
+    
     
     startMovingForward() {
-        this.fwAccelerate(this.maxSpeed);
+        this.fwAccelerate(this.fwMaxSpeed);
     }
 
     stopMovingForward(){
-        this.fwBreak();
+        if(!this._dashing){
+            this.fwBreak();
+        }
     }
 
     startMovingBackwards() {
-        this.bwAccelerate(this.maxSpeed);
+        this.bwAccelerate(this.bwMaxSpeed);
     }
 
     stopMovingBackwards() {
@@ -170,7 +180,7 @@ export default class Ship extends Group{
     }
 
     startMovingRight() {
-        this.rAccelerate(this.maxSpeed);
+        this.rAccelerate(this.rMaxSpeed);
     }
 
     stopMovingRight(){
@@ -178,11 +188,24 @@ export default class Ship extends Group{
     }
 
     startMovingLeft() {
-        this.lAccelerate(this.maxSpeed)
+        this.lAccelerate(this.lMaxSpeed)
     }
 
     stopMovingLeft(){
         this.lBreak();
+    }
+
+    dash(){
+        console.log('dashing...');
+        this._dashing = true;
+        setTimeout(() => {
+            this.undash()
+        }, 5000);
+    }
+
+    undash(){
+        this._dashing = false;
+        console.log('undashing...')
     }
 
     pointTo(x:number, y:number){
@@ -195,6 +218,5 @@ export default class Ship extends Group{
 
 		this.quaternion.setFromEuler( _euler );
     }
-
 
 }

@@ -12,7 +12,7 @@ export const ObservableKeyboard = merge(
     filter(
         (evt:KeyboardEvent) => {
 
-            let keyPosition = pressedKeys.indexOf(evt.key);
+            let keyPosition = pressedKeys.indexOf(evt.code);
             let keyIsPressed:boolean = keyPosition > -1;
 
             if(evt.type=='keypress' && keyIsPressed){
@@ -20,7 +20,7 @@ export const ObservableKeyboard = merge(
             }
 
             if(evt.type=='keypress' && !keyIsPressed){
-                pressedKeys.push(evt.key);
+                pressedKeys.push(evt.code);
                 return true;
             }
 

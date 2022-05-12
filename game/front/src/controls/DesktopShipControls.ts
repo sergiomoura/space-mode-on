@@ -12,10 +12,11 @@ const _lockEvent = { type: 'lock' };
 const _unlockEvent = { type: 'unlock' };
 
 enum ControlKeys {
-    w = 'w',
-    s = 's',
-    a = 'a',
-    d = 'd'
+	w = 'KeyW',
+	s = 'KeyS',
+	a = 'KeyA',
+	d = 'KeyD',
+	space = "Space"
 }
 
 class DesktopShipControls extends EventDispatcher {
@@ -144,7 +145,8 @@ class DesktopShipControls extends EventDispatcher {
         pressedKeys.indexOf(ControlKeys.w) > -1 ? this.ship.startMovingForward() : this.ship.stopMovingForward(); 
         pressedKeys.indexOf(ControlKeys.s) > -1 ? this.ship.startMovingBackwards() : this.ship.stopMovingBackwards(); 
         pressedKeys.indexOf(ControlKeys.d) > -1 ? this.ship.startMovingRight() : this.ship.stopMovingRight(); 
-        pressedKeys.indexOf(ControlKeys.a) > -1 ? this.ship.startMovingLeft() : this.ship.stopMovingLeft(); 
+        pressedKeys.indexOf(ControlKeys.a) > -1 ? this.ship.startMovingLeft() : this.ship.stopMovingLeft();
+		pressedKeys.indexOf(ControlKeys.space) > -1 ? this.ship.dash() : null ;
     }
 }
 
