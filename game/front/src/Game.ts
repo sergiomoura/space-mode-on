@@ -14,8 +14,8 @@ import {
 import Lights from "./Lights";
 import Cameras from "./Cameras";
 import Ship from "./Ship";
-import { DesktopShipControls } from "./DesktopShipControls";
-import DesktopGameControls from "./DesktopGameControls";
+import { DesktopShipControls } from "./controls/DesktopShipControls";
+import DesktopGameControls from "./controls/DesktopGameControls";
 
 export default class Game {
 

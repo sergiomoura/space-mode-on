@@ -3,7 +3,7 @@ import {
 	EventDispatcher,
 	Vector3
 } from 'three';
-import Ship from './Ship';
+import Ship from '../Ship';
 
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
 const _vector = new Vector3();
