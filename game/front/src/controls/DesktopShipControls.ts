@@ -4,17 +4,14 @@ import {
 	Vector3
 } from 'three';
 import Ship from '../Ship';
+import { PressedKeys, ObservableKeyboard } from "../lib/ObservableKeyboard";
 
-const _euler = new Euler( 0, 0, 0, 'YXZ' );
 const _vector = new Vector3();
-
 const _changeEvent = { type: 'change' };
 const _lockEvent = { type: 'lock' };
 const _unlockEvent = { type: 'unlock' };
 
-const _PI_2 = Math.PI / 2;
-
-enum Key {
+enum ControlKeys {
     w = 'w',
     s = 's',
     a = 'a',
@@ -25,19 +22,12 @@ class DesktopShipControls extends EventDispatcher {
 	
 	private domElement:HTMLElement;
 	private isLocked:boolean;
-	private minPolarAngle:number;
-	private maxPolarAngle:number;
-	private pointerSpeed:number;
-	private pressedKeys = {
-        'w': false,
-        's': false,
-        'a': false,
-        'd': false
-    }
 
-	constructor( private _ship:Ship, domElement:HTMLElement ) {
+	constructor( private ship:Ship, domElement:HTMLElement ) {
 
 		super();
+
+        ObservableKeyboard.subscribe((pressedKeys:PressedKeys)=>{this.commandShip(pressedKeys)});
 
 		if ( domElement === undefined ) {
 
@@ -49,15 +39,6 @@ class DesktopShipControls extends EventDispatcher {
 		this.domElement = domElement;
 		this.isLocked = false;
 
-		// Set to constrain the pitch of the camera
-		// Range is 0 to Math.PI radians
-		this.minPolarAngle = 0; // radians
-		this.maxPolarAngle = Math.PI; // radians
-
-		this.pointerSpeed = 1.0;
-
-		const scope = this;
-
 		domElement.addEventListener(
             'click',
             () => {
@@ -66,15 +47,8 @@ class DesktopShipControls extends EventDispatcher {
             false
         )
 
-        document.body.addEventListener('keydown', (evt)=>{this.onKeyDown(evt)}, false);
-        document.body.addEventListener('keyup', (evt)=>{this.onKeyUp(evt)}, false);
-
 		this.connect();
 
-	}
-	
-	public get ship() : Ship {
-		return this._ship
 	}
 
 	onMouseMove( evt:MouseEvent ) {
@@ -84,7 +58,7 @@ class DesktopShipControls extends EventDispatcher {
 		const movementX = evt.movementX || 0;
 		const movementY = evt.movementY || 0;
 		
-		this._ship.pointTo(movementX, movementY)
+		this.ship.pointTo(movementX, movementY)
 
 		this.dispatchEvent( _changeEvent );
 
@@ -145,17 +119,17 @@ class DesktopShipControls extends EventDispatcher {
 		// move forward parallel to the xz-plane
 		// assumes camera.up is y-up
 
-		_vector.setFromMatrixColumn( this._ship.matrix, 0 );
+		_vector.setFromMatrixColumn( this.ship.matrix, 0 );
 
-		_vector.crossVectors( this._ship.up, _vector );
+		_vector.crossVectors( this.ship.up, _vector );
 
-		this._ship.position.addScaledVector( _vector, distance );
+		this.ship.position.addScaledVector( _vector, distance );
 
 	};
 
 	moveRight( distance:number ) {
-		_vector.setFromMatrixColumn( this._ship.matrix, 0 );
-		this._ship.position.addScaledVector( _vector, distance );
+		_vector.setFromMatrixColumn( this.ship.matrix, 0 );
+		this.ship.position.addScaledVector( _vector, distance );
 	};
 
 	lock() {
@@ -166,21 +140,11 @@ class DesktopShipControls extends EventDispatcher {
 		this.domElement.ownerDocument.exitPointerLock();
 	};
 
-	onKeyDown(evt:KeyboardEvent){
-        this.pressedKeys[<Key>evt.key] = true;
-        this.moveShip();
-    };
-    
-    onKeyUp(evt:KeyboardEvent){
-        this.pressedKeys[<Key>evt.key] = false;
-        this.moveShip();
-    };
-
-    moveShip(){
-        this.pressedKeys.w ? this.ship.startMovingForward() : this.ship.stopMovingForward();
-        this.pressedKeys.s ? this.ship.startMovingBackwards() : this.ship.stopMovingBackwards();
-        this.pressedKeys.d ? this.ship.startMovingRight() : this.ship.stopMovingRight();
-        this.pressedKeys.a ? this.ship.startMovingLeft() : this.ship.stopMovingLeft();
+    private commandShip(pressedKeys:PressedKeys){
+        pressedKeys.indexOf(ControlKeys.w) > -1 ? this.ship.startMovingForward() : this.ship.stopMovingForward(); 
+        pressedKeys.indexOf(ControlKeys.s) > -1 ? this.ship.startMovingBackwards() : this.ship.stopMovingBackwards(); 
+        pressedKeys.indexOf(ControlKeys.d) > -1 ? this.ship.startMovingRight() : this.ship.stopMovingRight(); 
+        pressedKeys.indexOf(ControlKeys.a) > -1 ? this.ship.startMovingLeft() : this.ship.stopMovingLeft(); 
     }
 }
 
