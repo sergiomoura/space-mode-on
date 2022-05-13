@@ -65,6 +65,12 @@ class DesktopShipControls extends EventDispatcher {
 
 	}
 
+	onMouseClick(_evt:MouseEvent) {
+		if(this.isLocked){
+			this.ship.shoot();
+		}
+	}
+
 	onPointerlockChange() {
 
 		if ( this.domElement.ownerDocument.pointerLockElement === this.domElement ) {
@@ -84,6 +90,7 @@ class DesktopShipControls extends EventDispatcher {
 	connect() {
 
 		this.domElement.ownerDocument.addEventListener( 'mousemove', (evt)=>{this.onMouseMove(evt)} );
+		this.domElement.ownerDocument.addEventListener( 'click', (evt)=>{this.onMouseClick(evt)} );
 		this.domElement.ownerDocument.addEventListener( 'pointerlockchange', (evt)=>{this.onPointerlockChange()} );
 		this.domElement.ownerDocument.addEventListener( 'pointerlockerror', (evt)=>{this.onPointerlockError} );
 

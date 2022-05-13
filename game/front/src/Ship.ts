@@ -1,3 +1,4 @@
+import { throttleTime } from "rxjs";
 import {
     BoxGeometry,
     Group,
@@ -8,6 +9,7 @@ import {
     Euler
 } from "three";
 import DashPill from "./DashPill";
+import Shot from "./Shot";
 
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
 const _PI_2 = Math.PI / 2;
@@ -69,12 +71,12 @@ export default class Ship extends Group{
         // Definindo e desenhando hitBox
         this.hitBox = new BoxGeometry(1,1,2);
         this.drawHitBox();
-        this.hitBoxMesh.position.z = -7;
-        this.hitBoxMesh.position.y = -2;
-        this.hitBoxMesh.rotateX(0.05);
 
-        // Definindo camera
+        // Definindo e posicionando camera
         this._camera = camera;
+        this._camera.position.z = 7;
+        this._camera.position.y = 2;
+        this._camera.rotateX(-0.05);
 
         // Adicionando câmera e hitBox
         this.add(this.hitBoxMesh);
@@ -206,6 +208,17 @@ export default class Ship extends Group{
         this.lBreak();
     }
 
+    pointTo(x:number, y:number){
+        _euler.setFromQuaternion( this.quaternion );
+
+		_euler.y -= x * 0.002 * this.pointerSpeed;
+		_euler.x -= y * 0.002 * this.pointerSpeed;
+
+		_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
+
+		this.quaternion.setFromEuler( _euler );
+    }
+
     dash(){
         if(!this.dashing && this._dashPills.length > 0){
             console.log('dashing...');
@@ -223,15 +236,16 @@ export default class Ship extends Group{
         console.log('undashing...')
     }
 
-    pointTo(x:number, y:number){
-        _euler.setFromQuaternion( this.quaternion );
+    shoot(){
+        
+        let velocity = this.direction.clone().multiplyScalar(0.5);
+        let demage = 10;
+        let shot:Shot = new Shot(velocity,demage,20,this);
+        shot.applyMatrix4(this.matrix);
+        this.parent.add(shot);
 
-		_euler.y -= x * 0.002 * this.pointerSpeed;
-		_euler.x -= y * 0.002 * this.pointerSpeed;
-
-		_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
-
-		this.quaternion.setFromEuler( _euler );
     }
+
+    
 
 }
