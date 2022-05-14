@@ -33,27 +33,37 @@ export default class Ship extends Group{
     private rAcceleration:number = 0.004;
     private lAcceleration:number = 0.004;
 
-	private minPolarAngle:number = 0;
-	private maxPolarAngle:number = Math.PI;
-    private pointerSpeed:number = 1;
-
+    
     private fwAnimatrionFrameId:number;
     private bwAnimatrionFrameId:number;
     private rAnimatrionFrameId:number;
     private lAnimatrionFrameId:number;
+    
+    private defaults = {
+        fwMaxSpeed: 0.1,
+        bwMaxSpeed: 0.1,
+        rMaxSpeed: 0.1,
+        lMaxSpeed: 0.1,
+        fwAcceleration: 0.004,
+        bwAcceleration: 0.004,
+        rAcceleration: 0.004,
+        lAcceleration: 0.004,
+        minPolarAngle: 0,
+        maxPolarAngle: Math.PI,
+        pointingSpeed: 1
+    }
 
-    private fwMaxSpeed = 0.08;
-    private bwMaxSpeed = 0.08;
-    private rMaxSpeed = 0.08;
-    private lMaxSpeed = 0.08;
+    private fwMaxSpeed = 0.1;
+    private bwMaxSpeed = 0.1;
+    private rMaxSpeed = 0.1;
+    private lMaxSpeed = 0.1;
 
     private _dashing: boolean;
     private _dashPills:DashPill[] = [
-        new DashPill(5000, 0.16),
-        new DashPill(5000, 0.16),
-        new DashPill(5000, 0.16),
-        new DashPill(5000, 0.16),
-        new DashPill(5000, 0.16)
+        new DashPill(5000, 0.16, 0.01),
+        new DashPill(5000, 0.16, 0.01),
+        new DashPill(5000, 0.16, 0.01),
+        new DashPill(5000, 0.16, 0.01)
     ]
 
     constructor(camera:PerspectiveCamera){
@@ -108,13 +118,13 @@ export default class Ship extends Group{
     private fwAccelerate(maxSpeed:number){
         cancelAnimationFrame(this.fwAnimatrionFrameId);
         this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwAccelerate(maxSpeed)});
-        if(this.fwSpeed < maxSpeed){this.fwSpeed += (this.fwMaxSpeed - this.fwSpeed)/2}
+        if(this.fwSpeed < maxSpeed){this.fwSpeed += this.fwAcceleration;}
     }
 
     private fwBreak(){
-        cancelAnimationFrame(this.fwAnimatrionFrameId);
-        this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwBreak()});
-        if(this.fwSpeed > 0){this.fwSpeed -= this.fwAcceleration}
+            cancelAnimationFrame(this.fwAnimatrionFrameId);
+            this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwBreak()});
+            if(this.fwSpeed > 0){this.fwSpeed -= this.fwAcceleration}
     }
 
     private bwAccelerate(maxSpeed:number){
@@ -226,10 +236,9 @@ export default class Ship extends Group{
     pointTo(x:number, y:number){
         _euler.setFromQuaternion( this.quaternion );
 
-		_euler.y -= x * 0.002 * this.pointerSpeed;
-		_euler.x -= y * 0.002 * this.pointerSpeed;
-
-		_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
+		_euler.y -= x * 0.002 * this.defaults.pointingSpeed;
+		_euler.x -= y * 0.002 * this.defaults.pointingSpeed;
+		_euler.x = Math.max( _PI_2 - this.defaults.maxPolarAngle, Math.min( _PI_2 - this.defaults.minPolarAngle, _euler.x ) );
 
 		this.quaternion.setFromEuler( _euler );
     }
