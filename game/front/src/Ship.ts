@@ -16,7 +16,6 @@ const _PI_2 = Math.PI / 2;
 
 export default class Ship extends Group{
     
-    private _camera:PerspectiveCamera;
     private hitBox:BoxGeometry;
     private hitBoxMesh:Mesh;
 
@@ -71,7 +70,7 @@ export default class Ship extends Group{
         new DashPill(5000, 1, 0.1)
     ]
 
-    constructor(camera:PerspectiveCamera){
+    constructor(){
         // Chamando contrutor do pai
         super();
 
@@ -82,15 +81,8 @@ export default class Ship extends Group{
         this.hitBox = new BoxGeometry(1,1,2);
         this.drawHitBox();
 
-        // Definindo e posicionando camera
-        this._camera = camera;
-        this._camera.position.z = 7;
-        this._camera.position.y = 2;
-        this._camera.rotateX(-0.05);
-
-        // Adicionando câmera e hitBox
+        // Adicionando e hitBox
         this.add(this.hitBoxMesh);
-        this.add(this._camera);
 
         // Determinando o vetor da direção da câmera
         this.getWorldDirection(this.direction).multiplyScalar(-1);
@@ -145,10 +137,6 @@ export default class Ship extends Group{
         
         this.hitBoxMesh.castShadow = true;
         this.hitBoxMesh.receiveShadow = true;
-    }
-    
-    public get camera() : PerspectiveCamera {
-        return this._camera;
     }
 
     public get dashing() : boolean {

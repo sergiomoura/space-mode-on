@@ -16,11 +16,12 @@ import Cameras from "./Cameras";
 import Ship from "./Ship";
 import { DesktopShipControls } from "./controls/DesktopShipControls";
 import DesktopGameControls from "./controls/DesktopGameControls";
+import FirstPersonShip from "./FirstPersonShip";
 
 export default class Game {
 
     public scene = new Scene();
-    public ship:Ship = new Ship(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
+    public ship:FirstPersonShip = new FirstPersonShip(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
     public renderer = new WebGLRenderer({ antialias: true, canvas:document.getElementById('mainCanvas') });
     public auxRenderer = new WebGLRenderer({
         canvas:document.getElementById('auxCanvas'),
