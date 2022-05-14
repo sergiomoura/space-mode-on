@@ -22,6 +22,7 @@ export default class Game {
 
     public scene = new Scene();
     public ship:FirstPersonShip = new FirstPersonShip(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
+    public enemyShips:Ship[] = [];
     public renderer = new WebGLRenderer({ antialias: true, canvas:document.getElementById('mainCanvas') });
     public auxRenderer = new WebGLRenderer({
         canvas:document.getElementById('auxCanvas'),
@@ -48,6 +49,27 @@ export default class Game {
         this.ship.position.z = 10;
         this.ship.rotateX(-0.3)
         this.ship.rotateY(0.3)
+
+        // Criando e adicionando 5 naves.
+        // Uma na origem e outras em locais aleatórios;
+        let random = (max:number) => {
+            return Math.round(2*max*(Math.random() - 0.5));
+        }
+
+        let ship = new Ship();
+        this.enemyShips.push(ship);
+        ship.position.set(0,0,0);
+        this.scene.add(ship);
+
+        for (let i = 1; i < 5; i++) {
+            let ship = new Ship();
+            this.enemyShips.push(ship);
+            let [x,y,z] = [random(20),random(20),random(20)]
+            // console.log(x,y,z);
+            ship.position.set(x,y,z);
+            this.scene.add(ship);
+        }
+        
 
         // Configurando renderizadores
         this.auxRenderer.setClearColor(0x333333,0.5)
