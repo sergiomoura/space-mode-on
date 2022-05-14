@@ -53,7 +53,8 @@ export default class Game {
 
         // Extras
         this.addSpiningCube();
-        this.drawAxis();
+        // this.drawAxis();
+        this.drawGrid(100,1);
 
         // Renderizando continuamente
         this.renderContinuous();
@@ -107,25 +108,25 @@ export default class Game {
 
     }
 
-    public drawGrid(){
-        for (let i = -10; i <= 10; i+=0.5) {
-            this.drawLine(0x003300,new Vector3( - 10, i, 0 ), new Vector3( 10, i, 0 ));
-            this.drawLine(0x003300,new Vector3( i, -10, 0 ), new Vector3( i, 10, 0 ));
+    public drawGrid(size:number, step:number){
+        for (let i = -size; i <= size; i+=step) {
+            this.drawLine(0x003300,new Vector3( - size, i, 0 ), new Vector3( size, i, 0 ));
+            this.drawLine(0x003300,new Vector3( i, -size, 0 ), new Vector3( i, size, 0 ));
 
-            this.drawLine(0x330000,new Vector3( 0, i, -10 ), new Vector3( 0, i, 10 ));
-            this.drawLine(0x330000,new Vector3( 0, -10, i ), new Vector3( 0, 10 , i));
+            this.drawLine(0x330000,new Vector3( 0, i, -size ), new Vector3( 0, i, size ));
+            this.drawLine(0x330000,new Vector3( 0, -size, i ), new Vector3( 0, size , i));
 
-            this.drawLine(0x000033,new Vector3( i, 0, -10 ), new Vector3( i, 0, 10 ));
-            this.drawLine(0x000033,new Vector3( -10, 0, i ), new Vector3( 10, 0 , i));
+            this.drawLine(0x000033,new Vector3( i, 0, -size ), new Vector3( i, 0, size ));
+            this.drawLine(0x000033,new Vector3( -size, 0, i ), new Vector3( size, 0 , i));
 
-            this.drawLine(0x003300,new Vector3( - 10, i, 0 ), new Vector3( 10, i, 0 ));
-            this.drawLine(0x003300,new Vector3( i, -10, 0 ), new Vector3( i, 10, 0 ));
+            this.drawLine(0x003300,new Vector3( - size, i, 0 ), new Vector3( size, i, 0 ));
+            this.drawLine(0x003300,new Vector3( i, -size, 0 ), new Vector3( i, size, 0 ));
 
-            this.drawLine(0x330000,new Vector3( 0, i, -10 ), new Vector3( 0, i, 10 ));
-            this.drawLine(0x330000,new Vector3( 0, -10, i ), new Vector3( 0, 10 , i));
+            this.drawLine(0x330000,new Vector3( 0, i, -size ), new Vector3( 0, i, size ));
+            this.drawLine(0x330000,new Vector3( 0, -size, i ), new Vector3( 0, size , i));
 
-            this.drawLine(0x000033,new Vector3( i, 0, -10 ), new Vector3( i, 0, 10 ));
-            this.drawLine(0x000033,new Vector3( -10, 0, i ), new Vector3( 10, 0 , i));
+            this.drawLine(0x000033,new Vector3( i, 0, -size ), new Vector3( i, 0, size ));
+            this.drawLine(0x000033,new Vector3( -size, 0, i ), new Vector3( size, 0 , i));
         }
     }
 
