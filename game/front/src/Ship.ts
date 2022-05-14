@@ -30,32 +30,45 @@ export default class Ship extends Group{
     private rSpeed:number = 0;
     private lSpeed:number = 0;
 
-    private fwAcceleration:number = 0.004;
-    private bwAcceleration:number = 0.004;
-    private rAcceleration:number = 0.004;
-    private lAcceleration:number = 0.004;
+    private fwAcceleration:number = 0;
+    private bwAcceleration:number = 0;
+    private rAcceleration:number = 0;
+    private lAcceleration:number = 0;
 
-	private minPolarAngle:number = 0;
-	private maxPolarAngle:number = Math.PI;
-    private pointerSpeed:number = 1;
+    private fwDeacceleration:number = 0;
+    private bwDeacceleration:number = 0;
+    private rDeacceleration:number = 0;
+    private lDeacceleration:number = 0;
+    
+    private fwMaxSpeed:number;
+    private bwMaxSpeed:number;
+    private rMaxSpeed:number;
+    private lMaxSpeed:number;
 
-    private fwAnimatrionFrameId:number;
-    private bwAnimatrionFrameId:number;
-    private rAnimatrionFrameId:number;
-    private lAnimatrionFrameId:number;
-
-    private fwMaxSpeed = 0.08;
-    private bwMaxSpeed = 0.08;
-    private rMaxSpeed = 0.08;
-    private lMaxSpeed = 0.08;
+    private defaults = {
+        fwMaxSpeed: 0.1,
+        bwMaxSpeed: 0.1,
+        rMaxSpeed: 0.1,
+        lMaxSpeed: 0.1,
+        fwAcceleration: 0.004,
+        bwAcceleration: 0.004,
+        rAcceleration: 0.004,
+        lAcceleration: 0.004,
+        fwDeacceleration: 0.004,
+        bwDeacceleration: 0.004,
+        rDeacceleration: 0.004,
+        lDeacceleration: 0.004,
+        minPolarAngle: 0,
+        maxPolarAngle: Math.PI,
+        pointingSpeed: 1
+    }
 
     private _dashing: boolean;
     private _dashPills:DashPill[] = [
-        new DashPill(5000, 0.16),
-        new DashPill(5000, 0.16),
-        new DashPill(5000, 0.16),
-        new DashPill(5000, 0.16),
-        new DashPill(5000, 0.16)
+        new DashPill(5000, 1, 0.1),
+        new DashPill(5000, 1, 0.1),
+        new DashPill(5000, 1, 0.1),
+        new DashPill(5000, 1, 0.1)
     ]
 
     constructor(camera:PerspectiveCamera){
@@ -64,9 +77,6 @@ export default class Ship extends Group{
 
         // Iniciando movimento perpétuo
         this.move();
-
-        // Criando array de dashPills
-        
 
         // Definindo e desenhando hitBox
         this.hitBox = new BoxGeometry(1,1,2);
@@ -96,63 +106,35 @@ export default class Ship extends Group{
 
         // Determinando o vetor para a esquerda;
         this.left = this.right.clone().multiplyScalar(-1);
+
+        // Determinando valores padrão
+        this.fwMaxSpeed = this.defaults.fwMaxSpeed;
+        this.bwMaxSpeed = this.defaults.bwMaxSpeed;
+        this.rMaxSpeed = this.defaults.rMaxSpeed;
+        this.lMaxSpeed = this.defaults.lMaxSpeed;
+
     }
 
     private move(){
-        requestAnimationFrame(()=>{this.move()});
-        
+
+        // Atualizando velocidade com aceleração
+        if(this.fwSpeed < this.fwMaxSpeed){this.fwSpeed += this.fwAcceleration}
+        if(this.bwSpeed < this.bwMaxSpeed){this.bwSpeed += this.bwAcceleration}
+        if(this.rSpeed < this.rMaxSpeed){this.rSpeed += this.rAcceleration}
+        if(this.lSpeed < this.lMaxSpeed){this.lSpeed += this.lAcceleration}
+
+        if(this.fwSpeed > 0){this.fwSpeed -= this.fwDeacceleration}
+        if(this.bwSpeed > 0){this.bwSpeed -= this.bwDeacceleration}
+        if(this.rSpeed > 0){this.rSpeed -= this.rDeacceleration}
+        if(this.lSpeed > 0){this.lSpeed -= this.lDeacceleration}
+
+        // Atualizando posição com velocidade
         this.translateOnAxis(this.direction, this.fwSpeed);
         this.translateOnAxis(this.oposite, this.bwSpeed);
         this.translateOnAxis(this.right, this.rSpeed);
         this.translateOnAxis(this.left, this.lSpeed);
-    }
-
-    private fwAccelerate(maxSpeed:number){
-        cancelAnimationFrame(this.fwAnimatrionFrameId);
-        this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwAccelerate(maxSpeed)});
-        if(this.fwSpeed < maxSpeed){this.fwSpeed += (this.fwMaxSpeed - this.fwSpeed)/2}
-    }
-
-    private fwBreak(){
-        cancelAnimationFrame(this.fwAnimatrionFrameId);
-        this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwBreak()});
-        if(this.fwSpeed > 0){this.fwSpeed -= this.fwAcceleration}
-    }
-
-    private bwAccelerate(maxSpeed:number){
-        cancelAnimationFrame(this.bwAnimatrionFrameId);
-        this.bwAnimatrionFrameId = requestAnimationFrame(()=>{this.bwAccelerate(maxSpeed)});
-        if(this.bwSpeed < maxSpeed){this.bwSpeed += this.bwAcceleration}
-    }
-
-    private bwBreak(){
-        cancelAnimationFrame(this.bwAnimatrionFrameId);
-        this.bwAnimatrionFrameId = requestAnimationFrame(()=>{this.bwBreak()});
-        if(this.bwSpeed > 0){this.bwSpeed -= this.bwAcceleration}
-    }
-
-    private rAccelerate(maxSpeed:number){
-        cancelAnimationFrame(this.rAnimatrionFrameId);
-        this.rAnimatrionFrameId = requestAnimationFrame(()=>{this.rAccelerate(maxSpeed)});
-        if(this.rSpeed < maxSpeed){this.rSpeed += this.rAcceleration}
-    }
-
-    private rBreak(){
-        cancelAnimationFrame(this.rAnimatrionFrameId);
-        this.rAnimatrionFrameId = requestAnimationFrame(()=>{this.rBreak()});
-        if(this.rSpeed > 0){this.rSpeed -= this.rAcceleration}
-    }
-
-    private lAccelerate(maxSpeed:number){
-        cancelAnimationFrame(this.lAnimatrionFrameId);
-        this.lAnimatrionFrameId = requestAnimationFrame(()=>{this.lAccelerate(maxSpeed)});
-        if(this.lSpeed < maxSpeed){this.lSpeed += this.lAcceleration}
-    }
-
-    private lBreak(){
-        cancelAnimationFrame(this.lAnimatrionFrameId);
-        this.lAnimatrionFrameId = requestAnimationFrame(()=>{this.lBreak()});
-        if(this.lSpeed > 0){this.lSpeed -= this.lAcceleration}
+        
+        requestAnimationFrame(()=>{this.move()});
     }
 
     drawHitBox(){
@@ -173,58 +155,80 @@ export default class Ship extends Group{
         return this._dashing;
     }
     
-    
     startMovingForward() {
-        this.fwAccelerate(this.fwMaxSpeed);
+        if(!this._dashing){
+            this.fwAcceleration = this.defaults.fwAcceleration;
+            this.fwDeacceleration = 0;
+        }
     }
 
     stopMovingForward(){
         if(!this._dashing){
-            this.fwBreak();
+            this.fwDeacceleration = this.defaults.fwDeacceleration;
+            this.fwAcceleration = 0; 
         }
     }
 
     startMovingBackwards() {
-        this.bwAccelerate(this.bwMaxSpeed);
+        if(!this._dashing){
+            this.bwAcceleration = this.defaults.bwAcceleration;
+            this.bwDeacceleration = 0;
+        }
     }
 
     stopMovingBackwards() {
-        this.bwBreak()
+        if(!this._dashing){
+            this.bwDeacceleration = this.defaults.bwDeacceleration;
+            this.bwAcceleration = 0; 
+        }
     }
 
     startMovingRight() {
-        this.rAccelerate(this.rMaxSpeed);
+        this.rAcceleration = this.defaults.rAcceleration;
+        this.rDeacceleration = 0;
     }
 
     stopMovingRight(){
-        this.rBreak();
+        this.rDeacceleration = this.defaults.rDeacceleration;
+        this.rAcceleration = 0; 
     }
 
     startMovingLeft() {
-        this.lAccelerate(this.lMaxSpeed)
+        this.lAcceleration = this.defaults.lAcceleration;
+        this.lDeacceleration = 0;
     }
 
     stopMovingLeft(){
-        this.lBreak();
+        this.lDeacceleration = this.defaults.lDeacceleration;
+        this.lAcceleration = 0; 
     }
 
     pointTo(x:number, y:number){
         _euler.setFromQuaternion( this.quaternion );
 
-		_euler.y -= x * 0.002 * this.pointerSpeed;
-		_euler.x -= y * 0.002 * this.pointerSpeed;
+		_euler.y -= x * 0.002 * this.defaults.pointingSpeed;
+		_euler.x -= y * 0.002 * this.defaults.pointingSpeed;
 
-		_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
+		_euler.x = Math.max( _PI_2 - this.defaults.maxPolarAngle, Math.min( _PI_2 - this.defaults.minPolarAngle, _euler.x ) );
 
 		this.quaternion.setFromEuler( _euler );
     }
 
     dash(){
-        if(!this.dashing && this._dashPills.length > 0){
-            console.log('dashing...');
+
+        if(!this._dashing && this._dashPills.length > 0){
+
             let dashPill = this._dashPills.pop();
             this._dashing = true;
-            console.log(`setando a velocidade para ${dashPill.speed}`);
+            
+            // Determinando a nova velocidade máxima
+            this.fwMaxSpeed = dashPill.speed;
+
+            // Determinando a nova aceleração
+            this.fwAcceleration = dashPill.acceleration;
+            this.fwDeacceleration = 0;
+
+            // Determinandoa hora de parar o dash
             setTimeout(() => {
                 this.undash()
             }, dashPill.duration);
@@ -232,20 +236,26 @@ export default class Ship extends Group{
     }
 
     undash(){
+
+        // Marcando a flag para false
         this._dashing = false;
-        console.log('undashing...')
+
+        // Retornando a velocidade normal
+        this.fwMaxSpeed = this.defaults.fwMaxSpeed;
+
+        // Setando a aceleração para 0 e desaceleração para valor padrão
+        this.fwAcceleration = 0
+        this.fwDeacceleration = this.defaults.fwDeacceleration;
     }
 
     shoot(){
         
-        let velocity = this.direction.clone().multiplyScalar(0.5);
+        let velocity = this.direction.clone().multiplyScalar(2);
         let demage = 10;
         let shot:Shot = new Shot(velocity,demage,20,this);
         shot.applyMatrix4(this.matrix);
         this.parent.add(shot);
 
-    }
-
-    
+    }  
 
 }
