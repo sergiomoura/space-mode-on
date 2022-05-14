@@ -28,11 +28,15 @@ export default class Ship extends Group{
     private rSpeed:number = 0;
     private lSpeed:number = 0;
 
-    private fwAcceleration:number = 0.004;
-    private bwAcceleration:number = 0.004;
-    private rAcceleration:number = 0.004;
-    private lAcceleration:number = 0.004;
+    private fwAcceleration:number = 0;
+    private bwAcceleration:number = 0;
+    private rAcceleration:number = 0;
+    private lAcceleration:number = 0;
 
+    private fwDeacceleration:number = 0;
+    private bwDeacceleration:number = 0;
+    private rDeacceleration:number = 0;
+    private lDeacceleration:number = 0;
     
     private fwAnimatrionFrameId:number;
     private bwAnimatrionFrameId:number;
@@ -48,15 +52,19 @@ export default class Ship extends Group{
         bwAcceleration: 0.004,
         rAcceleration: 0.004,
         lAcceleration: 0.004,
+        fwDeacceleration: 0.004,
+        bwDeacceleration: 0.004,
+        rDeacceleration: 0.004,
+        lDeacceleration: 0.004,
         minPolarAngle: 0,
         maxPolarAngle: Math.PI,
         pointingSpeed: 1
     }
 
-    private fwMaxSpeed = 0.1;
-    private bwMaxSpeed = 0.1;
-    private rMaxSpeed = 0.1;
-    private lMaxSpeed = 0.1;
+    private fwMaxSpeed = 0.05;
+    private bwMaxSpeed = 0.05;
+    private rMaxSpeed = 0.05;
+    private lMaxSpeed = 0.05;
 
     private _dashing: boolean;
     private _dashPills:DashPill[] = [
@@ -72,9 +80,6 @@ export default class Ship extends Group{
 
         // Iniciando movimento perpétuo
         this.move();
-
-        // Criando array de dashPills
-        
 
         // Definindo e desenhando hitBox
         this.hitBox = new BoxGeometry(1,1,2);
@@ -104,63 +109,29 @@ export default class Ship extends Group{
 
         // Determinando o vetor para a esquerda;
         this.left = this.right.clone().multiplyScalar(-1);
+
     }
 
     private move(){
-        requestAnimationFrame(()=>{this.move()});
-        
+
+        // Atualizando velocidade com aceleração
+        if(this.fwSpeed < this.fwMaxSpeed){this.fwSpeed += this.fwAcceleration}
+        if(this.bwSpeed < this.bwMaxSpeed){this.bwSpeed += this.bwAcceleration}
+        if(this.rSpeed < this.rMaxSpeed){this.rSpeed += this.rAcceleration}
+        if(this.lSpeed < this.lMaxSpeed){this.lSpeed += this.lAcceleration}
+
+        if(this.fwSpeed > 0){this.fwSpeed -= this.fwDeacceleration}
+        if(this.bwSpeed > 0){this.bwSpeed -= this.bwDeacceleration}
+        if(this.rSpeed > 0){this.rSpeed -= this.rDeacceleration}
+        if(this.lSpeed > 0){this.lSpeed -= this.lDeacceleration}
+
+        // Atualizando posição com velocidade
         this.translateOnAxis(this.direction, this.fwSpeed);
         this.translateOnAxis(this.oposite, this.bwSpeed);
         this.translateOnAxis(this.right, this.rSpeed);
         this.translateOnAxis(this.left, this.lSpeed);
-    }
-
-    private fwAccelerate(maxSpeed:number){
-        cancelAnimationFrame(this.fwAnimatrionFrameId);
-        this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwAccelerate(maxSpeed)});
-        if(this.fwSpeed < maxSpeed){this.fwSpeed += this.fwAcceleration;}
-    }
-
-    private fwBreak(){
-            cancelAnimationFrame(this.fwAnimatrionFrameId);
-            this.fwAnimatrionFrameId = requestAnimationFrame(()=>{this.fwBreak()});
-            if(this.fwSpeed > 0){this.fwSpeed -= this.fwAcceleration}
-    }
-
-    private bwAccelerate(maxSpeed:number){
-        cancelAnimationFrame(this.bwAnimatrionFrameId);
-        this.bwAnimatrionFrameId = requestAnimationFrame(()=>{this.bwAccelerate(maxSpeed)});
-        if(this.bwSpeed < maxSpeed){this.bwSpeed += this.bwAcceleration}
-    }
-
-    private bwBreak(){
-        cancelAnimationFrame(this.bwAnimatrionFrameId);
-        this.bwAnimatrionFrameId = requestAnimationFrame(()=>{this.bwBreak()});
-        if(this.bwSpeed > 0){this.bwSpeed -= this.bwAcceleration}
-    }
-
-    private rAccelerate(maxSpeed:number){
-        cancelAnimationFrame(this.rAnimatrionFrameId);
-        this.rAnimatrionFrameId = requestAnimationFrame(()=>{this.rAccelerate(maxSpeed)});
-        if(this.rSpeed < maxSpeed){this.rSpeed += this.rAcceleration}
-    }
-
-    private rBreak(){
-        cancelAnimationFrame(this.rAnimatrionFrameId);
-        this.rAnimatrionFrameId = requestAnimationFrame(()=>{this.rBreak()});
-        if(this.rSpeed > 0){this.rSpeed -= this.rAcceleration}
-    }
-
-    private lAccelerate(maxSpeed:number){
-        cancelAnimationFrame(this.lAnimatrionFrameId);
-        this.lAnimatrionFrameId = requestAnimationFrame(()=>{this.lAccelerate(maxSpeed)});
-        if(this.lSpeed < maxSpeed){this.lSpeed += this.lAcceleration}
-    }
-
-    private lBreak(){
-        cancelAnimationFrame(this.lAnimatrionFrameId);
-        this.lAnimatrionFrameId = requestAnimationFrame(()=>{this.lBreak()});
-        if(this.lSpeed > 0){this.lSpeed -= this.lAcceleration}
+        
+        requestAnimationFrame(()=>{this.move()});
     }
 
     drawHitBox(){
@@ -183,37 +154,49 @@ export default class Ship extends Group{
     
     
     startMovingForward() {
-        this.fwAccelerate(this.fwMaxSpeed);
+        this.fwAcceleration = this.defaults.fwAcceleration;
+        this.fwDeacceleration = 0;
     }
 
     stopMovingForward(){
         if(!this._dashing){
-            this.fwBreak();
+            this.fwDeacceleration = this.defaults.fwDeacceleration;
+            this.fwAcceleration = 0; 
         }
     }
 
     startMovingBackwards() {
-        this.bwAccelerate(this.bwMaxSpeed);
+        if(!this._dashing){
+            this.bwAcceleration = this.defaults.bwAcceleration;
+            this.bwDeacceleration = 0;
+        }
     }
 
     stopMovingBackwards() {
-        this.bwBreak()
+        if(!this._dashing){
+            this.bwDeacceleration = this.defaults.bwDeacceleration;
+            this.bwAcceleration = 0; 
+        }
     }
 
     startMovingRight() {
-        this.rAccelerate(this.rMaxSpeed);
+        this.rAcceleration = this.defaults.rAcceleration;
+        this.rDeacceleration = 0;
     }
 
     stopMovingRight(){
-        this.rBreak();
+        this.rDeacceleration = this.defaults.rDeacceleration;
+        this.rAcceleration = 0; 
     }
 
     startMovingLeft() {
-        this.lAccelerate(this.lMaxSpeed)
+        this.lAcceleration = this.defaults.lAcceleration;
+        this.lDeacceleration = 0;
     }
 
     stopMovingLeft(){
-        this.lBreak();
+        this.lDeacceleration = this.defaults.lDeacceleration;
+        this.lAcceleration = 0; 
     }
 
     dash(){
