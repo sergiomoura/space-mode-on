@@ -38,11 +38,11 @@ export default class Ship extends Group{
     private rDeacceleration:number = 0;
     private lDeacceleration:number = 0;
     
-    private fwAnimatrionFrameId:number;
-    private bwAnimatrionFrameId:number;
-    private rAnimatrionFrameId:number;
-    private lAnimatrionFrameId:number;
-    
+    private fwMaxSpeed:number;
+    private bwMaxSpeed:number;
+    private rMaxSpeed:number;
+    private lMaxSpeed:number;
+
     private defaults = {
         fwMaxSpeed: 0.1,
         bwMaxSpeed: 0.1,
@@ -61,17 +61,12 @@ export default class Ship extends Group{
         pointingSpeed: 1
     }
 
-    private fwMaxSpeed = 0.05;
-    private bwMaxSpeed = 0.05;
-    private rMaxSpeed = 0.05;
-    private lMaxSpeed = 0.05;
-
     private _dashing: boolean;
     private _dashPills:DashPill[] = [
-        new DashPill(5000, 0.16, 0.01),
-        new DashPill(5000, 0.16, 0.01),
-        new DashPill(5000, 0.16, 0.01),
-        new DashPill(5000, 0.16, 0.01)
+        new DashPill(5000, 1, 0.1),
+        new DashPill(5000, 1, 0.1),
+        new DashPill(5000, 1, 0.1),
+        new DashPill(5000, 1, 0.1)
     ]
 
     constructor(camera:PerspectiveCamera){
@@ -109,6 +104,12 @@ export default class Ship extends Group{
 
         // Determinando o vetor para a esquerda;
         this.left = this.right.clone().multiplyScalar(-1);
+
+        // Determinando valores padrão
+        this.fwMaxSpeed = this.defaults.fwMaxSpeed;
+        this.bwMaxSpeed = this.defaults.bwMaxSpeed;
+        this.rMaxSpeed = this.defaults.rMaxSpeed;
+        this.lMaxSpeed = this.defaults.lMaxSpeed;
 
     }
 
@@ -152,10 +153,11 @@ export default class Ship extends Group{
         return this._dashing;
     }
     
-    
     startMovingForward() {
-        this.fwAcceleration = this.defaults.fwAcceleration;
-        this.fwDeacceleration = 0;
+        if(!this._dashing){
+            this.fwAcceleration = this.defaults.fwAcceleration;
+            this.fwDeacceleration = 0;
+        }
     }
 
     stopMovingForward(){
@@ -200,11 +202,20 @@ export default class Ship extends Group{
     }
 
     dash(){
-        if(!this.dashing && this._dashPills.length > 0){
-            console.log('dashing...');
+
+        if(!this._dashing && this._dashPills.length > 0){
+
             let dashPill = this._dashPills.pop();
             this._dashing = true;
-            console.log(`setando a velocidade para ${dashPill.speed}`);
+            
+            // Determinando a nova velocidade máxima
+            this.fwMaxSpeed = dashPill.speed;
+
+            // Determinando a nova aceleração
+            this.fwAcceleration = dashPill.acceleration;
+            this.fwDeacceleration = 0;
+
+            // Determinandoa hora de parar o dash
             setTimeout(() => {
                 this.undash()
             }, dashPill.duration);
@@ -212,8 +223,16 @@ export default class Ship extends Group{
     }
 
     undash(){
+
+        // Marcando a flag para false
         this._dashing = false;
-        console.log('undashing...')
+
+        // Retornando a velocidade normal
+        this.fwMaxSpeed = this.defaults.fwMaxSpeed;
+
+        // Setando a aceleração para 0 e desaceleração para valor padrão
+        this.fwAcceleration = 0
+        this.fwDeacceleration = this.defaults.fwDeacceleration;
     }
 
     pointTo(x:number, y:number){
