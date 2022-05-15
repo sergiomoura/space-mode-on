@@ -6,18 +6,21 @@ import {
     MeshPhongMaterial,
     Mesh,
     Vector3,
-    Euler
+    Euler,
+    Event
 } from "three";
+import Damageble from "./Damageble";
 import DashPill from "./DashPill";
 import Shot from "./Shot";
 
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
 const _PI_2 = Math.PI / 2;
 
-export default class Ship extends Group{
+export default class Ship extends Group implements Damageble{
     
     private hitBox:BoxGeometry;
     private hitBoxMesh:Mesh;
+    private _life:number = 50;
 
     private direction:Vector3 = new Vector3(0,0,0);
     private oposite:Vector3 = new Vector3(0,0,0);
@@ -106,6 +109,24 @@ export default class Ship extends Group{
         this.lMaxSpeed = this.defaults.lMaxSpeed;
 
     }
+
+    
+    public get life() : number {
+        return this._life;
+    }
+
+    public getDemage(damage:number){
+        this._life -= damage;
+        if(this._life <=0){
+            this.die()
+        }
+    }
+
+    public die(): void {
+        this.removeFromParent();
+    }
+
+    
 
     private move(){
 

@@ -1,8 +1,8 @@
 Fase 1 - Jogabilidade:
     ✔ Dar Dash @done(22-05-14 09:56)
     ✔ Atirar @done(22-05-14 09:56)
-    ☐ Criar e adicionar alvos movendo aleatoriamente
-    ☐ Fazer tiro colidir com alvo
+    ✔ Criar e adicionar alvos movendo aleatoriamente @done(22-05-15 07:00)
+    ✔ Fazer tiro colidir com alvo @done(22-05-15 07:00)
     ☐ Limitar o movimento de uma nave (esfera?)
 
 Fase 2 - Gráficos:

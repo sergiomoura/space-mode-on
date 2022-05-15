@@ -78,7 +78,7 @@ export default class Shot extends Group{
                     
                     // Capturando nave na trajetória do tiro
                     let ship:Ship = <Ship>(intersections[0].object.parent);
-                    console.log(ship);
+                    ship.getDemage(this._demage);
                 }
             }
 
