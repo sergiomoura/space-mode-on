@@ -5,13 +5,7 @@ Fase 1 - Jogabilidade:
     ✔ Fazer tiro colidir com alvo @done(22-05-15 07:00)
     ☐ Limitar o movimento de uma nave (esfera?)
 
-Fase 2 - Gráficos:
-    ☐ Trazer Voxels de Nave
-    ☐ Fazer Voxels de Tiros
-    ☐ Fazer ambiente
-    ☐ Ajustar Iluminação
-
-Fase 3 - Bots:
+Fase 2 - Bots:
     ☐ Fazer bot perceber o ambiente:
         ☐ Posição de inimigos
         ☐ Velocidades dos Inimigos
@@ -22,6 +16,13 @@ Fase 3 - Bots:
     ☐ Fazer bot agressivo atirar em inimigo
     ☐ Fazer bot fujão fujir do inimigo
     ☐ Fazer bot fujão dar dash
+
+Fase 3 - Gráficos:
+    ☐ Trazer Voxels de Nave
+    ☐ Fazer Voxels de Tiros
+    ☐ Fazer ambiente
+    ☐ Ajustar Iluminação
+
 
 Fase 4 - Mobilidade:
     ☐ Fazer MobileShipControl
