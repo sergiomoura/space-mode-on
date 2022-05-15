@@ -1,6 +1,7 @@
 import { BoxGeometry, MeshBasicMaterial, Mesh, Vector3, Group, Event, Ray, Raycaster } from "three";
 import Ship from "./Ship";
 import Game from "./Game";
+import Damageble from "./Damageble";
 
 export default class Shot extends Group{
     
@@ -77,8 +78,9 @@ export default class Shot extends Group{
                     (<Game>(this._owner.parent)).addSpiningCube(fi.x, fi.y, fi.z)
                     
                     // Capturando nave na trajetória do tiro
-                    let ship:Ship = <Ship>(intersections[0].object.parent);
-                    ship.getDemage(this._demage);
+                    let damageble:Damageble = <Damageble>(<unknown>(intersections[0].object.parent));
+                    damageble.getDemage(this._demage);
+
                 }
             }
 
