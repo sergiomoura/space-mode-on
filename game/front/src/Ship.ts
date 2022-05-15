@@ -243,6 +243,7 @@ export default class Ship extends Group{
         let shot:Shot = new Shot(velocity,demage,20,this);
         shot.applyMatrix4(this.matrix);
         this.parent.add(shot);
+        this.dispatchEvent({type: 'shoot', shot})
 
     }  
 

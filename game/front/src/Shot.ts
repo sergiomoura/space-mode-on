@@ -12,7 +12,9 @@ export default class Shot extends Group{
     private _animationFrameId: number;
     private _raycaster:Raycaster;
     private _intersectables:Ship[];
-    
+    private _origin:Vector3;
+    private _worldDirection:Vector3;
+
     public get hitbox(): BoxGeometry {
         return this._hitbox;
     }
@@ -29,6 +31,13 @@ export default class Shot extends Group{
         this._speed = this._velocity.length();
         this._remainingDistance = _reach;
         this._intersectables = (<Game>(this._owner.parent)).enemyShips;
+        _owner.addEventListener(
+            'shoot',
+            ()=>{
+                this._origin = _owner.position.clone();
+                this._worldDirection = this._direction.clone().applyMatrix4(_owner.matrixWorld).sub(_owner.position);
+            }
+        );
         this.move();
     }
 
@@ -56,10 +65,7 @@ export default class Shot extends Group{
     private checkHit(){
         if(this.parent != null){
 
-            console.log(this._direction.clone().applyMatrix4(this._owner.matrixWorld).sub(this._owner.position));
-            let origin:Vector3 = this._owner.position.clone();
-            let direction:Vector3 = this._direction.clone().applyMatrix4(this._owner.matrixWorld).sub(this._owner.position);
-            let rc:Raycaster = new Raycaster(origin, direction);
+            let rc:Raycaster = new Raycaster(this._origin, this._worldDirection);
             let intersected = rc.intersectObjects(this._intersectables, true);
             
             if(intersected.length > 0){
