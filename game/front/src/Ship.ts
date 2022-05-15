@@ -62,7 +62,7 @@ export default class Ship extends Group{
         pointingSpeed: 1
     }
 
-    private _dashing: boolean;
+    private _dashing: boolean = false;
     private _dashPills:DashPill[] = [
         new DashPill(5000, 1, 0.1),
         new DashPill(5000, 1, 0.1),
@@ -238,7 +238,7 @@ export default class Ship extends Group{
 
     shoot(){
         
-        let velocity = this.direction.clone().multiplyScalar(2);
+        let velocity = this.direction.clone().multiplyScalar(1);
         let demage = 10;
         let shot:Shot = new Shot(velocity,demage,20,this);
         shot.applyMatrix4(this.matrix);

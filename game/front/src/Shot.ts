@@ -65,12 +65,21 @@ export default class Shot extends Group{
     private checkHit(){
         if(this.parent != null){
 
-            let rc:Raycaster = new Raycaster(this._origin, this._worldDirection);
-            let intersected = rc.intersectObjects(this._intersectables, true);
+            let origin:Vector3 = this.position.clone();
+
+            let rc:Raycaster = new Raycaster(origin, this._worldDirection);
+            let intersections = rc.intersectObjects(this._intersectables, true);
             
-            if(intersected.length > 0){
-                let fi = intersected[0].point;
-                (<Game>(this._owner.parent)).addSpiningCube(fi.x, fi.y, fi.z)
+            if(intersections.length > 0){
+                if(intersections[0].distance < this._velocity.length()){
+                    // Adicionando spinningCube no ponto de colisão
+                    let fi = intersections[0].point;
+                    (<Game>(this._owner.parent)).addSpiningCube(fi.x, fi.y, fi.z)
+                    
+                    // Capturando nave na trajetória do tiro
+                    let ship:Ship = <Ship>(intersections[0].object.parent);
+                    console.log(ship);
+                }
             }
 
         }
