@@ -1,5 +1,6 @@
-import { BoxGeometry, MeshBasicMaterial, Mesh, Vector3, Group, Event } from "three";
+import { BoxGeometry, MeshBasicMaterial, Mesh, Vector3, Group, Event, Ray, Raycaster } from "three";
 import Ship from "./Ship";
+import Game from "./Game";
 
 export default class Shot extends Group{
     
@@ -9,7 +10,9 @@ export default class Shot extends Group{
     private _speed: number;
     private _remainingDistance: number;
     private _animationFrameId: number;
-
+    private _raycaster:Raycaster;
+    private _intersectables:Ship[];
+    
     public get hitbox(): BoxGeometry {
         return this._hitbox;
     }
@@ -25,6 +28,7 @@ export default class Shot extends Group{
         this._direction = this._velocity.clone().normalize();
         this._speed = this._velocity.length();
         this._remainingDistance = _reach;
+        this._intersectables = (<Game>(this._owner.parent)).enemyShips;
         this.move();
     }
 
@@ -40,6 +44,8 @@ export default class Shot extends Group{
         if(this._remainingDistance > 0){
             this.translateOnAxis(this._direction, this._speed);
             this._remainingDistance -= this._speed;
+            this.checkHit();
+
         } else {
             cancelAnimationFrame(this._animationFrameId);
             this.removeFromParent();
@@ -47,5 +53,21 @@ export default class Shot extends Group{
         
     }
 
+    private checkHit(){
+        if(this.parent != null){
+
+            console.log(this._direction.clone().applyMatrix4(this._owner.matrixWorld).sub(this._owner.position));
+            let origin:Vector3 = this._owner.position.clone();
+            let direction:Vector3 = this._direction.clone().applyMatrix4(this._owner.matrixWorld).sub(this._owner.position);
+            let rc:Raycaster = new Raycaster(origin, direction);
+            let intersected = rc.intersectObjects(this._intersectables, true);
+            
+            if(intersected.length > 0){
+                let fi = intersected[0].point;
+                (<Game>(this._owner.parent)).addSpiningCube(fi.x, fi.y, fi.z)
+            }
+
+        }
+    }
     
 }

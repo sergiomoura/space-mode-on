@@ -18,9 +18,8 @@ import { DesktopShipControls } from "./controls/DesktopShipControls";
 import DesktopGameControls from "./controls/DesktopGameControls";
 import FirstPersonShip from "./FirstPersonShip";
 
-export default class Game {
+export default class Game extends Scene{
 
-    public scene = new Scene();
     public ship:FirstPersonShip = new FirstPersonShip(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
     public enemyShips:Ship[] = [];
     public renderer = new WebGLRenderer({ antialias: true, canvas:document.getElementById('mainCanvas') });
@@ -36,19 +35,22 @@ export default class Game {
     
 
     constructor(height:number, width:number) {
+
+        super();
+
         // Determinando dimensões do renderer principal
         this.setSize(height, width);
 
         // Adicionando Iluminação
-        this.scene.add(...Lights);
+        this.add(...Lights);
 
         // Adicionando Nave
-        this.scene.add(this.ship);
-        this.ship.position.x = 5;
-        this.ship.position.y = 5;
-        this.ship.position.z = 10;
-        this.ship.rotateX(-0.3)
-        this.ship.rotateY(0.3)
+        this.add(this.ship);
+        this.ship.position.x = 2;
+        this.ship.position.y = 0;
+        this.ship.position.z = 0;
+        // this.ship.rotateX(-0.3)
+        this.ship.rotateY(Math.PI)
 
         // Criando e adicionando 5 naves.
         // Uma na origem e outras em locais aleatórios;
@@ -59,7 +61,7 @@ export default class Game {
         let ship = new Ship();
         this.enemyShips.push(ship);
         ship.position.set(0,0,0);
-        this.scene.add(ship);
+        this.add(ship);
 
         for (let i = 1; i < 5; i++) {
             let ship = new Ship();
@@ -67,7 +69,7 @@ export default class Game {
             let [x,y,z] = [random(20),random(20),random(20)]
             // console.log(x,y,z);
             ship.position.set(x,y,z);
-            this.scene.add(ship);
+            this.add(ship);
         }
         
 
@@ -75,9 +77,9 @@ export default class Game {
         this.auxRenderer.setClearColor(0x333333,0.5)
 
         // Extras
-        this.addSpiningCube();
-        // this.drawAxis();
-        this.drawGrid(100,1);
+        // this.addSpiningCube();
+        this.drawAxis(5);
+        // this.drawGrid(100,1);
 
         // Renderizando continuamente
         this.renderContinuous();
@@ -87,17 +89,17 @@ export default class Game {
         this.renderer.setSize(width, height);
     }
 
-    public addSpiningCube() {
+    public addSpiningCube(x:number = 0, y:number = 0, z:number = 0, color:ColorRepresentation = 0xff0000) {
 
-        const geometry = new BoxGeometry(1, 1, 1);
-        const material = new MeshPhongMaterial({ color: 0x00ff00 });
+        const geometry = new BoxGeometry(0.1, 0.1, 0.1);
+        const material = new MeshPhongMaterial({ color });
         material.opacity = 0.5;
         material.transparent = true;
         const cube = new Mesh(geometry, material);
-        
+        cube.position.set(x,y,z);
         cube.castShadow = true;
         cube.receiveShadow = true;
-        this.scene.add(cube);
+        this.add(cube);
 
         const animate = () => {
             requestAnimationFrame(animate);
@@ -109,25 +111,25 @@ export default class Game {
         animate();
     }
 
-    public drawAxis(){
+    public drawAxis(size:number){
 
-        this.drawLine(0x0000FF,new Vector3( - 10, 0, 0 ), new Vector3( 10, 0, 0 ));
-        this.drawLine(0x00FF00,new Vector3( 0, -10, 0 ), new Vector3( 0, 10, 0 ));
-        this.drawLine(0xFF0000,new Vector3( 0, 0, -10 ), new Vector3( 0, 0, 10 ));
+        let arrowSize:number = 1;
+
+        this.drawLine(0x0000FF,new Vector3( -size, 0, 0 ), new Vector3( size, 0, 0 ),new Vector3( size, 0, arrowSize),new Vector3( size + 2*arrowSize, 0, 0 ),new Vector3( size, 0, -arrowSize),new Vector3( size, 0, 0 ));
+        this.drawLine(0x00FF00,new Vector3( 0, -size, 0 ), new Vector3( 0, size, 0 ),new Vector3( arrowSize, size, 0),new Vector3( 0, size + 2*arrowSize, 0 ),new Vector3( -arrowSize, size, 0),new Vector3( 0, size, 0 ));
+        this.drawLine(0xFF0000,new Vector3( 0, 0, -size ), new Vector3( 0, 0, size ),new Vector3( arrowSize, 0, size),new Vector3( 0, 0, size + 2*arrowSize ),new Vector3( -arrowSize, 0, size),new Vector3( 0, 0, size ));
         
     }
 
-    public drawLine(color:ColorRepresentation, start:Vector3, end:Vector3){
+    public drawLine(color:ColorRepresentation, ...points:Vector3[]){
         const material = new LineBasicMaterial( { color } );
         
         let geometry:BufferGeometry;
         let line:Line;
-        let points:Vector3[] = [start, end];
-
         
         geometry = new BufferGeometry().setFromPoints(points);
         line = new Line( geometry, material );
-        this.scene.add(line);
+        this.add(line);
 
     }
 
@@ -155,8 +157,8 @@ export default class Game {
 
     public renderContinuous(){
         requestAnimationFrame(()=>{this.renderContinuous()});
-        this.renderer.render(this.scene, this.ship.camera);
-        this.auxRenderer.render(this.scene, this.showingCamera);
+        this.renderer.render(this, this.ship.camera);
+        this.auxRenderer.render(this, this.showingCamera);
     }
 
     switchNextCamera() {
