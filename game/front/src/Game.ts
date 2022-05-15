@@ -70,6 +70,9 @@ export default class Game extends Scene{
             // console.log(x,y,z);
             ship.position.set(x,y,z);
             this.add(ship);
+            ship.pointTo(100*Math.random(),10*Math.random());
+            ship.startMovingForward();
+            
         }
         
 
