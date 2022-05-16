@@ -31,7 +31,7 @@ export default class Shot extends Group{
         this._direction = this._velocity.clone().normalize();
         this._speed = this._velocity.length();
         this._remainingDistance = _reach;
-        this._intersectables = (<Game>(this._owner.parent)).enemyShips;
+        this._intersectables = (<Game>(this._owner.parent)).enemies.map(b => b.ship);
         _owner.addEventListener(
             'shoot',
             ()=>{

@@ -17,11 +17,12 @@ import Ship from "./Ship";
 import { DesktopShipControls } from "./controls/DesktopShipControls";
 import DesktopGameControls from "./controls/DesktopGameControls";
 import FirstPersonShip from "./FirstPersonShip";
+import Bot from "./Bot";
 
 export default class Game extends Scene{
 
     public ship:FirstPersonShip = new FirstPersonShip(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
-    public enemyShips:Ship[] = [];
+    public enemies:Bot[] = [];
     public renderer = new WebGLRenderer({ antialias: true, canvas:document.getElementById('mainCanvas') });
     public auxRenderer = new WebGLRenderer({
         canvas:document.getElementById('auxCanvas'),
@@ -49,7 +50,7 @@ export default class Game extends Scene{
         this.ship.position.x = 2;
         this.ship.position.y = 0;
         this.ship.position.z = 0;
-        // this.ship.rotateX(-0.3)
+        this.ship.rotateX(-0.3)
         this.ship.rotateY(Math.PI)
 
         // Criando e adicionando 5 naves.
@@ -58,24 +59,18 @@ export default class Game extends Scene{
             return Math.round(2*max*(Math.random() - 0.5));
         }
 
-        let ship = new Ship();
-        this.enemyShips.push(ship);
-        ship.position.set(0,0,0);
-        this.add(ship);
-
-        for (let i = 1; i < 5; i++) {
-            let ship = new Ship();
-            this.enemyShips.push(ship);
+        for (let i = 0; i < 5; i++) {
+            let bot = new Bot(this)
+            this.enemies.push(bot);
             let [x,y,z] = [random(20),random(20),random(20)]
-            // console.log(x,y,z);
-            ship.position.set(x,y,z);
-            this.add(ship);
             
+            bot.ship.position.set(x,y,z);
+            this.add(bot.ship);
         }
         
 
         // Configurando renderizadores
-        this.auxRenderer.setClearColor(0x333333,0.5)
+        this.auxRenderer.setClearColor(0x333333, 0.5)
 
         // Extras
         // this.addSpiningCube();
