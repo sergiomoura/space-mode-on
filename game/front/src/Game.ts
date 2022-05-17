@@ -33,7 +33,8 @@ export default class Game extends Scene{
     public gameControls = new DesktopGameControls(this);
     public cameras:PerspectiveCamera[] = Cameras;
     private showingCamera:PerspectiveCamera = this.cameras[0];
-    
+    private _ships:Ship[] = [];
+    public get ships() : Ship[] {return this._ships};
 
     constructor(height:number, width:number) {
 
@@ -46,28 +47,17 @@ export default class Game extends Scene{
         this.add(...Lights);
 
         // Adicionando Nave
-        this.add(this.ship);
         this.ship.position.x = 2;
         this.ship.position.y = 0;
         this.ship.position.z = 0;
         this.ship.rotateX(-0.3)
         this.ship.rotateY(Math.PI)
+        this.addShip(this.ship);
 
-        // Criando e adicionando 5 naves.
-        // Uma na origem e outras em locais aleatórios;
-        let random = (max:number) => {
-            return Math.round(2*max*(Math.random() - 0.5));
-        }
-
+        // Adicionando bots aleatoriamente
         for (let i = 0; i < 5; i++) {
-            let bot = new Bot(this)
-            this.enemies.push(bot);
-            let [x,y,z] = [random(20),random(20),random(20)]
-            
-            bot.ship.position.set(x,y,z);
-            this.add(bot.ship);
+            this.addBotRandomly()
         }
-        
 
         // Configurando renderizadores
         this.auxRenderer.setClearColor(0x333333, 0.5)
@@ -83,6 +73,24 @@ export default class Game extends Scene{
 
     public setSize(height: number, width: number) {
         this.renderer.setSize(width, height);
+    }
+
+    public addBotRandomly(){
+        
+        let bot = new Bot(this)
+        bot.ship.position.set(random(20), random(20), random(20));
+        this.enemies.push(bot);
+        this.addShip(bot.ship);
+
+        function random(max:number){
+            return Math.round(2*max*(Math.random() - 0.5));
+        }
+        
+    }
+
+    public addShip(ship:Ship){
+        this.add(ship);
+        this._ships.push(ship);
     }
 
     public addSpiningCube(x:number = 0, y:number = 0, z:number = 0, color:ColorRepresentation = 0xff0000) {
