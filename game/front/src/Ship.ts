@@ -161,6 +161,28 @@ export default class Ship extends Group implements Damageble{
         this._hitBoxMesh.receiveShadow = true;
     }
 
+    public get velocity():Vector3 {
+        
+        let result = new Vector3();
+        let resultP1 = new Vector3();
+        let resultP2 = new Vector3();
+
+        result.addVectors(
+
+            resultP1.addVectors(
+                this._direction.clone().multiplyScalar(this._fwSpeed),
+                this._oposite.clone().multiplyScalar(this._bwSpeed)
+            ),
+    
+            resultP2.addVectors(
+                this._left.clone().multiplyScalar(this._lSpeed),
+                this._right.clone().multiplyScalar(this._rSpeed)
+            )
+        )
+
+        return result.applyEuler(this.rotation);
+    }
+
     public get dashing() : boolean {
         return this._dashing;
     }
