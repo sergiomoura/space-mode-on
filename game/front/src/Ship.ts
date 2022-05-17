@@ -1,13 +1,10 @@
-import { throttleTime } from "rxjs";
 import {
     BoxGeometry,
     Group,
-    PerspectiveCamera,
     MeshPhongMaterial,
     Mesh,
     Vector3,
     Euler,
-    Event
 } from "three";
 import Damageble from "./Damageble";
 import DashPill from "./DashPill";
@@ -18,36 +15,38 @@ const _PI_2 = Math.PI / 2;
 
 export default class Ship extends Group implements Damageble{
     
-    private hitBox:BoxGeometry;
-    private hitBoxMesh:Mesh;
+    private _animationFrameId:number;
+
+    private _hitBoxGeometry:BoxGeometry;
+    private _hitBoxMesh:Mesh;
     private _life:number = 50;
 
-    private direction:Vector3 = new Vector3(0,0,0);
-    private oposite:Vector3 = new Vector3(0,0,0);
-    private right:Vector3 = new Vector3(0,0,0);
-    private left:Vector3 =  new Vector3(0,0,0);
+    private _direction:Vector3 = new Vector3(0,0,0);
+    private _oposite:Vector3 = new Vector3(0,0,0);
+    private _right:Vector3 = new Vector3(0,0,0);
+    private _left:Vector3 =  new Vector3(0,0,0);
 
-    private fwSpeed:number = 0;
-    private bwSpeed:number = 0;
-    private rSpeed:number = 0;
-    private lSpeed:number = 0;
+    private _fwSpeed:number = 0;
+    private _bwSpeed:number = 0;
+    private _rSpeed:number = 0;
+    private _lSpeed:number = 0;
 
-    private fwAcceleration:number = 0;
-    private bwAcceleration:number = 0;
-    private rAcceleration:number = 0;
-    private lAcceleration:number = 0;
+    private _fwAcceleration:number = 0;
+    private _bwAcceleration:number = 0;
+    private _rAcceleration:number = 0;
+    private _lAcceleration:number = 0;
 
-    private fwDeacceleration:number = 0;
-    private bwDeacceleration:number = 0;
-    private rDeacceleration:number = 0;
-    private lDeacceleration:number = 0;
+    private _fwDeacceleration:number = 0;
+    private _bwDeacceleration:number = 0;
+    private _rDeacceleration:number = 0;
+    private _lDeacceleration:number = 0;
     
-    private fwMaxSpeed:number;
-    private bwMaxSpeed:number;
-    private rMaxSpeed:number;
-    private lMaxSpeed:number;
+    private _fwMaxSpeed:number;
+    private _bwMaxSpeed:number;
+    private _rMaxSpeed:number;
+    private _lMaxSpeed:number;
 
-    private defaults = {
+    private _defaults = {
         fwMaxSpeed: 0.1,
         bwMaxSpeed: 0.1,
         rMaxSpeed: 0.1,
@@ -81,32 +80,32 @@ export default class Ship extends Group implements Damageble{
         this.move();
 
         // Definindo e desenhando hitBox
-        this.hitBox = new BoxGeometry(1,1,2);
+        this._hitBoxGeometry = new BoxGeometry(1,1,2);
         this.drawHitBox();
 
         // Adicionando e hitBox
-        this.add(this.hitBoxMesh);
+        this.add(this._hitBoxMesh);
 
         // Determinando o vetor da direção da câmera
-        this.getWorldDirection(this.direction).multiplyScalar(-1);
+        this.getWorldDirection(this._direction).multiplyScalar(-1);
 
         // Determinando o vetor oposto à direção da câmera
-        this.oposite = this.direction.clone().multiplyScalar(-1);
+        this._oposite = this._direction.clone().multiplyScalar(-1);
         
         // Determinando o vetor da posição;
         this.getWorldPosition(this.position);
 
         // Determinando vetor para a direita
-        this.right = this.localToWorld(new Vector3(1,0,0)).sub(this.position);
+        this._right = this.localToWorld(new Vector3(1,0,0)).sub(this.position);
 
         // Determinando o vetor para a esquerda;
-        this.left = this.right.clone().multiplyScalar(-1);
+        this._left = this._right.clone().multiplyScalar(-1);
 
         // Determinando valores padrão
-        this.fwMaxSpeed = this.defaults.fwMaxSpeed;
-        this.bwMaxSpeed = this.defaults.bwMaxSpeed;
-        this.rMaxSpeed = this.defaults.rMaxSpeed;
-        this.lMaxSpeed = this.defaults.lMaxSpeed;
+        this._fwMaxSpeed = this._defaults.fwMaxSpeed;
+        this._bwMaxSpeed = this._defaults.bwMaxSpeed;
+        this._rMaxSpeed = this._defaults.rMaxSpeed;
+        this._lMaxSpeed = this._defaults.lMaxSpeed;
 
     }
 
@@ -126,104 +125,106 @@ export default class Ship extends Group implements Damageble{
         this.removeFromParent();
     }
 
-    
-
     private move(){
+        
+        // Iniciando movimento perpétuo
+        this._animationFrameId = requestAnimationFrame(()=>{
+            this.move()
+        });
 
         // Atualizando velocidade com aceleração
-        if(this.fwSpeed < this.fwMaxSpeed){this.fwSpeed += this.fwAcceleration}
-        if(this.bwSpeed < this.bwMaxSpeed){this.bwSpeed += this.bwAcceleration}
-        if(this.rSpeed < this.rMaxSpeed){this.rSpeed += this.rAcceleration}
-        if(this.lSpeed < this.lMaxSpeed){this.lSpeed += this.lAcceleration}
+        if(this._fwSpeed < this._fwMaxSpeed){this._fwSpeed += this._fwAcceleration}
+        if(this._bwSpeed < this._bwMaxSpeed){this._bwSpeed += this._bwAcceleration}
+        if(this._rSpeed < this._rMaxSpeed){this._rSpeed += this._rAcceleration}
+        if(this._lSpeed < this._lMaxSpeed){this._lSpeed += this._lAcceleration}
 
-        if(this.fwSpeed > 0){this.fwSpeed -= this.fwDeacceleration}
-        if(this.bwSpeed > 0){this.bwSpeed -= this.bwDeacceleration}
-        if(this.rSpeed > 0){this.rSpeed -= this.rDeacceleration}
-        if(this.lSpeed > 0){this.lSpeed -= this.lDeacceleration}
+        if(this._fwSpeed > 0){this._fwSpeed -= this._fwDeacceleration}
+        if(this._bwSpeed > 0){this._bwSpeed -= this._bwDeacceleration}
+        if(this._rSpeed > 0){this._rSpeed -= this._rDeacceleration}
+        if(this._lSpeed > 0){this._lSpeed -= this._lDeacceleration}
 
         // Atualizando posição com velocidade
-        this.translateOnAxis(this.direction, this.fwSpeed);
-        this.translateOnAxis(this.oposite, this.bwSpeed);
-        this.translateOnAxis(this.right, this.rSpeed);
-        this.translateOnAxis(this.left, this.lSpeed);
-        
-        requestAnimationFrame(()=>{this.move()});
+        this.translateOnAxis(this._direction, this._fwSpeed);
+        this.translateOnAxis(this._oposite, this._bwSpeed);
+        this.translateOnAxis(this._right, this._rSpeed);
+        this.translateOnAxis(this._left, this._lSpeed);
+
     }
 
     drawHitBox(){
         const material = new MeshPhongMaterial({ color: 0xf0f0f0 });
         material.opacity = 0.5;
         material.transparent = true;
-        this.hitBoxMesh = new Mesh(this.hitBox, material);
+        this._hitBoxMesh = new Mesh(this._hitBoxGeometry, material);
         
-        this.hitBoxMesh.castShadow = true;
-        this.hitBoxMesh.receiveShadow = true;
+        this._hitBoxMesh.castShadow = true;
+        this._hitBoxMesh.receiveShadow = true;
     }
 
     public get dashing() : boolean {
         return this._dashing;
     }
     
-    startMovingForward() {
+    public startMovingForward() {
         if(!this._dashing){
-            this.fwAcceleration = this.defaults.fwAcceleration;
-            this.fwDeacceleration = 0;
+            this._fwAcceleration = this._defaults.fwAcceleration;
+            this._fwDeacceleration = 0;
         }
     }
 
-    stopMovingForward(){
+    public stopMovingForward(){
         if(!this._dashing){
-            this.fwDeacceleration = this.defaults.fwDeacceleration;
-            this.fwAcceleration = 0; 
+            this._fwDeacceleration = this._defaults.fwDeacceleration;
+            this._fwAcceleration = 0; 
         }
     }
 
-    startMovingBackwards() {
+    public startMovingBackwards() {
         if(!this._dashing){
-            this.bwAcceleration = this.defaults.bwAcceleration;
-            this.bwDeacceleration = 0;
+            this._bwAcceleration = this._defaults.bwAcceleration;
+            this._bwDeacceleration = 0;
         }
     }
 
-    stopMovingBackwards() {
+    public stopMovingBackwards() {
         if(!this._dashing){
-            this.bwDeacceleration = this.defaults.bwDeacceleration;
-            this.bwAcceleration = 0; 
+            this._bwDeacceleration = this._defaults.bwDeacceleration;
+            this._bwAcceleration = 0; 
         }
     }
 
-    startMovingRight() {
-        this.rAcceleration = this.defaults.rAcceleration;
-        this.rDeacceleration = 0;
+    public startMovingRight() {
+        this._rAcceleration = this._defaults.rAcceleration;
+        this._rDeacceleration = 0;
     }
 
-    stopMovingRight(){
-        this.rDeacceleration = this.defaults.rDeacceleration;
-        this.rAcceleration = 0; 
+    public stopMovingRight(){
+        this._rDeacceleration = this._defaults.rDeacceleration;
+        this._rAcceleration = 0; 
     }
 
-    startMovingLeft() {
-        this.lAcceleration = this.defaults.lAcceleration;
-        this.lDeacceleration = 0;
+    public startMovingLeft() {
+        this._lAcceleration = this._defaults.lAcceleration;
+        this._lDeacceleration = 0;
     }
 
-    stopMovingLeft(){
-        this.lDeacceleration = this.defaults.lDeacceleration;
-        this.lAcceleration = 0; 
+    public stopMovingLeft(){
+        this._lDeacceleration = this._defaults.lDeacceleration;
+        this._lAcceleration = 0; 
     }
 
-    pointTo(x:number, y:number){
+    public pointTo(x:number, y:number){
         _euler.setFromQuaternion( this.quaternion );
 
-		_euler.y -= x * 0.002 * this.defaults.pointingSpeed;
-		_euler.x -= y * 0.002 * this.defaults.pointingSpeed;
+		_euler.y -= x * 0.002 * this._defaults.pointingSpeed;
+		_euler.x -= y * 0.002 * this._defaults.pointingSpeed;
 
-		_euler.x = Math.max( _PI_2 - this.defaults.maxPolarAngle, Math.min( _PI_2 - this.defaults.minPolarAngle, _euler.x ) );
+		_euler.x = Math.max( _PI_2 - this._defaults.maxPolarAngle, Math.min( _PI_2 - this._defaults.minPolarAngle, _euler.x ) );
 
 		this.quaternion.setFromEuler( _euler );
     }
 
-    dash(){
+    public dash(){
 
         if(!this._dashing && this._dashPills.length > 0){
 
@@ -231,11 +232,11 @@ export default class Ship extends Group implements Damageble{
             this._dashing = true;
             
             // Determinando a nova velocidade máxima
-            this.fwMaxSpeed = dashPill.speed;
+            this._fwMaxSpeed = dashPill.speed;
 
             // Determinando a nova aceleração
-            this.fwAcceleration = dashPill.acceleration;
-            this.fwDeacceleration = 0;
+            this._fwAcceleration = dashPill.acceleration;
+            this._fwDeacceleration = 0;
 
             // Determinandoa hora de parar o dash
             setTimeout(() => {
@@ -244,22 +245,22 @@ export default class Ship extends Group implements Damageble{
         }
     }
 
-    undash(){
+    public undash(){
 
         // Marcando a flag para false
         this._dashing = false;
 
         // Retornando a velocidade normal
-        this.fwMaxSpeed = this.defaults.fwMaxSpeed;
+        this._fwMaxSpeed = this._defaults.fwMaxSpeed;
 
         // Setando a aceleração para 0 e desaceleração para valor padrão
-        this.fwAcceleration = 0
-        this.fwDeacceleration = this.defaults.fwDeacceleration;
+        this._fwAcceleration = 0
+        this._fwDeacceleration = this._defaults.fwDeacceleration;
     }
 
-    shoot(){
+    public shoot(){
         
-        let velocity = this.direction.clone().multiplyScalar(1);
+        let velocity = this._direction.clone().multiplyScalar(1);
         let demage = 10;
         let shot:Shot = new Shot(velocity,demage,20,this);
         shot.applyMatrix4(this.matrix);
