@@ -1,11 +1,4 @@
-import {
-    BoxGeometry,
-    Group,
-    MeshPhongMaterial,
-    Mesh,
-    Vector3,
-    Euler,
-} from "three";
+import {BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler} from "three";
 import Damageble from "./Damageble";
 import DashPill from "./DashPill";
 import Shot from "./Shot";
@@ -46,6 +39,14 @@ export default class Ship extends Group implements Damageble{
     private _rMaxSpeed:number;
     private _lMaxSpeed:number;
 
+    private _dashing: boolean = false;
+    private _dashPills:DashPill[] = [
+        new DashPill(5000, 1, 0.1),
+        new DashPill(5000, 1, 0.1),
+        new DashPill(5000, 1, 0.1),
+        new DashPill(5000, 1, 0.1)
+    ]
+
     private _defaults = {
         fwMaxSpeed: 0.1,
         bwMaxSpeed: 0.1,
@@ -64,20 +65,9 @@ export default class Ship extends Group implements Damageble{
         pointingSpeed: 1
     }
 
-    private _dashing: boolean = false;
-    private _dashPills:DashPill[] = [
-        new DashPill(5000, 1, 0.1),
-        new DashPill(5000, 1, 0.1),
-        new DashPill(5000, 1, 0.1),
-        new DashPill(5000, 1, 0.1)
-    ]
-
     constructor(){
         // Chamando contrutor do pai
         super();
-
-        // Iniciando movimento perpétuo
-        this.move();
 
         // Definindo e desenhando hitBox
         this._hitBoxGeometry = new BoxGeometry(1,1,2);
@@ -106,9 +96,10 @@ export default class Ship extends Group implements Damageble{
         this._bwMaxSpeed = this._defaults.bwMaxSpeed;
         this._rMaxSpeed = this._defaults.rMaxSpeed;
         this._lMaxSpeed = this._defaults.lMaxSpeed;
-
+        
+        // Iniciando movimento perpétuo
+        this.move();
     }
-
     
     public get life() : number {
         return this._life;
