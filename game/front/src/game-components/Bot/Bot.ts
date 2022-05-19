@@ -1,5 +1,5 @@
-import Game from "./Game";
-import Ship from "./Ship";
+import Game from "../Game/Game";
+import Ship from "../Ship/Ship";
 
 export default class Bot {
 

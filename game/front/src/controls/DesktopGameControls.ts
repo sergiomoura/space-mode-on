@@ -1,4 +1,4 @@
-import Game from "../Game";
+import Game from "../game-components/Game/Game";
 
 enum PossibleKeys {
     ArrowLeft = "ArrowLeft",

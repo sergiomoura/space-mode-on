@@ -11,13 +11,13 @@ import {
     Line,
     ColorRepresentation,
 } from "three";
-import Lights from "./Lights";
-import Cameras from "./Cameras";
-import Ship from "./Ship";
-import { DesktopShipControls } from "./controls/DesktopShipControls";
-import DesktopGameControls from "./controls/DesktopGameControls";
-import FirstPersonShip from "./FirstPersonShip";
-import Bot from "./Bot";
+import Lights from "../Lights/Lights";
+import Cameras from "../Cameras/Cameras";
+import Ship from "../Ship/Ship";
+import { DesktopShipControls } from "../../controls/DesktopShipControls";
+import DesktopGameControls from "../../controls/DesktopGameControls";
+import FirstPersonShip from "../FirstPersonShip/FirstPersonShip";
+import Bot from "../Bot/Bot";
 
 export default class Game extends Scene{
 

@@ -1,7 +1,7 @@
 import { BoxGeometry, MeshBasicMaterial, Mesh, Vector3, Group, Event, Ray, Raycaster } from "three";
-import Ship from "./Ship";
-import Game from "./Game";
-import Damageble from "./Damageble";
+import Ship from "../Ship/Ship";
+import Game from "../Game/Game";
+import Damageble from "../Damageble/Damageble";
 
 export default class Shot extends Group{
     

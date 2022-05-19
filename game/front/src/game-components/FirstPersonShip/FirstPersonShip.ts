@@ -1,5 +1,5 @@
 import { PerspectiveCamera } from "three";
-import Ship from "./Ship";
+import Ship from "../Ship/Ship";
 
 export default class FirstPersonShip extends Ship{
     constructor(private _camera:PerspectiveCamera) {

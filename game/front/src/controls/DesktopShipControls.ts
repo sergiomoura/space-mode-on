@@ -3,7 +3,7 @@ import {
 	EventDispatcher,
 	Vector3
 } from 'three';
-import Ship from '../Ship';
+import Ship from '../game-components/Ship/Ship';
 import { PressedKeys, ObservableKeyboard } from "../lib/ObservableKeyboard";
 
 const _vector = new Vector3();
