@@ -18,7 +18,12 @@ let config:Config.InitialOptions = {
     "js",
     "json",
     "node"
-  ]
+  ],
+  globals: {
+    "ts-jest":{
+      isolatedModules: true
+    }
+  }
 
 }
 
