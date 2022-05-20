@@ -3,6 +3,9 @@ import Damageble from "../Damageble/Damageble";
 import DashPill from "../DashPill/DashPill";
 import Shot from "../Shot/Shot";
 
+import mockRequestAnimationFrame from 'mock-request-animation-frame';
+mockRequestAnimationFrame();
+
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
 const _PI_2 = Math.PI / 2;
 
@@ -65,7 +68,7 @@ export default class Ship extends Group implements Damageble{
         pointingSpeed: 1
     }
 
-    constructor(){
+    constructor(initiateMoving:boolean = true){
         // Chamando contrutor do pai
         super();
 
@@ -97,8 +100,11 @@ export default class Ship extends Group implements Damageble{
         this._rMaxSpeed = this._defaults.rMaxSpeed;
         this._lMaxSpeed = this._defaults.lMaxSpeed;
         
-        // Iniciando movimento perpétuo
-        this.move();
+        // Iniciando movimento perpétuo caso tenha sido construido com
+        // initiateMoving true
+        if(initiateMoving){
+            this.move();
+        }
     }
     
     public get life() : number {
