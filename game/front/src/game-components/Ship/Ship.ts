@@ -3,9 +3,6 @@ import Damageble from "../Damageble/Damageble";
 import DashPill from "../DashPill/DashPill";
 import Shot from "../Shot/Shot";
 
-import mockRequestAnimationFrame from 'mock-request-animation-frame';
-mockRequestAnimationFrame();
-
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
 const _PI_2 = Math.PI / 2;
 
