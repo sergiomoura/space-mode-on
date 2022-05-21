@@ -1,15 +1,12 @@
 import Game from "../Game/Game";
-import Ship from "../Ship/Ship";
+import Player from "../Player/Player";
 
-export default class Bot {
-
-    private _ship: Ship;
-
+export default class Bot extends Player{
+    
     constructor(
-        private _game: Game,
+        _game: Game,
     ) {
-        this._ship = new Ship();
-        this._game.add(this._ship);
+        super(_game);
         this.move();
     }
 
@@ -22,10 +19,6 @@ export default class Bot {
 
         this._ship.pointTo(random(100), random(100));
         this._ship.startMovingForward();
-    }
-
-    public get ship() {
-        return this._ship;
     }
 
 }
