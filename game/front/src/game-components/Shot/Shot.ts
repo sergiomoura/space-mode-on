@@ -24,19 +24,19 @@ export default class Shot extends Group{
         private _velocity:Vector3,
         private _demage:number,
         private _reach:number,
-        private _owner:Ship
+        private _ownerShip:Ship
     ){
         super();
         this.drawHitBox();
         this._direction = this._velocity.clone().normalize();
         this._speed = this._velocity.length();
         this._remainingDistance = _reach;
-        this._intersectables = (<Game>(this._owner.parent)).enemies.map(b => b.ship);
-        _owner.addEventListener(
+        this._intersectables = _ownerShip.player.enemies.map(b => b.ship);
+        _ownerShip.addEventListener(
             'shoot',
             ()=>{
-                this._origin = _owner.position.clone();
-                this._worldDirection = this._direction.clone().applyMatrix4(_owner.matrixWorld).sub(_owner.position);
+                this._origin = _ownerShip.position.clone();
+                this._worldDirection = this._direction.clone().applyMatrix4(_ownerShip.matrixWorld).sub(_ownerShip.position);
             }
         );
         this.move();
@@ -75,7 +75,7 @@ export default class Shot extends Group{
                 if(intersections[0].distance < this._velocity.length()){
                     // Adicionando spinningCube no ponto de colisão
                     let fi = intersections[0].point;
-                    (<Game>(this._owner.parent)).addSpiningCube(fi.x, fi.y, fi.z)
+                    (<Game>(this._ownerShip.parent)).addSpiningCube(fi.x, fi.y, fi.z)
                     
                     // Capturando nave na trajetória do tiro
                     let damageble:Damageble = <Damageble>(<unknown>(intersections[0].object.parent));

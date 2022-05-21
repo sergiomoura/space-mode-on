@@ -1,12 +1,12 @@
-import Game from "../Game/Game";
+import { ColorRepresentation } from "three";
 import Player from "../Player/Player";
+import Ship from "../Ship/Ship";
 
 export default class Bot extends Player{
     
-    constructor(
-        _game: Game,
-    ) {
-        super(_game);
+    constructor(color: ColorRepresentation) {
+        super(`BOT-${Math.round(Math.random()*10000)}`);
+        this.ship = new Ship(color);
         this.move();
     }
 

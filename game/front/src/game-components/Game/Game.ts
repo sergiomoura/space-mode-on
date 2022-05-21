@@ -18,31 +18,56 @@ import { DesktopShipControls } from "../../controls/DesktopShipControls";
 import DesktopGameControls from "../../controls/DesktopGameControls";
 import FirstPersonShip from "../FirstPersonShip/FirstPersonShip";
 import Bot from "../Bot/Bot";
+import Player from "../Player/Player";
+import User from "../User/User";
 
 export default class Game extends Scene{
 
-    private _ship:FirstPersonShip = new FirstPersonShip(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
     private _mainRenderer:WebGLRenderer;
     private _auxRenderer:WebGLRenderer;
     private _shipControls:DesktopShipControls;
     private _gameControls:DesktopGameControls;
     private _cameras:PerspectiveCamera[] = Cameras;
     private _showingCamera:PerspectiveCamera = this._cameras[0];
+    private _mainPlayer:Player;
     
     private _ships:Ship[] = [];
     public get ships() : Ship[] {return this._ships};
-    
-    private _enemies:Bot[] = [];
-    public get enemies():Bot[]{return this._enemies}
 
     constructor(
         height:number,
         width:number,
         mainCanvas:HTMLCanvasElement,
-        auxCanvas:HTMLCanvasElement
+        auxCanvas:HTMLCanvasElement,
+        playerName:string
     ) {
 
         super();
+
+        // Criando Jogador Principal
+        this._mainPlayer = new User(playerName);
+
+        // Criando Time A
+        let teamA:Player[] = []
+        teamA.push(this._mainPlayer)
+        for (let i = 0; i < 3; i++) {
+            let bot = new Bot(0xFF6666);
+            teamA.push(bot);
+            this.addShip(bot.ship);
+        }
+
+        // Criando Time B
+        let teamB:Player[] = []
+        teamB.push(this._mainPlayer)
+        for (let i = 0; i < 4; i++) {
+            let bot = new Bot(0x6666FF);
+            teamB.push(bot);
+            this.addShip(bot.ship);
+        }
+
+        // Configurando amizades e inimizades
+        teamA.forEach(p => {p.addEnemies(...teamB);p.addFriends(...teamA)});
+        teamB.forEach(p => {p.addEnemies(...teamA);p.addFriends(...teamB)});
 
         // Criando o renderer principal
         this._mainRenderer = new WebGLRenderer({ antialias: true, canvas:mainCanvas});
@@ -51,7 +76,7 @@ export default class Game extends Scene{
         this._auxRenderer = new WebGLRenderer({ antialias:false, canvas:auxCanvas});
 
         // Instanciando controles de nave de do jogo
-        this._shipControls = new DesktopShipControls(this._ship, this._mainRenderer.domElement);
+        this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this._mainRenderer.domElement);
         this._gameControls = new DesktopGameControls(this);
 
         // Determinando dimensões do renderer principal
@@ -60,18 +85,13 @@ export default class Game extends Scene{
         // Adicionando Iluminação
         this.add(...Lights);
 
-        // Adicionando Nave
-        this._ship.position.x = 2;
-        this._ship.position.y = 0;
-        this._ship.position.z = 0;
-        this._ship.rotateX(-0.3)
-        this._ship.rotateY(Math.PI)
-        this.addShip(this._ship);
-
-        // Adicionando bots aleatoriamente
-        for (let i = 0; i < 5; i++) {
-            this.addBotRandomly()
-        }
+        // Adicionando Nave do Main Player
+        this._mainPlayer.ship.position.x = 2;
+        this._mainPlayer.ship.position.y = 0;
+        this._mainPlayer.ship.position.z = 0;
+        this._mainPlayer.ship.rotateX(-0.3)
+        this._mainPlayer.ship.rotateY(Math.PI)
+        this.addShip(this._mainPlayer.ship);
 
         // Configurando renderizadores
         this._auxRenderer.setClearColor(0x333333, 0.5)
@@ -87,19 +107,6 @@ export default class Game extends Scene{
 
     public setSize(height: number, width: number) {
         this._mainRenderer.setSize(width, height);
-    }
-
-    public addBotRandomly(){
-        
-        let bot = new Bot(this)
-        bot.ship.position.set(random(20), random(20), random(20));
-        this._enemies.push(bot);
-        this.addShip(bot.ship);
-
-        function random(max:number){
-            return Math.round(2*max*(Math.random() - 0.5));
-        }
-        
     }
 
     public addShip(ship:Ship){
@@ -175,7 +182,7 @@ export default class Game extends Scene{
 
     public renderContinuous(){
         requestAnimationFrame(()=>{this.renderContinuous()});
-        this._mainRenderer.render(this, this._ship.camera);
+        this._mainRenderer.render(this, (<FirstPersonShip>this._mainPlayer.ship).camera);
         this._auxRenderer.render(this, this._showingCamera);
     }
 

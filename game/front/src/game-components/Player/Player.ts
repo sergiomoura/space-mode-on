@@ -1,22 +1,25 @@
-import Game from "../Game/Game";
 import Ship from "../Ship/Ship";
 
-export default class Player {
+export default abstract class Player {
 
     protected _ship: Ship;
     public get ship() {return this._ship;}
+    public set ship(s:Ship){
+        this._ship = s
+        s.player = this;
+    }
 
-    private _enemies: Player[];
+    private _enemies: Player[] = [];
     public get enemies(): Player[] {return this._enemies;}
 
-    private _friends: Player[];
+    private _friends: Player[] = [];
     public get friends(): Player[] {return this._friends;}
     
-    constructor(
-        private _game: Game
-    ) {
-        this._ship = new Ship();
-        this._game.add(this._ship);
+    private _name:string;
+    public get name():string{return this._name} 
+
+    constructor(name:string) {
+        this._name = name;
     }
 
     addEnemies(...players:Player[]){

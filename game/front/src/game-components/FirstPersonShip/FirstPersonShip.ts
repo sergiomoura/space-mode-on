@@ -3,7 +3,7 @@ import Ship from "../Ship/Ship";
 
 export default class FirstPersonShip extends Ship{
     constructor(private _camera:PerspectiveCamera) {
-        super();
+        super(0xF0F0F0);
 
         // Definindo e posicionando camera
         this._camera.position.z = 7;

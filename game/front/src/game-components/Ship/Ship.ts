@@ -1,6 +1,7 @@
-import {BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler} from "three";
+import {BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation} from "three";
 import Damageble from "../Damageble/Damageble";
 import DashPill from "../DashPill/DashPill";
+import Player from "../Player/Player";
 import Shot from "../Shot/Shot";
 
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
@@ -39,6 +40,10 @@ export default class Ship extends Group implements Damageble{
     private _rMaxSpeed:number;
     private _lMaxSpeed:number;
 
+    private _player: Player;
+    public get player(): Player {return this._player}
+    public set player(value: Player) {this._player = value}
+
     private _dashing: boolean = false;
     private _dashPills:DashPill[] = [
         new DashPill(5000, 1, 0.1),
@@ -65,7 +70,7 @@ export default class Ship extends Group implements Damageble{
         pointingSpeed: 1
     }
 
-    constructor(initiateMoving:boolean = true){
+    constructor(private _color:ColorRepresentation, initiateMoving:boolean = true){
         // Chamando contrutor do pai
         super();
 
@@ -146,7 +151,7 @@ export default class Ship extends Group implements Damageble{
     }
 
     drawHitBox(){
-        const material = new MeshPhongMaterial({ color: 0xf0f0f0 });
+        const material = new MeshPhongMaterial({ color: this._color });
         material.opacity = 0.5;
         material.transparent = true;
         this._hitBoxMesh = new Mesh(this._hitBoxGeometry, material);
