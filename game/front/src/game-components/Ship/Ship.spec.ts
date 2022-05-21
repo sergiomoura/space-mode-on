@@ -12,8 +12,7 @@ describe(
             }
         );
 
-        test('Velocity',()=>{
-            ship.startMovingForward();
+        test('Espera-se que a nave inicie parada',()=>{
             expect(ship.velocity).toEqual(new Vector3(0,0,0));
         });
 
