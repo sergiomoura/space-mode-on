@@ -21,24 +21,38 @@ import Bot from "../Bot/Bot";
 
 export default class Game extends Scene{
 
-    public ship:FirstPersonShip = new FirstPersonShip(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
-    public enemies:Bot[] = [];
-    public renderer = new WebGLRenderer({ antialias: true, canvas:document.getElementById('mainCanvas') });
-    public auxRenderer = new WebGLRenderer({
-        canvas:document.getElementById('auxCanvas'),
-        antialias:false,
-    });
-
-    public controls = new DesktopShipControls(this.ship, this.renderer.domElement);
-    public gameControls = new DesktopGameControls(this);
-    public cameras:PerspectiveCamera[] = Cameras;
-    private showingCamera:PerspectiveCamera = this.cameras[0];
+    private _ship:FirstPersonShip = new FirstPersonShip(new PerspectiveCamera(60, window.innerWidth / window.innerHeight));
+    private _mainRenderer:WebGLRenderer;
+    private _auxRenderer:WebGLRenderer;
+    private _shipControls:DesktopShipControls;
+    private _gameControls:DesktopGameControls;
+    private _cameras:PerspectiveCamera[] = Cameras;
+    private _showingCamera:PerspectiveCamera = this._cameras[0];
+    
     private _ships:Ship[] = [];
     public get ships() : Ship[] {return this._ships};
+    
+    private _enemies:Bot[] = [];
+    public get enemies():Bot[]{return this._enemies}
 
-    constructor(height:number, width:number) {
+    constructor(
+        height:number,
+        width:number,
+        mainCanvas:HTMLCanvasElement,
+        auxCanvas:HTMLCanvasElement
+    ) {
 
         super();
+
+        // Criando o renderer principal
+        this._mainRenderer = new WebGLRenderer({ antialias: true, canvas:mainCanvas});
+
+        // Criando o renderer auxiliar
+        this._auxRenderer = new WebGLRenderer({ antialias:false, canvas:auxCanvas});
+
+        // Instanciando controles de nave de do jogo
+        this._shipControls = new DesktopShipControls(this._ship, this._mainRenderer.domElement);
+        this._gameControls = new DesktopGameControls(this);
 
         // Determinando dimensões do renderer principal
         this.setSize(height, width);
@@ -47,12 +61,12 @@ export default class Game extends Scene{
         this.add(...Lights);
 
         // Adicionando Nave
-        this.ship.position.x = 2;
-        this.ship.position.y = 0;
-        this.ship.position.z = 0;
-        this.ship.rotateX(-0.3)
-        this.ship.rotateY(Math.PI)
-        this.addShip(this.ship);
+        this._ship.position.x = 2;
+        this._ship.position.y = 0;
+        this._ship.position.z = 0;
+        this._ship.rotateX(-0.3)
+        this._ship.rotateY(Math.PI)
+        this.addShip(this._ship);
 
         // Adicionando bots aleatoriamente
         for (let i = 0; i < 5; i++) {
@@ -60,7 +74,7 @@ export default class Game extends Scene{
         }
 
         // Configurando renderizadores
-        this.auxRenderer.setClearColor(0x333333, 0.5)
+        this._auxRenderer.setClearColor(0x333333, 0.5)
 
         // Extras
         // this.addSpiningCube();
@@ -72,14 +86,14 @@ export default class Game extends Scene{
     }
 
     public setSize(height: number, width: number) {
-        this.renderer.setSize(width, height);
+        this._mainRenderer.setSize(width, height);
     }
 
     public addBotRandomly(){
         
         let bot = new Bot(this)
         bot.ship.position.set(random(20), random(20), random(20));
-        this.enemies.push(bot);
+        this._enemies.push(bot);
         this.addShip(bot.ship);
 
         function random(max:number){
@@ -161,25 +175,25 @@ export default class Game extends Scene{
 
     public renderContinuous(){
         requestAnimationFrame(()=>{this.renderContinuous()});
-        this.renderer.render(this, this.ship.camera);
-        this.auxRenderer.render(this, this.showingCamera);
+        this._mainRenderer.render(this, this._ship.camera);
+        this._auxRenderer.render(this, this._showingCamera);
     }
 
     switchNextCamera() {
-        let pos = this.cameras.indexOf(this.showingCamera);
-        if(pos == this.cameras.length - 1){
-            this.showingCamera = this.cameras[0]
+        let pos = this._cameras.indexOf(this._showingCamera);
+        if(pos == this._cameras.length - 1){
+            this._showingCamera = this._cameras[0]
         } else {
-            this.showingCamera = this.cameras[pos + 1];
+            this._showingCamera = this._cameras[pos + 1];
         }
     }
     
     switchToPreviousCamera() {
-        let pos = this.cameras.indexOf(this.showingCamera);
+        let pos = this._cameras.indexOf(this._showingCamera);
         if(pos == 0){
-            this.showingCamera = this.cameras[this.cameras.length - 1]
+            this._showingCamera = this._cameras[this._cameras.length - 1]
         } else {
-            this.showingCamera = this.cameras[pos - 1];
+            this._showingCamera = this._cameras[pos - 1];
         }
     }
 }

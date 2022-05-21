@@ -1,6 +1,14 @@
+// Importando estilo
 import './styles/style.scss';
 
+// Imports
 import Game from "./game-components/Game/Game";
-const game = new Game(window.innerHeight, window.innerWidth);
-document.body.appendChild(game.renderer.domElement);
+
+// Recuperando os canvas
+let mainCanvas = <HTMLCanvasElement>document.getElementById('mainCanvas');
+let auxCanvas = <HTMLCanvasElement>document.getElementById('auxCanvas');
+
+// Criando o jogo
+const game = new Game(window.innerHeight, window.innerWidth, mainCanvas, auxCanvas);
+
 window.addEventListener('resize', () => { game.setSize(window.innerHeight, window.innerWidth) })
