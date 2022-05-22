@@ -1,4 +1,4 @@
-import {BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation} from "three";
+import {BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation, ArrowHelper} from "three";
 import Damageble from "../Damageble/Damageble";
 import DashPill from "../DashPill/DashPill";
 import Player from "../Player/Player";
@@ -288,6 +288,54 @@ export default class Ship extends Group implements Damageble{
         this.parent.add(shot);
         this.dispatchEvent({type: 'shoot', shot})
 
-    }  
+    }
+
+    public drawDirection(){
+        let helper = new ArrowHelper(this._direction, new Vector3(), 10, 0x333333);
+        this.add(helper);
+    }
+
+    public getAimVector(s:Ship){
+        
+        // Calculando vetor normal ao plano que coincide com a direção da nave
+        let normal = this.getWorldDirection(new Vector3()).multiplyScalar(-1);
+
+        // Calculando o vetor da posição da nave inimiga com relação a nave
+        let d = s.position.clone().sub(this.position);
+
+        // Calculando o vetor distância da nave inimiga a reta da minha trajetória
+        // Calcular somente se a nave inimiga estiver a frente da nave.
+        let r:Vector3 = undefined;
+        if(normal.dot(d)>0) {
+            r = d.clone().projectOnVector(normal).sub(d)                
+        }
+
+        /* ================= BLOCO QUE DESENHA OS VETORES ENVOLVIDOS NO CÁLCULO ==================  *
+        // Desenhando a posição da nave com relação à nave inimiga
+        this.parent.add(new ArrowHelper(d.clone().normalize(), this.position, d.length(), 0x006600));
+        
+        // Desenhando a normal: direção da nave
+        this.parent.add(new ArrowHelper(normal, this.position, 1, 0xffff00));
+
+        // Desenhando o vetor R
+        if(r != undefined){
+            this.parent.add(new ArrowHelper(r.clone().normalize(), s.position, r.length(), 0x660066));
+        }
+        /* ================= BLOCO QUE DESENHA OS VETORES ENVOLVIDOS NO CÁLCULO ==================  */
+
+        return r;
+    }
+
+    public getAimVectors(){
+        let enemyShips = this.player.enemies.map(e => e.ship);
+        return enemyShips.map(s=>this.getAimVector(s));
+    }
+
+    public get aimVectorsOnMe() : Vector3[] {
+
+        let enemyShips = this.player.enemies.map(e => e.ship);
+        return enemyShips.map(s=>s.getAimVector(this))
+    }
+    
 
 }
