@@ -16,6 +16,7 @@ enum ControlKeys {
 	s = 'KeyS',
 	a = 'KeyA',
 	d = 'KeyD',
+	q = 'KeyQ',
 	space = "Space"
 }
 
@@ -154,6 +155,7 @@ class DesktopShipControls extends EventDispatcher {
         pressedKeys.indexOf(ControlKeys.d) > -1 ? this.ship.startMovingRight() : this.ship.stopMovingRight(); 
         pressedKeys.indexOf(ControlKeys.a) > -1 ? this.ship.startMovingLeft() : this.ship.stopMovingLeft();
 		pressedKeys.indexOf(ControlKeys.space) > -1 ? this.ship.dash() : null ;
+		pressedKeys.indexOf(ControlKeys.q) > -1 ? console.log(this.ship.aimVectorsOnMe) : null;
     }
 }
 
