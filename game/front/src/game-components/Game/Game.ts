@@ -10,6 +10,7 @@ import {
     BufferGeometry,
     Line,
     ColorRepresentation,
+    ArrowHelper,
 } from "three";
 import Lights from "../Lights/Lights";
 import Cameras from "../Cameras/Cameras";
@@ -50,19 +51,20 @@ export default class Game extends Scene{
         // Criando Time A
         let teamA:Player[] = []
         teamA.push(this._mainPlayer)
-        for (let i = 0; i < 3; i++) {
-            let bot = new Bot(0xFF6666);
+        for (let i = 0; i < 0; i++) {
+            let bot = new Bot(0x6666FF);
             teamA.push(bot);
             this.addShip(bot.ship);
         }
 
         // Criando Time B
         let teamB:Player[] = []
-        teamB.push(this._mainPlayer)
         for (let i = 0; i < 4; i++) {
-            let bot = new Bot(0x6666FF);
+            let bot = new Bot(0xFF0000);
             teamB.push(bot);
             this.addShip(bot.ship);
+            bot.ship.position.set(10*i, 10*i,0)
+
         }
 
         // Configurando amizades e inimizades
@@ -138,13 +140,13 @@ export default class Game extends Scene{
 
     public drawAxis(size:number){
 
-        let arrowSize:number = 1;
+        let helperX= new ArrowHelper(new Vector3(1,0,0), new Vector3(),size, 0x0000FF);
+        let helperY= new ArrowHelper(new Vector3(0,1,0), new Vector3(),size, 0xFFFF00);
+        let helperZ= new ArrowHelper(new Vector3(0,0,1), new Vector3(),size, 0xFF0000);
 
-        this.drawLine(0x0000FF,new Vector3( -size, 0, 0 ), new Vector3( size, 0, 0 ),new Vector3( size, 0, arrowSize),new Vector3( size + 2*arrowSize, 0, 0 ),new Vector3( size, 0, -arrowSize),new Vector3( size, 0, 0 ));
-        this.drawLine(0x00FF00,new Vector3( 0, -size, 0 ), new Vector3( 0, size, 0 ),new Vector3( arrowSize, size, 0),new Vector3( 0, size + 2*arrowSize, 0 ),new Vector3( -arrowSize, size, 0),new Vector3( 0, size, 0 ));
-        this.drawLine(0xFF0000,new Vector3( 0, 0, -size ), new Vector3( 0, 0, size ),new Vector3( arrowSize, 0, size),new Vector3( 0, 0, size + 2*arrowSize ),new Vector3( -arrowSize, 0, size),new Vector3( 0, 0, size ));
-        
-    }
+        this.add(helperX,helperY,helperZ);
+
+   }
 
     public drawLine(color:ColorRepresentation, ...points:Vector3[]){
         const material = new LineBasicMaterial( { color } );
