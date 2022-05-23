@@ -1,9 +1,25 @@
-import { ColorRepresentation } from "three";
+import { ColorRepresentation, Vector3 } from "three";
 import Player from "../Player/Player";
 import Ship from "../Ship/Ship";
 
+enum Behaviours {FLEE='flee', CHASE='chase', ATTACK='attack'};
+class Decision {
+    behaviour:Behaviours;
+    ship:Ship;
+}
+
 export default class Bot extends Player{
     
+    private _decisionFrequency = 5000; // 5 seconds
+    private _targetShip:Ship;
+    private _minimunAimingDistance = 2;
+    private _behaviour: Behaviours = Behaviours.CHASE;
+    public get behaviour(): Behaviours {return this._behaviour;}
+    public set behaviour(value: Behaviours) {
+        console.log(`${this.name} diz: Mudando comportamento de ${this._behaviour} para ${value}`);
+        this._behaviour = value;
+    }
+
     constructor(color: ColorRepresentation) {
         super(`BOT-${Math.round(Math.random()*10000)}`);
         this.ship = new Ship(color);
@@ -12,13 +28,76 @@ export default class Bot extends Player{
 
     private move() {
         requestAnimationFrame(() => this.move());
+    }
 
-        // let random = (max: number) => {
-        //     return Math.round(2 * max * (Math.random() - 0.5));
-        // }
+    public init(){
+        let decision = this.decideBehaviour();
+        this._targetShip = decision.ship;
+        this.behaviour = decision.behaviour;
 
-        // this._ship.pointTo(random(100), random(100));
-        // this._ship.startMovingForward();
+        // Iniciando decisão perpétuo
+        setInterval(()=>{
+            let decision = this.decideBehaviour();
+            this._targetShip = decision.ship;
+            this.behaviour = decision.behaviour;
+        }, this._decisionFrequency)
+    }
+
+    private decideBehaviour():Decision{
+
+        // Determinando as variáveis de retorno
+        let decision:Decision = {
+            behaviour: undefined,
+            ship: undefined
+        }
+
+        // Levantando as naves inimigas
+        let enemyShips = this.enemies.map(e=>e.ship);
+
+        // Levantando vetores de mira em mim
+        let aimVectors = this.ship.aimVectorsOnMe;
+
+        // Verificando tamanho de vetores de mira.
+        // Quanto menor, mais perigoso
+        let index = 0;
+        let minLength = aimVectors[0] != undefined ? aimVectors[0].length() : Infinity;
+        for (let i = 0; i < aimVectors.length; i++) {
+            let length = aimVectors[i]!=undefined ? aimVectors[i].length() : Infinity;
+            if(length < minLength){
+                index = i;
+                minLength = length;
+            }
+        }
+        
+        // Verificando se a menor distância é menor que o tolerável
+        if(minLength < this._minimunAimingDistance){
+            decision.behaviour = Behaviours.FLEE;
+            decision.ship = enemyShips[index];
+            return decision;
+        }
+        
+        // Distâncias entre as naves inimigas e a própria nave
+        let {ship:closestShip, distance} = enemyShips.reduce(
+            (previous, current, currentIndex)=>{
+                let previousDistance = previous.ship.position.distanceTo(this.ship.position);
+                let currentDistance = current.position.distanceTo(this.ship.position);
+                if(currentDistance < previousDistance ){
+                    return {ship:enemyShips[currentIndex], distance: currentDistance}
+                } else {
+                    return {ship:enemyShips[currentIndex - 1], distance: previousDistance}
+                }
+            }
+            ,
+            {ship: enemyShips[0], distance: this.ship.position.distanceTo(enemyShips[0].position)}
+        )
+
+        // Se a menor distância entre a própria nave e a nave inimiga for menor que o alcance de ataque, atacar!
+        // Caso contrário, perseguir
+        if(distance <= this.ship.attackRange){
+            return {behaviour:Behaviours.ATTACK, ship:closestShip}
+        } else {
+            return {behaviour:Behaviours.CHASE, ship:closestShip}
+        }
     }
 
 }

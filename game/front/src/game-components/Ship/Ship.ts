@@ -9,7 +9,28 @@ const _PI_2 = Math.PI / 2;
 
 export default class Ship extends Group implements Damageble{
     
-    private _animationFrameId:number;
+    private _defaults = {
+        fwMaxSpeed: 0.1,
+        bwMaxSpeed: 0.1,
+        rMaxSpeed: 0.1,
+        lMaxSpeed: 0.1,
+        fwAcceleration: 0.004,
+        bwAcceleration: 0.004,
+        rAcceleration: 0.004,
+        lAcceleration: 0.004,
+        fwDeacceleration: 0.004,
+        bwDeacceleration: 0.004,
+        rDeacceleration: 0.004,
+        lDeacceleration: 0.004,
+        minPolarAngle: 0,
+        maxPolarAngle: Math.PI,
+        pointingSpeed: 1,
+        attakRange: 20
+    }
+
+    private _attackRange: number = this._defaults.attakRange;
+    public set attackRange(value: number) {this._attackRange = value;}
+    public get attackRange() : number {return this._attackRange}
 
     private _hitBoxGeometry:BoxGeometry;
     private _hitBoxMesh:Mesh;
@@ -51,24 +72,6 @@ export default class Ship extends Group implements Damageble{
         new DashPill(5000, 1, 0.1),
         new DashPill(5000, 1, 0.1)
     ]
-
-    private _defaults = {
-        fwMaxSpeed: 0.1,
-        bwMaxSpeed: 0.1,
-        rMaxSpeed: 0.1,
-        lMaxSpeed: 0.1,
-        fwAcceleration: 0.004,
-        bwAcceleration: 0.004,
-        rAcceleration: 0.004,
-        lAcceleration: 0.004,
-        fwDeacceleration: 0.004,
-        bwDeacceleration: 0.004,
-        rDeacceleration: 0.004,
-        lDeacceleration: 0.004,
-        minPolarAngle: 0,
-        maxPolarAngle: Math.PI,
-        pointingSpeed: 1
-    }
 
     constructor(private _color:ColorRepresentation, initiateMoving:boolean = true){
         // Chamando contrutor do pai
@@ -127,7 +130,7 @@ export default class Ship extends Group implements Damageble{
     private move(){
         
         // Iniciando movimento perpétuo
-        this._animationFrameId = requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
             this.move()
         });
 
@@ -283,7 +286,7 @@ export default class Ship extends Group implements Damageble{
         
         let velocity = this._direction.clone().multiplyScalar(1);
         let demage = 10;
-        let shot:Shot = new Shot(velocity,demage,20,this);
+        let shot:Shot = new Shot(velocity,demage,this._attackRange,this);
         shot.applyMatrix4(this.matrix);
         this.parent.add(shot);
         this.dispatchEvent({type: 'shoot', shot})

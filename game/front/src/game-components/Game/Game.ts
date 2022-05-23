@@ -64,12 +64,18 @@ export default class Game extends Scene{
             teamB.push(bot);
             this.addShip(bot.ship);
             bot.ship.position.set(10*i, 10*i,0)
-
         }
 
         // Configurando amizades e inimizades
         teamA.forEach(p => {p.addEnemies(...teamB);p.addFriends(...teamA)});
         teamB.forEach(p => {p.addEnemies(...teamA);p.addFriends(...teamB)});
+
+        // Iniciando bots
+        [...teamA, ...teamB].forEach(
+            (p:Player) => {
+                if(p instanceof Bot){p.init()}
+            }
+        )
 
         // Criando o renderer principal
         this._mainRenderer = new WebGLRenderer({ antialias: true, canvas:mainCanvas});
