@@ -1,4 +1,4 @@
-import {BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation, ArrowHelper} from "three";
+import {BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation, ArrowHelper, Material} from "three";
 import Damageble from "../Damageble/Damageble";
 import DashPill from "../DashPill/DashPill";
 import Player from "../Player/Player";
@@ -61,6 +61,15 @@ export default class Ship extends Group implements Damageble{
     private _rMaxSpeed:number;
     private _lMaxSpeed:number;
 
+    private _color: ColorRepresentation;
+    public get color(): ColorRepresentation {
+        return this._color;
+    }
+    public set color(value: ColorRepresentation) {
+        this._color = value;
+        this.drawHitBox();
+    }
+
     private _player: Player;
     public get player(): Player {return this._player}
     public set player(value: Player) {this._player = value}
@@ -73,16 +82,16 @@ export default class Ship extends Group implements Damageble{
         new DashPill(5000, 1, 0.1)
     ]
 
-    constructor(private _color:ColorRepresentation, initiateMoving:boolean = true){
+    constructor(_color:ColorRepresentation, initiateMoving:boolean = true){
         // Chamando contrutor do pai
         super();
+
+        // Definindo a cor
+        this._color = _color;
 
         // Definindo e desenhando hitBox
         this._hitBoxGeometry = new BoxGeometry(1,1,2);
         this.drawHitBox();
-
-        // Adicionando e hitBox
-        this.add(this._hitBoxMesh);
 
         // Determinando o vetor da direção da câmera
         this.getWorldDirection(this._direction).multiplyScalar(-1);
@@ -154,6 +163,14 @@ export default class Ship extends Group implements Damageble{
     }
 
     drawHitBox(){
+
+        // Limpando o objeto caso exista algo nele
+        if(this._hitBoxMesh){
+            (<Material>this._hitBoxMesh.material).dispose();
+            this._hitBoxMesh.geometry.dispose();
+            this.remove(this._hitBoxMesh);
+        }
+
         const material = new MeshPhongMaterial({ color: this._color });
         material.opacity = 0.5;
         material.transparent = true;
@@ -161,6 +178,8 @@ export default class Ship extends Group implements Damageble{
         
         this._hitBoxMesh.castShadow = true;
         this._hitBoxMesh.receiveShadow = true;
+
+        this.add(this._hitBoxMesh);
     }
 
     public get velocity():Vector3 {

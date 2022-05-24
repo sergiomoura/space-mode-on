@@ -10,7 +10,7 @@ class Decision {
 
 export default class Bot extends Player{
     
-    private _decisionFrequency = 5000; // 5 seconds
+    private _decisionFrequency = 200; // 0.2 seconds
     private _targetShip:Ship;
     private _minimunAimingDistance = 2;
     private _behaviour: Behaviours = Behaviours.CHASE;
@@ -18,6 +18,22 @@ export default class Bot extends Player{
     public set behaviour(value: Behaviours) {
         console.log(`${this.name} diz: Mudando comportamento de ${this._behaviour} para ${value}`);
         this._behaviour = value;
+        switch (value) {
+            case Behaviours.FLEE:
+                this.ship.color = 0xFFFF00
+                break;
+
+            case Behaviours.ATTACK:
+                this.ship.color = 0xFF0000
+                break;
+            
+            case Behaviours.CHASE:
+                this.ship.color = 0x6666FF
+                break;
+        
+            default:
+                break;
+        }
     }
 
     constructor(color: ColorRepresentation) {
