@@ -16,19 +16,21 @@ export default class Bot extends Player{
     private _behaviour: Behaviours = Behaviours.CHASE;
     public get behaviour(): Behaviours {return this._behaviour;}
     public set behaviour(value: Behaviours) {
-        console.log(`${this.name} diz: Mudando comportamento de ${this._behaviour} para ${value}`);
         this._behaviour = value;
         switch (value) {
             case Behaviours.FLEE:
-                this.ship.color = 0xFFFF00
+                this.ship.color = 0xFFFF00;
+                this.fleeFrom(this._targetShip);
                 break;
 
             case Behaviours.ATTACK:
-                this.ship.color = 0xFF0000
+                this.ship.color = 0xFF0000;
+                this.attack(this._targetShip);
                 break;
             
             case Behaviours.CHASE:
-                this.ship.color = 0x6666FF
+                this.ship.color = 0x6666FF;
+                this.chase(this._targetShip);
                 break;
         
             default:
@@ -39,7 +41,20 @@ export default class Bot extends Player{
     constructor(color: ColorRepresentation) {
         super(`BOT-${Math.round(Math.random()*10000)}`);
         this.ship = new Ship(color);
+        this.ship.drawDirection();
         this.move();
+    }
+
+    private fleeFrom(ship:Ship){
+        this.ship.startMovingForward()
+    }
+
+    private attack(ship:Ship){
+
+    }
+
+    private chase(ship:Ship){
+
     }
 
     private move() {
@@ -55,7 +70,7 @@ export default class Bot extends Player{
         setInterval(()=>{
             let decision = this.decideBehaviour();
             this._targetShip = decision.ship;
-            this.behaviour = decision.behaviour;
+            this.behaviour = decision.behaviour;            
         }, this._decisionFrequency)
     }
 
