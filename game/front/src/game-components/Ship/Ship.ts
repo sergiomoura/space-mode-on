@@ -36,7 +36,11 @@ export default class Ship extends Group implements Damageble{
     private _hitBoxMesh:Mesh;
     private _life:number = 50;
 
-    private _direction:Vector3 = new Vector3(0,0,0);
+    private _direction: Vector3 = new Vector3(0, 0, 0);
+    public get direction(): Vector3 {
+        return this.localToWorld(new Vector3(0,0,-1)).sub(this.position);
+    }
+    
     private _oposite:Vector3 = new Vector3(0,0,0);
     private _right:Vector3 = new Vector3(0,0,0);
     private _left:Vector3 =  new Vector3(0,0,0);
@@ -265,6 +269,7 @@ export default class Ship extends Group implements Damageble{
 		_euler.x = Math.max( _PI_2 - this._defaults.maxPolarAngle, Math.min( _PI_2 - this._defaults.minPolarAngle, _euler.x ) );
 
 		this.quaternion.setFromEuler( _euler );
+        
     }
 
     public dash(){
@@ -313,8 +318,16 @@ export default class Ship extends Group implements Damageble{
     }
 
     public drawDirection(){
-        let helper = new ArrowHelper(this._direction, new Vector3(), 10, 0x333333);
+        let helper = new ArrowHelper(this._direction, new Vector3(), 5, 0x333333);
         this.add(helper);
+    }
+
+    public drawLocalAxis(){
+        let helperX= new ArrowHelper(new Vector3(1,0,0), new Vector3(),1 , 0x0000FF);
+        let helperY= new ArrowHelper(new Vector3(0,1,0), new Vector3(),1 , 0xFFFF00);
+        let helperZ= new ArrowHelper(new Vector3(0,0,1), new Vector3(),1 , 0xFF0000);
+
+        this.add(helperX,helperY,helperZ);
     }
 
     public getAimVector(s:Ship){

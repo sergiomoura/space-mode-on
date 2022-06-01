@@ -59,11 +59,12 @@ export default class Game extends Scene{
 
         // Criando Time B
         let teamB:Player[] = []
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 1; i++) {
             let bot = new Bot(0xFF0000);
             teamB.push(bot);
             this.addShip(bot.ship);
-            bot.ship.position.set(10*i, 10*i,0)
+            bot.ship.position.set(5*(Math.random()-0.5),5*(Math.random()-0.5),5*(Math.random()-0.5));
+            bot.ship.pointTo(500*(Math.random()-0.5),500*(Math.random()-0.5))
         }
 
         // Configurando amizades e inimizades
@@ -94,18 +95,18 @@ export default class Game extends Scene{
         this.add(...Lights);
 
         // Adicionando Nave do Main Player
-        this._mainPlayer.ship.position.x = 2;
-        this._mainPlayer.ship.position.y = 0;
-        this._mainPlayer.ship.position.z = 0;
+        this._mainPlayer.ship.position.x = 5;
+        this._mainPlayer.ship.position.y = 5;
+        this._mainPlayer.ship.position.z = 5;
         this._mainPlayer.ship.rotateX(-0.3)
-        this._mainPlayer.ship.rotateY(Math.PI)
+        // this._mainPlayer.ship.rotateY(Math.PI)
         this.addShip(this._mainPlayer.ship);
 
         // Configurando renderizadores
         this._auxRenderer.setClearColor(0x333333, 0.5)
 
         // Extras
-        // this.addSpiningCube();
+        this.addSpiningCube(10, 10, 3, 0xFF0000);
         this.drawAxis(5);
         // this.drawGrid(100,1);
 

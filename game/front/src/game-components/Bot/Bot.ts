@@ -1,4 +1,4 @@
-import { ColorRepresentation, Vector3 } from "three";
+import { ArrowHelper, ColorRepresentation, Vector3 } from "three";
 import Player from "../Player/Player";
 import Ship from "../Ship/Ship";
 
@@ -14,6 +14,8 @@ export default class Bot extends Player{
     private _targetShip:Ship;
     private _minimunAimingDistance = 2;
     private _behaviour: Behaviours = Behaviours.CHASE;
+    private _chasedPoint: Vector3 = new Vector3(10, 10, 3);
+
     public get behaviour(): Behaviours {return this._behaviour;}
     public set behaviour(value: Behaviours) {
         this._behaviour = value;
@@ -41,12 +43,13 @@ export default class Bot extends Player{
     constructor(color: ColorRepresentation) {
         super(`BOT-${Math.round(Math.random()*10000)}`);
         this.ship = new Ship(color);
+        this.ship.drawLocalAxis();
         this.ship.drawDirection();
-        this.move();
+        this.ship.startMovingForward();
     }
 
     private fleeFrom(ship:Ship){
-        this.ship.startMovingForward()
+        
     }
 
     private attack(ship:Ship){
@@ -57,14 +60,42 @@ export default class Bot extends Player{
 
     }
 
+
     private move() {
         requestAnimationFrame(() => this.move());
+        this.movePointerToChasePoint();
+    }
+
+    public movePointerToChasePoint(pointingSpeed:number = 18){
+
+            // Definindo o chasePoint
+            this._chasedPoint = this.enemies[0].ship.position;
+
+            // Declarando vetor que aponta do chasedPoint à posição atual: d
+            let d:Vector3 = this._chasedPoint.clone().sub(this.ship.position);
+
+            // Obtendo o vetor p projetando o vetor d no vetor direção da nave
+            let p:Vector3 = d.clone().projectOnVector(this.ship.direction.normalize());
+
+            // Obtendo o vetor u que é a projeção de d no plano da tela
+            let u:Vector3 = d.clone().sub(p).normalize();
+            
+            // Representando u no sistema de coordenadas local
+            let t = u.clone().applyQuaternion(this.ship.quaternion.clone().conjugate());
+
+            // Redimensionando o vetor de mudança de direção
+            t.multiplyScalar(pointingSpeed);
+
+            // Mudando a direção da nave
+            this.ship.pointTo(t.x, -t.y);
+        
     }
 
     public init(){
         let decision = this.decideBehaviour();
         this._targetShip = decision.ship;
         this.behaviour = decision.behaviour;
+        this.move();
 
         // Iniciando decisão perpétuo
         setInterval(()=>{
