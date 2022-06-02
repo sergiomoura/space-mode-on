@@ -23,17 +23,17 @@ export default class Bot extends Player{
             this._behaviour = value;
             switch (value) {
                 case Behaviours.FLEE:
-                    this.ship.color = 0xFFFF00;
+                    // this.ship.color = 0xFFFF00;
                     this.fleeFrom(this._targetShip);
                     break;
 
                 case Behaviours.ATTACK:
-                    this.ship.color = 0xFF0000;
+                    // this.ship.color = 0xFF0000;
                     this.attack(this._targetShip);
                     break;
                 
                 case Behaviours.CHASE:
-                    this.ship.color = 0x6666FF;
+                    // this.ship.color = 0x6666FF;
                     this.chase(this._targetShip);
                     break;
             
