@@ -19,25 +19,27 @@ export default class Bot extends Player{
 
     public get behaviour(): Behaviours {return this._behaviour;}
     public set behaviour(value: Behaviours) {
-        this._behaviour = value;
-        switch (value) {
-            case Behaviours.FLEE:
-                this.ship.color = 0xFFFF00;
-                this.fleeFrom(this._targetShip);
-                break;
+        if(this._behaviour != value){
+            this._behaviour = value;
+            switch (value) {
+                case Behaviours.FLEE:
+                    this.ship.color = 0xFFFF00;
+                    this.fleeFrom(this._targetShip);
+                    break;
 
-            case Behaviours.ATTACK:
-                this.ship.color = 0xFF0000;
-                this.attack(this._targetShip);
-                break;
+                case Behaviours.ATTACK:
+                    this.ship.color = 0xFF0000;
+                    this.attack(this._targetShip);
+                    break;
+                
+                case Behaviours.CHASE:
+                    this.ship.color = 0x6666FF;
+                    this.chase(this._targetShip);
+                    break;
             
-            case Behaviours.CHASE:
-                this.ship.color = 0x6666FF;
-                this.chase(this._targetShip);
-                break;
-        
-            default:
-                break;
+                default:
+                    break;
+            }
         }
     }
 
