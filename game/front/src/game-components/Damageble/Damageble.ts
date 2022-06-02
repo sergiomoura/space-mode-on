@@ -8,6 +8,6 @@ interface DieFunction {
 
 export default interface Damageble {
     life: number;
-    getDemage: DamageFunction;
+    getDamage: DamageFunction;
     die:DieFunction;
 }

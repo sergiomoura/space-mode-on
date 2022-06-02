@@ -129,7 +129,8 @@ export default class Ship extends Group implements Damageble{
         return this._life;
     }
 
-    public getDemage(damage:number){
+    public getDamage(damage:number){
+        console.warn(`${this.name} tomou dano de ${damage}`)
         this._life -= damage;
         if(this._life <=0){
             this.die()
@@ -137,6 +138,7 @@ export default class Ship extends Group implements Damageble{
     }
 
     public die(): void {
+        console.warn(`${this.name} foi destruída`);
         this.removeFromParent();
     }
 
