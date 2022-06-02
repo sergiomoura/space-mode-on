@@ -43,7 +43,7 @@ export default class Bot extends Player{
     constructor(color: ColorRepresentation) {
         super(`BOT-${Math.round(Math.random()*10000)}`);
         this.ship = new Ship(color);
-        // this.ship.drawLocalAxis();
+        this.ship.drawLocalAxis();
         this.ship.drawDirection();
         this.ship.startMovingForward();
         this.ship.name = `SHIP-OF-${this.name}`;
