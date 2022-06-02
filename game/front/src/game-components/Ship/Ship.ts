@@ -139,6 +139,8 @@ export default class Ship extends Group implements Damageble{
 
     public die(): void {
         console.warn(`${this.name} foi destruída`);
+        this._hitBoxGeometry.dispose();
+        this._hitBoxMesh.removeFromParent();
         this.removeFromParent();
     }
 

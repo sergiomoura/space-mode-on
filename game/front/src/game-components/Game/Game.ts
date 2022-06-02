@@ -71,13 +71,6 @@ export default class Game extends Scene{
         teamA.forEach(p => {p.addEnemies(...teamB);p.addFriends(...teamA)});
         teamB.forEach(p => {p.addEnemies(...teamA);p.addFriends(...teamB)});
 
-        // Iniciando bots
-        [...teamA, ...teamB].forEach(
-            (p:Player) => {
-                if(p instanceof Bot){p.init()}
-            }
-        )
-
         // Criando o renderer principal
         this._mainRenderer = new WebGLRenderer({ antialias: true, canvas:mainCanvas});
 
@@ -109,6 +102,13 @@ export default class Game extends Scene{
         this.addSpiningCube(10, 10, 3, 0xFF0000);
         this.drawAxis(5);
         // this.drawGrid(100,1);
+
+        // Iniciando bots
+        [...teamA, ...teamB].forEach(
+            (p:Player) => {
+                if(p instanceof Bot){p.init()}
+            }
+        )
 
         // Renderizando continuamente
         this.renderContinuous();

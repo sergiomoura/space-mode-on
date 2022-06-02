@@ -15,6 +15,7 @@ export default class Bot extends Player{
     private _minimunAimingDistance = 2;
     private _behaviour: Behaviours = Behaviours.CHASE;
     private _chasedPoint: Vector3 = new Vector3(10, 10, 3);
+    private _shootInterval: NodeJS.Timer;
 
     public get behaviour(): Behaviours {return this._behaviour;}
     public set behaviour(value: Behaviours) {
@@ -54,11 +55,13 @@ export default class Bot extends Player{
     }
 
     private attack(ship:Ship){
-
+        this._chasedPoint = ship.position;
+        this._shootInterval = setInterval(()=>{this.ship.shoot()},5000);
     }
 
     private chase(ship:Ship){
-
+        this._chasedPoint = ship.position;
+        clearInterval(this._shootInterval);
     }
 
 
@@ -144,7 +147,8 @@ export default class Bot extends Player{
             (previous, current, currentIndex)=>{
                 let previousDistance = previous.ship.position.distanceTo(this.ship.position);
                 let currentDistance = current.position.distanceTo(this.ship.position);
-                if(currentDistance < previousDistance ){
+                
+                if(currentDistance <= previousDistance ){
                     return {ship:enemyShips[currentIndex], distance: currentDistance}
                 } else {
                     return {ship:enemyShips[currentIndex - 1], distance: previousDistance}
