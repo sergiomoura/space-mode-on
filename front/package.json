@@ -1,5 +1,5 @@
 {
-  "name": "space-mode-on",
+  "name": "front-space-mode-on",
   "version": "1.0.0",
   "description": "🚀 Space Mode On",
   "main": "index.js",
@@ -24,7 +24,9 @@
     "webpack-dev-server": "^4.9.0"
   },
   "dependencies": {
+    "cross-env": "5.0.5",
     "rxjs": "^7.5.5",
-    "three": "^0.140.2"
+    "three": "^0.140.2",
+    "back-space-mode-on": "1.0.0"
   }
 }
