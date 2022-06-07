@@ -121,6 +121,28 @@ export default class Game extends Scene{
     public addShip(ship:Ship){
         this.add(ship);
         this._ships.push(ship);
+        this.handleShipEvents(ship);
+    }
+    
+    private handleShipEvents(ship:Ship){
+        // ship.addEventListener('shoot', this.onShipShoot);
+        ship.addEventListener('gotDamage', this.onShipGotDamage);
+        ship.addEventListener('died', this.onShipDeath);
+
+    }
+    
+    private onShipDeath(evt:Event & {type: 'died'} & {target: Ship}){
+        console.log(`${evt.target.name} foi destruída.`);
+        evt.target.player.enemies.forEach(
+            e=>{
+                e.enemies.splice(e.enemies.indexOf(evt.target.player),1);
+            }
+        )
+        delete evt.target;
+    }
+
+    private onShipGotDamage(evt:Event & {type: 'gotDamage'} & {target: Ship}){
+        console.log(`${evt.target.name} sofreu dano de ___.`); // TODO: mostrar o dano sofrido
     }
 
     public addSpiningCube(x:number = 0, y:number = 0, z:number = 0, color:ColorRepresentation = 0xff0000) {
