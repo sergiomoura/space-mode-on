@@ -80,9 +80,6 @@ export default class Bot extends Player{
 
     public movePointerToChasePoint(pointingSpeed:number = 18){
 
-            // Definindo o chasePoint
-            this._chasedPoint = this.enemies[0].ship.position;
-
             // Declarando vetor que aponta do chasedPoint à posição atual: d
             let d:Vector3 = this._chasedPoint.clone().sub(this.ship.position);
 
