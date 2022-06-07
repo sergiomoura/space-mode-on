@@ -2,7 +2,7 @@ import { ArrowHelper, ColorRepresentation, Vector3 } from "three";
 import Player from "../Player/Player";
 import Ship from "../Ship/Ship";
 
-enum Behaviours {FLEE='flee', CHASE='chase', ATTACK='attack'};
+enum Behaviours {FLEE='flee', CHASE='chase', ATTACK='attack', PEACEFULL="peacefull"};
 class Decision {
     behaviour:Behaviours;
     ship:Ship;
@@ -38,6 +38,9 @@ export default class Bot extends Player{
                     // this.ship.color = 0x6666FF;
                     this.chase(this._targetShip);
                     break;
+                
+                case Behaviours.PEACEFULL:
+                    // TODO: Decidir o que fazer no modo peacefull
             
                 default:
                     break;
@@ -133,6 +136,11 @@ export default class Bot extends Player{
         let decision:Decision = {
             behaviour: undefined,
             ship: undefined
+        }
+
+        // Verificando se existem inimigos
+        if(this.enemies.length == 0){
+            return {behaviour:Behaviours.PEACEFULL, ship: undefined}
         }
 
         // Levantando as naves inimigas
