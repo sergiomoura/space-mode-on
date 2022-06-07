@@ -16,6 +16,8 @@ export default class Bot extends Player{
     private _behaviour: Behaviours = Behaviours.CHASE;
     private _chasedPoint: Vector3 = new Vector3(10, 10, 3);
     private _shootInterval: NodeJS.Timer;
+    private _rafId: number;
+    private _decisionIntervalId: NodeJS.Timer;
 
     public get behaviour(): Behaviours {return this._behaviour;}
     public set behaviour(value: Behaviours) {
@@ -45,11 +47,16 @@ export default class Bot extends Player{
 
     constructor(color: ColorRepresentation) {
         super(`BOT-${Math.round(Math.random()*10000)}`);
+
+        // Criando a nave
         this.ship = new Ship(color);
         this.ship.drawLocalAxis();
         this.ship.drawDirection();
-        this.ship.startMovingForward();
         this.ship.name = `SHIP-OF-${this.name}`;
+        this.ship.addEventListener('died', evt=>{
+            this.stopDecindingBehaviour();
+            this.stopMovingShip();
+        });
     }
 
     private fleeFrom(ship:Ship){
@@ -66,9 +73,8 @@ export default class Bot extends Player{
         clearInterval(this._shootInterval);
     }
 
-
-    private move() {
-        requestAnimationFrame(() => this.move());
+    private startMovingShip() {
+        this._rafId = requestAnimationFrame(() => this.startMovingShip());
         this.movePointerToChasePoint();
     }
 
@@ -98,17 +104,30 @@ export default class Bot extends Player{
     }
 
     public init(){
+        this.ship.startMovingForward();
         let decision = this.decideBehaviour();
         this._targetShip = decision.ship;
         this.behaviour = decision.behaviour;
-        this.move();
+        this.startMovingShip();
+        this.startDescidingBehaviour();
+        
+    }
 
+    private startDescidingBehaviour(){
         // Iniciando decisão perpétuo
-        setInterval(()=>{
+        this._decisionIntervalId = setInterval(()=>{
             let decision = this.decideBehaviour();
             this._targetShip = decision.ship;
             this.behaviour = decision.behaviour;            
         }, this._decisionFrequency)
+    }
+
+    private stopDecindingBehaviour(){
+        clearInterval(this._decisionIntervalId);
+    }
+
+    private stopMovingShip(){
+        cancelAnimationFrame(this._rafId);
     }
 
     private decideBehaviour():Decision{
@@ -168,5 +187,7 @@ export default class Bot extends Player{
             return {behaviour:Behaviours.CHASE, ship:closestShip}
         }
     }
+
+
 
 }
