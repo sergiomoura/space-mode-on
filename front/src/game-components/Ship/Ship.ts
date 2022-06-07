@@ -29,6 +29,7 @@ export default class Ship extends Group implements Damageble{
     }
 
     private _attackRange: number = this._defaults.attakRange;
+    private _rafId: number;
     public set attackRange(value: number) {this._attackRange = value;}
     public get attackRange() : number {return this._attackRange}
 
@@ -130,24 +131,26 @@ export default class Ship extends Group implements Damageble{
     }
 
     public getDamage(damage:number){
-        console.warn(`${this.name} tomou dano de ${damage}`)
         this._life -= damage;
+        this.dispatchEvent({type:'gotDamage', damage});
         if(this._life <=0){
             this.die()
         }
     }
 
     public die(): void {
-        console.warn(`${this.name} foi destruída`);
         this._hitBoxGeometry.dispose();
         this._hitBoxMesh.removeFromParent();
+        this.clear();
         this.removeFromParent();
+        this.dispatchEvent({type:"died"});
+        cancelAnimationFrame(this._rafId);
     }
 
     private move(){
         
         // Iniciando movimento perpétuo
-        requestAnimationFrame(()=>{
+        this._rafId = requestAnimationFrame(()=>{
             this.move()
         });
 
