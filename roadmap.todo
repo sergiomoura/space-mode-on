@@ -3,35 +3,35 @@ Fase 1 - Jogabilidade:
     ✔ Atirar @done(22-05-14 09:56)
     ✔ Criar e adicionar alvos movendo aleatoriamente @done(22-05-15 07:00)
     ✔ Fazer tiro colidir com alvo @done(22-05-15 07:00)
-    ☐ Limitar o movimento de uma nave (esfera?)
 
 Fase 2 - Bots:
-    ☐ Fazer bot perceber o ambiente:
-        ☐ Posição de inimigos
-        ☐ Velocidades dos Inimigos
-        ☐ Própria posição
+    ✔ Fazer bot perceber o ambiente: @done(22-06-06 22:42)
+        ✔ Posição de inimigos @done(22-06-06 22:42)
+        ✔ Velocidades dos Inimigos @done(22-06-06 22:42)
+        ✔ Própria posição @done(22-06-06 22:42)
 
-    ☐ Fazer bot identificar inimigo mais próximo
-    ☐ Fazer bot agressivo perseguir inimigo
-    ☐ Fazer bot agressivo atirar em inimigo
+    ✔ Fazer bot identificar inimigo mais próximo @done(22-06-06 22:42)
+    ✔ Fazer bot agressivo perseguir inimigo @done(22-06-06 22:42)
+    ✔ Fazer bot agressivo atirar em inimigo @done(22-06-06 22:42)
     ☐ Fazer bot fujão fujir do inimigo
     ☐ Fazer bot fujão dar dash
-
-Fase 3 - Gráficos:
-    ☐ Trazer Voxels de Nave
-    ☐ Fazer Voxels de Tiros
-    ☐ Fazer ambiente
-    ☐ Ajustar Iluminação
-
-
+    
 Fase 4 - Mobilidade:
     ☐ Fazer MobileShipControl
     ☐ Fazer MobileGameControl
     ☐ Fazer funcionar em celular
     ☐ Transformar num PWA
+    
+Fase 3 - Gráficos:
+    ☐ Trazer Model de nave
+    ☐ Fazer ambiente
+    ☐ Ajustar Iluminação
+    ☐ Limitar o movimento de uma nave (esfera?)
 
 Fase 5 - Configurações:
     ☐ Fazer tela inicial
     ☐ Fazer as partes configuráveis
+    
+
 
 Fase 6 - Multiplayer Online:
