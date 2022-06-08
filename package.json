@@ -4,7 +4,7 @@
   "private": true,
   "workspaces":["front","back"],
   "scripts": {
-    "front:dev":"yarn --cwd ./front/ webpack-dev-server --open"
+    "front:dev":"yarn --cwd ./front/ webpack-dev-server --open --host 0.0.0.0"
   },
   "dependencies": {},
   "devDependencies": {}
