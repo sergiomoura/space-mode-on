@@ -12,6 +12,8 @@ import {
     ColorRepresentation,
     ArrowHelper,
 } from "three";
+import {GetDeviceType} from "../../lib/GetDeviceType";
+import {DeviceType} from "../../lib/GetDeviceType";
 import Lights from "../Lights/Lights";
 import Cameras from "../Cameras/Cameras";
 import Ship from "../Ship/Ship";
@@ -77,9 +79,21 @@ export default class Game extends Scene{
         // Criando o renderer auxiliar
         this._auxRenderer = new WebGLRenderer({ antialias:false, canvas:auxCanvas});
 
+        // Verificando o tipo de dispositivo para definir os controles.
+        switch (GetDeviceType()) {
+            case DeviceType.TABLET:
+            case DeviceType.MOBILE:
+                alert("Ainda não disponível para celulares e tablets");
+                return;
+                break;
+            default:
+                this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this._mainRenderer.domElement);
+                this._gameControls = new DesktopGameControls(this);
+       
+                break;
+        }
+
         // Instanciando controles de nave de do jogo
-        this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this._mainRenderer.domElement);
-        this._gameControls = new DesktopGameControls(this);
 
         // Determinando dimensões do renderer principal
         this.setSize(height, width);
