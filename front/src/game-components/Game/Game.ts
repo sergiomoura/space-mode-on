@@ -84,7 +84,7 @@ export default class Game extends Scene{
             case DeviceType.TABLET:
             case DeviceType.MOBILE:
                 alert("Ainda não disponível para celulares e tablets");
-                return;
+                // return;
                 break;
             default:
                 this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this._mainRenderer.domElement);
