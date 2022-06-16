@@ -17,6 +17,7 @@ import {DeviceType} from "../../lib/GetDeviceType";
 import Lights from "../Lights/Lights";
 import Cameras from "../Cameras/Cameras";
 import Ship from "../Ship/Ship";
+import MobileShipControls from "../../controls/MobileShipControls";
 import { DesktopShipControls } from "../../controls/DesktopShipControls";
 import DesktopGameControls from "../../controls/DesktopGameControls";
 import FirstPersonShip from "../FirstPersonShip/FirstPersonShip";
@@ -83,7 +84,7 @@ export default class Game extends Scene{
         switch (GetDeviceType()) {
             case DeviceType.TABLET:
             case DeviceType.MOBILE:
-                alert("Ainda não disponível para celulares e tablets");
+                new MobileShipControls(this._mainPlayer.ship);
                 // return;
                 break;
             default:
