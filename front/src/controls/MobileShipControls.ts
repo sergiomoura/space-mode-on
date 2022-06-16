@@ -29,7 +29,7 @@ class MobileShipControls {
         this.connectBtDasher();
         this.connectBtJoystick();        
         this.connectDirectionalScreen();
-        
+
     }
 
     private connectBtShooter(){
@@ -60,38 +60,46 @@ class MobileShipControls {
         this._btJoystick.addEventListener(
             'touchmove',
             evt => {
+
                 evt.cancelBubble = true;
                 evt.stopPropagation();
 
-                let x = evt.changedTouches[0].clientX - this._btJoystick.offsetLeft - this._btJoystick.offsetWidth/2 + 1;
-                let y = evt.changedTouches[0].clientY - this._btJoystick.offsetTop - this._btJoystick.offsetHeight/2 + 1;
-                let ratio = y/x;
-                
-                if(x > 0 && ratio < MaxTanDireita && ratio>MinTanDireita){
-                    this._ship.startMovingRight();
-                } else {
-                    this._ship.stopMovingRight();
+                let touch = evt.changedTouches[0];
+
+                if(touch.target == this._btJoystick){
+
+                    let x = touch.clientX - this._btJoystick.offsetLeft - this._btJoystick.offsetWidth/2 + 1;
+                    let y = touch.clientY - this._btJoystick.offsetTop - this._btJoystick.offsetHeight/2 + 1;
+                    let ratio = y/x;
+                    
+                    if(x > 0 && ratio < MaxTanDireita && ratio>MinTanDireita){
+                        this._ship.startMovingRight();
+                    } else {
+                        this._ship.stopMovingRight();
+                    }
+    
+                    if(x < 0 && ratio < MaxTanDireita && ratio>MinTanDireita){
+                        this._ship.startMovingLeft();
+                    } else {
+                        this._ship.stopMovingLeft();
+                    }
+    
+                    ratio = x/-y;
+    
+                    if(y < 0 && ratio < MaxTanDireita && ratio>MinTanDireita){
+                        this._ship.startMovingForward();
+                    } else {
+                        this._ship.stopMovingForward();
+                    }
+    
+                    if(y > 0 && ratio < MaxTanDireita && ratio>MinTanDireita){
+                        this._ship.startMovingBackwards();
+                    } else {
+                        this._ship.stopMovingBackwards();
+                    }
+
                 }
 
-                if(x < 0 && ratio < MaxTanDireita && ratio>MinTanDireita){
-                    this._ship.startMovingLeft();
-                } else {
-                    this._ship.stopMovingLeft();
-                }
-
-                ratio = x/-y;
-
-                if(y < 0 && ratio < MaxTanDireita && ratio>MinTanDireita){
-                    this._ship.startMovingForward();
-                } else {
-                    this._ship.stopMovingForward();
-                }
-
-                if(y > 0 && ratio < MaxTanDireita && ratio>MinTanDireita){
-                    this._ship.startMovingBackwards();
-                } else {
-                    this._ship.stopMovingBackwards();
-                }
 
 
             }
@@ -110,13 +118,16 @@ class MobileShipControls {
     }
 
     private connectDirectionalScreen(){
-        this._directionalScreen.addEventListener('touchstart', evt=>{
+
+        this._directionalScreen.addEventListener('touchstart', evt => {
             
+            evt.preventDefault();
             evt.stopPropagation();
-            evt.cancelBubble = true;
-            
-            this._previousTouch = evt.changedTouches[0];
-        })
+
+            if(evt.changedTouches[0].target == this._directionalScreen){
+                this._previousTouch = evt.changedTouches[0];
+            }
+        });
 
         this._directionalScreen.addEventListener('touchmove', evt=>{
             
@@ -124,11 +135,21 @@ class MobileShipControls {
             evt.stopPropagation();
 
             let touch = evt.changedTouches[0];
-            let movementX = touch.clientX - this._previousTouch.clientX;
-            let movementY = touch.clientY - this._previousTouch.clientY;
-            
-            this._ship.pointTo(movementX,movementY,0.01);
-            this._previousTouch = touch;
+
+            if(touch.target == this._directionalScreen){
+                let movementX;
+                let movementY;
+                if(this._previousTouch == undefined){
+                    movementX = 0;
+                    movementY = 0;
+                } else {
+                    movementX = touch.clientX - this._previousTouch.clientX;
+                    movementY = touch.clientY - this._previousTouch.clientY;
+                }
+                
+                this._ship.pointTo(movementX,movementY,0.01);
+                this._previousTouch = touch;
+            }
 
         })
     }

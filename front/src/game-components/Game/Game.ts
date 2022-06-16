@@ -54,7 +54,7 @@ export default class Game extends Scene{
         // Criando Time A
         let teamA:Player[] = []
         teamA.push(this._mainPlayer)
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 0; i++) {
             let bot = new Bot(0x6666FF);
             teamA.push(bot);
             this.addShip(bot.ship);
@@ -62,7 +62,7 @@ export default class Game extends Scene{
 
         // Criando Time B
         let teamB:Player[] = []
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 0; i++) {
             let bot = new Bot(0xFF0000);
             teamB.push(bot);
             this.addShip(bot.ship);
