@@ -3,8 +3,13 @@
     display: none;
 }
 
+
 @media only screen and (hover: none) and (pointer: coarse){
     
+    #auxCanvas{
+        display: none;
+    }
+
     #mobile-controls{
     
         display: block;
@@ -30,18 +35,18 @@
             }
         
             &#shooter{
-                width: 60px;
-                height: 60px;
-                right: 20px;
-                bottom: 100px;
+                width: 120px;
+                height: 120px;
+                right: 30px;
+                bottom: 30px;
             }
         
             &#dasher{
                 width: 60px;
                 height: 60px;
                 position: absolute;
-                right: 100px;
-                bottom: 20px;
+                right: 30px;
+                bottom: 180px;
             }
         
             &:active{
