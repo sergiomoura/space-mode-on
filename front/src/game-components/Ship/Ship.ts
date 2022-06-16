@@ -267,11 +267,12 @@ export default class Ship extends Group implements Damageble{
         this._lAcceleration = 0; 
     }
 
-    public pointTo(x:number, y:number){
+    public pointTo(x:number, y:number, pointingSpeed:number = 0.002){
+        
         _euler.setFromQuaternion( this.quaternion );
 
-		_euler.y -= x * 0.002 * this._defaults.pointingSpeed;
-		_euler.x -= y * 0.002 * this._defaults.pointingSpeed;
+		_euler.y -= x * pointingSpeed * this._defaults.pointingSpeed;
+		_euler.x -= y * pointingSpeed * this._defaults.pointingSpeed;
 
 		_euler.x = Math.max( _PI_2 - this._defaults.maxPolarAngle, Math.min( _PI_2 - this._defaults.minPolarAngle, _euler.x ) );
 

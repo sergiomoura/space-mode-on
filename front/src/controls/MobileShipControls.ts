@@ -10,6 +10,7 @@ class MobileShipControls {
     private _btShooter: HTMLButtonElement;
     private _btDasher: HTMLButtonElement;
     private _btJoystick: HTMLButtonElement;
+    private _previousTouch:Touch;
 
     constructor(private _ship:Ship){
         
@@ -82,13 +83,31 @@ class MobileShipControls {
             }
         )
 
-        // this._mobileScreen.addEventListener('touchstart', evt=>{evt.stopPropagation();console.log(evt)}, false)
-        //this._mobileScreen.addEventListener('touchmove', evt=>console.log(evt))
-        // this._mobileScreen.addEventListener('touchend', evt=>console.log(evt), false)
-    }
+        this._btJoystick.addEventListener('touchend',evt=>{
+            this._ship.stopMovingForward();
+            this._ship.stopMovingBackwards();
+            this._ship.stopMovingRight();
+            this._ship.stopMovingLeft();
+        })
 
-    private shoot(){
+        // Associando eventos da tela
+        this._mobileScreen.addEventListener('touchstart', evt=>{
+            evt.stopPropagation();
+            this._previousTouch = evt.changedTouches[0];
+        })
 
+        this._mobileScreen.addEventListener('touchmove', evt=>{
+            
+            evt.preventDefault();
+            evt.stopPropagation();
+
+            let touch = evt.changedTouches[0];
+            let movementX = touch.clientX - this._previousTouch.clientX;
+            let movementY = touch.clientY - this._previousTouch.clientY;
+            
+            this._ship.pointTo(movementX,movementY,0.01);
+            this._previousTouch = touch;
+        })
     }
 
     
