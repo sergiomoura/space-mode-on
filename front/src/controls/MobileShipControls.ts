@@ -6,7 +6,7 @@ const MinTanDireita = -Math.tan(3*frac);
 
 class MobileShipControls {
 
-    private _mobileScreen:HTMLDivElement;
+    private _directionalScreen:HTMLDivElement;
     private _btShooter: HTMLButtonElement;
     private _btDasher: HTMLButtonElement;
     private _btJoystick: HTMLButtonElement;
@@ -14,7 +14,7 @@ class MobileShipControls {
 
     constructor(private _ship:Ship){
         
-        this._mobileScreen = <HTMLDivElement>document.getElementById('mobile-controls');
+        this._directionalScreen = <HTMLDivElement>document.getElementById('mobile-controls');
         this._btShooter = <HTMLButtonElement>document.getElementById('shooter');
         this._btDasher = <HTMLButtonElement>document.getElementById('dasher');
         this._btJoystick = <HTMLButtonElement>document.getElementById('joystick');
@@ -25,29 +25,43 @@ class MobileShipControls {
 
     private associateEvents(){
 
-        // Associando eventos ao botão de tiro
+        this.connectBtShooter();    
+        this.connectBtDasher();
+        this.connectBtJoystick();        
+        this.connectDirectionalScreen();
+        
+    }
+
+    private connectBtShooter(){
         this._btShooter.addEventListener(
             'touchstart',
             (evt)=>{
+                evt.cancelBubble = true;
                 evt.stopPropagation();
                 this._ship.shoot();
             }
         );
+    }
 
-        // Associando eventos ao botão de dash
+    private connectBtDasher(){
         this._btDasher.addEventListener(
             'touchend',
             evt=>{
+                
+                evt.cancelBubble = true;
                 evt.stopPropagation();
+
                 this._ship.dash()
             }
-        );
-        
-        // Associando eventos ao joystick
+        )
+    }
+
+    private connectBtJoystick(){
         this._btJoystick.addEventListener(
             'touchmove',
             evt => {
                 evt.cancelBubble = true;
+                evt.stopPropagation();
 
                 let x = evt.changedTouches[0].clientX - this._btJoystick.offsetLeft - this._btJoystick.offsetWidth/2 + 1;
                 let y = evt.changedTouches[0].clientY - this._btJoystick.offsetTop - this._btJoystick.offsetHeight/2 + 1;
@@ -84,19 +98,27 @@ class MobileShipControls {
         )
 
         this._btJoystick.addEventListener('touchend',evt=>{
+            
+            evt.stopPropagation();
+            evt.cancelBubble = true;
+
             this._ship.stopMovingForward();
             this._ship.stopMovingBackwards();
             this._ship.stopMovingRight();
             this._ship.stopMovingLeft();
         })
+    }
 
-        // Associando eventos da tela
-        this._mobileScreen.addEventListener('touchstart', evt=>{
+    private connectDirectionalScreen(){
+        this._directionalScreen.addEventListener('touchstart', evt=>{
+            
             evt.stopPropagation();
+            evt.cancelBubble = true;
+            
             this._previousTouch = evt.changedTouches[0];
         })
 
-        this._mobileScreen.addEventListener('touchmove', evt=>{
+        this._directionalScreen.addEventListener('touchmove', evt=>{
             
             evt.preventDefault();
             evt.stopPropagation();
@@ -107,10 +129,9 @@ class MobileShipControls {
             
             this._ship.pointTo(movementX,movementY,0.01);
             this._previousTouch = touch;
+
         })
     }
-
-    
 
 }
 
