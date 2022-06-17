@@ -123,7 +123,7 @@ class MobileShipControls {
             
             evt.preventDefault();
             evt.stopPropagation();
-
+            
             if(evt.changedTouches[0].target == this._directionalScreen){
                 this._previousTouch = evt.changedTouches[0];
             }
@@ -139,14 +139,10 @@ class MobileShipControls {
             if(touch.target == this._directionalScreen){
                 let movementX;
                 let movementY;
-                if(this._previousTouch == undefined){
-                    movementX = 0;
-                    movementY = 0;
-                } else {
-                    movementX = touch.clientX - this._previousTouch.clientX;
-                    movementY = touch.clientY - this._previousTouch.clientY;
-                }
                 
+                movementX = touch.clientX - this._previousTouch.clientX;
+                movementY = touch.clientY - this._previousTouch.clientY;
+               
                 this._ship.pointTo(movementX,movementY,0.01);
                 this._previousTouch = touch;
             }
