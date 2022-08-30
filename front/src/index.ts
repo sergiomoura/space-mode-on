@@ -1,6 +1,6 @@
 // Importando estilo
 import './styles/style.scss';
-
+/*
 // Imports
 import Game from "./game-components/Game/Game";
 
@@ -18,3 +18,4 @@ const game = new Game(
             );
 
 window.addEventListener('resize', () => { game.setSize(window.innerHeight, window.innerWidth) })
+*/

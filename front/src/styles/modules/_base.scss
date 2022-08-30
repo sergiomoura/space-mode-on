@@ -1,20 +1,50 @@
 *,
 *:before,
 *:after {
-  box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: $font;
+    color: $primary-color;
+    text-shadow: 0 0 2px $primary-color;
 }
 
 html {
   box-sizing: border-box;
   color: $primary-color;
-  font-family: $primary-font;
   background: #F0F0F0;
   height: 100%;
+  font-size: 18px;
 }
 
 body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
 }
+
+h1 {
+  font-size: 1.8rem;
+  font-weight: normal;
+  margin: 0;
+}
+
+button {
+  border: 2px solid $primary-color;
+  color: $primary-color;
+  padding: 10px 20px;
+  background-color: transparent;
+  font-size: 1rem;
+}
+
+select {
+  border: 2px solid $primary-color;
+  color: $primary-color;
+  padding: 2px 2px;
+  background-color: transparent;
+  font-size: 1rem;
+}
+
+option {
+  background: $primary-background;
+}
+
+

@@ -1,19 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Space Mode On!</title>
-  </head>
 
-  <body>
-    <canvas id="mainCanvas"></canvas>
-    <canvas id="auxCanvas"></canvas>
-    <div id="mobile-controls">
-      <button id="joystick"></button>
-      <button id="shooter"></button>
-      <button id="dasher"></button>
-    </div>
-  </body>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Space Mode On!</title>
+</head>
+
+<body>
+
+	<section id="game">
+		<canvas id="mainCanvas"></canvas>
+		<canvas id="auxCanvas"></canvas>
+		<div id="mobile-controls">
+			<button id="joystick"></button>
+			<button id="shooter"></button>
+			<button id="dasher"></button>
+		</div>
+	</section>
+
+	<section id="hall">
+		<form>
+			<h1>
+				Space Mode On
+			</h1>
+			<label>
+				<span>Nº de Bots Inimigos:</span>
+				<select id="nEnimies">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+			</label>
+			<label>
+				<span>Nº de Bots Aliados:</span>
+				<select id="nFriends">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+			</label>
+			<button>Jogar!</button>
+		</form>
+
+
+	</section>
+
+
+</body>
+
 </html>

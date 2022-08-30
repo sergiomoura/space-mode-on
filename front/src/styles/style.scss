@@ -1,20 +1,5 @@
+@import 'modules/font';
 @import 'modules/variables';
 @import 'modules/base';
-@import 'modules/mobile-controls';
-
-#mainCanvas {
-    background-color: aqua;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-}
-
-#auxCanvas {
-    background-color: transparent;
-    position: absolute;
-    right: 10px;
-    top:10px;
-    width: 25vw;
-    height: 25vh;
-    border: 1px solid #333;
-}
+@import 'modules/hall';
+@import 'modules/game';
