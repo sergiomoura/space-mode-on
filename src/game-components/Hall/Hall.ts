@@ -9,6 +9,7 @@ class Hall {
   private readonly divHall: HTMLDivElement;
   private readonly formGameSettings: HTMLFormElement;
   private readonly transitionDuration: number = 0.3;
+  private game: Game;
 
   constructor () {
 
@@ -32,7 +33,7 @@ class Hall {
 
         evt.preventDefault();
         this.hideHall();
-        this.createGame();
+        this.createNewGame();
       
       }
     );
@@ -44,17 +45,36 @@ class Hall {
 
   }
 
-  private createGame (): void {
+  private createNewGame (): void {
 
     // Criando o jogo
-    const game = new Game(
+    this.game = new Game(
       this.inputPlayerName.value,
       Number(this.selectEnemies.value),
       Number(this.selectFriends.value)
     );
 
     // Conectando controles do jogo
-    game.connectControls();
+    this.game.connectControls();
+
+    // Associando evento... se morrer, volta para o hall!
+    this.game.addEventListener(
+      'died',
+      (evt) => {
+
+        this.showHall();
+        this.game.suspend();
+        this.inputPlayerName.focus();
+      
+      }
+    );
+  
+  }
+
+  private showHall (died: boolean = true): void {
+    
+    this.divHall.style.display = 'flex';
+    this.divHall.style.opacity = '1';
   
   }
 

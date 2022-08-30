@@ -55,6 +55,16 @@ export default class Game extends Scene {
     // Criando Jogador Principal
     this._mainPlayer = new User(playerName);
 
+    // Adicionando listeners à nave do player
+    this._mainPlayer.ship.addEventListener(
+      'died',
+      () => {
+
+        this.dispatchEvent({ type: 'died' });
+      
+      }
+    );
+
     // Criando Time A
     const teamA: Player[] = [];
     teamA.push(this._mainPlayer);
@@ -158,6 +168,13 @@ export default class Game extends Scene {
     
     }
   
+  }
+
+  public suspend (): void {
+    
+    // TODO: Fazer para mobile
+    (<DesktopShipControls> this._shipControls).unlock();
+        
   }
 
   public setSize (height: number, width: number): void {
