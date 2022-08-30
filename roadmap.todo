@@ -1,8 +1,16 @@
+Fase 0 - Arquitetura:
+    ☐ Criar Hub de eventos
+
 Fase 1 - Jogabilidade:
     ✔ Dar Dash @done(22-05-14 09:56)
     ✔ Atirar @done(22-05-14 09:56)
     ✔ Criar e adicionar alvos movendo aleatoriamente @done(22-05-15 07:00)
     ✔ Fazer tiro colidir com alvo @done(22-05-15 07:00)
+    ☐ Refazer com dash contínuo
+    ☐ Mostrar life
+    ☐ Piscar tela vermelha quando tomar dano
+    ☐ Adicionar som de disparo
+    ☐ Adicionar som de colisão com tiro
 
 Fase 2 - Bots:
     ✔ Fazer bot perceber o ambiente: @done(22-06-06 22:42)
@@ -29,9 +37,8 @@ Fase 3 - Gráficos:
     ☐ Limitar o movimento de uma nave (esfera?)
 
 Fase 5 - Configurações:
-    ☐ Fazer tela inicial
-    ☐ Fazer as partes configuráveis
+    ✔ Fazer tela inicial @done(22-08-30 20:26)
+    ✔ Fazer as partes configuráveis @done(22-08-30 20:26)
     
-
 
 Fase 6 - Multiplayer Online:
