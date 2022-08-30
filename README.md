@@ -13,6 +13,6 @@ Para rodar localmente em modo de desenvolvimento:
 ```bash
 
 yarn install
-yarn front:dev
+yarn dev
 
 ```
