@@ -1,13 +1,9 @@
-interface DamageFunction {
-    (damage:number):void;
-}
+type DamageFunction = (damage: number) => void
 
-interface DieFunction {
-    ():void
-}
+type DieFunction = () => void
 
 export default interface Damageble {
-    life: number;
-    getDamage: DamageFunction;
-    die:DieFunction;
+  life: number
+  getDamage: DamageFunction
+  die: DieFunction
 }

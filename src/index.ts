@@ -1,5 +1,5 @@
 // Importando estilo
-import './styles/style.scss';
+import './styles/style.scss'
 /*
 // Imports
 import Game from "./game-components/Game/Game";
