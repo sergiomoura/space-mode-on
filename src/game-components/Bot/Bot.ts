@@ -155,8 +155,8 @@ export default class Bot extends Player {
     // Verificando se existem inimigos
     if (this.enemies.length === 0) {
 
-      this.behaviour = Behaviours.PEACEFULL;
       this._targetShip = undefined;
+      this.behaviour = Behaviours.PEACEFULL;
       return;
     
     }
@@ -187,8 +187,8 @@ export default class Bot extends Player {
     // Verificando se a menor distância é menor que o tolerável
     if (minLength < this._minimunAimingDistance) {
 
-      this.behaviour = Behaviours.FLEE;
       this._targetShip = enemyShips[index];
+      this.behaviour = Behaviours.FLEE;
       return;
     
     }
@@ -218,13 +218,13 @@ export default class Bot extends Player {
     // Caso contrário, perseguir
     if (distance <= this.ship.attackRange) {
 
-      this.behaviour = Behaviours.ATTACK;
       this._targetShip = closestShip;
+      this.behaviour = Behaviours.ATTACK;
     
     } else {
 
-      this.behaviour = Behaviours.CHASE;
       this._targetShip = closestShip;
+      this.behaviour = Behaviours.CHASE;
     
     }
   

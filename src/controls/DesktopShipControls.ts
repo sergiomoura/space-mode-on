@@ -175,4 +175,4 @@ class DesktopShipControls extends EventDispatcher {
 
 }
 
-export { DesktopShipControls };
+export default DesktopShipControls;

@@ -2,7 +2,7 @@ import Game from '../Game/Game';
 
 class Hall {
 
-  private readonly selectEnimies: HTMLSelectElement;
+  private readonly selectEnemies: HTMLSelectElement;
   private readonly selectFriends: HTMLSelectElement;
   private readonly inputPlayerName: HTMLInputElement;
   private readonly btStart: HTMLButtonElement;
@@ -10,7 +10,7 @@ class Hall {
   constructor () {
 
     // Capturando elementos
-    this.selectEnimies = <HTMLSelectElement> document.getElementById('nEnemies');
+    this.selectEnemies = <HTMLSelectElement> document.getElementById('nEnemies');
     this.selectFriends = <HTMLSelectElement> document.getElementById('nFriends');
     this.inputPlayerName = <HTMLInputElement> document.getElementById('playerName');
     this.btStart = <HTMLButtonElement> document.getElementById('start');
@@ -41,11 +41,11 @@ class Hall {
 
     // Criando o jogo
     const game = new Game(
-      window.innerHeight,
-      window.innerWidth,
       mainCanvas,
       auxCanvas,
-      'Sérgio Moura'
+      this.inputPlayerName.value,
+      Number(this.selectEnemies.value),
+      Number(this.selectFriends.value)
     );
 
     // Imprimindo mensagem no console

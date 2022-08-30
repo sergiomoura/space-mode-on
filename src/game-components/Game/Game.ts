@@ -19,7 +19,7 @@ import Lights from '../Lights/Lights';
 import Cameras from '../Cameras/Cameras';
 import Ship from '../Ship/Ship';
 import MobileShipControls from '../../controls/MobileShipControls';
-import { DesktopShipControls } from '../../controls/DesktopShipControls';
+import DesktopShipControls from '../../controls/DesktopShipControls';
 import DesktopGameControls from '../../controls/DesktopGameControls';
 import FirstPersonShip from '../FirstPersonShip/FirstPersonShip';
 import Bot from '../Bot/Bot';
@@ -40,13 +40,13 @@ export default class Game extends Scene {
   public get ships (): Ship[] { return this._ships; };
 
   constructor (
-    height: number,
-    width: number,
     mainCanvas: HTMLCanvasElement,
     auxCanvas: HTMLCanvasElement,
-    playerName: string
+    playerName: string,
+    nEnimies: number,
+    nFriends: number
   ) {
-
+    
     super();
 
     // Criando Jogador Principal
@@ -55,7 +55,7 @@ export default class Game extends Scene {
     // Criando Time A
     const teamA: Player[] = [];
     teamA.push(this._mainPlayer);
-    for (let i = 0; i < 0; i++) {
+    for (let i = 0; i < nFriends; i++) {
 
       const bot = new Bot(0x6666FF);
       teamA.push(bot);
@@ -65,7 +65,7 @@ export default class Game extends Scene {
 
     // Criando Time B
     const teamB: Player[] = [];
-    for (let i = 0; i < 0; i++) {
+    for (let i = 0; i < nEnimies; i++) {
 
       const bot = new Bot(0xFF0000);
       teamB.push(bot);
@@ -103,7 +103,7 @@ export default class Game extends Scene {
     // Instanciando controles de nave de do jogo
 
     // Determinando dimensões do renderer principal
-    this.setSize(height, width);
+    this.setSize(window.innerHeight, window.innerWidth);
 
     // Adicionando Iluminação
     this.add(...Lights);
