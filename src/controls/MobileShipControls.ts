@@ -25,7 +25,7 @@ class MobileShipControls extends EventDispatcher {
   
   }
 
-  private associateEvents () {
+  private associateEvents (): void {
 
     this.connectBtShooter();
     this.connectBtDasher();
@@ -34,7 +34,7 @@ class MobileShipControls extends EventDispatcher {
   
   }
 
-  private connectBtShooter () {
+  private connectBtShooter (): void {
 
     this._btShooter.addEventListener(
       'touchstart',
@@ -49,7 +49,7 @@ class MobileShipControls extends EventDispatcher {
   
   }
 
-  private connectBtDasher () {
+  private connectBtDasher (): void {
 
     this._btDasher.addEventListener(
       'touchend',
@@ -65,7 +65,7 @@ class MobileShipControls extends EventDispatcher {
   
   }
 
-  private connectBtJoystick () {
+  private connectBtJoystick (): void {
 
     this._btJoystick.addEventListener(
       'touchmove',
@@ -76,7 +76,7 @@ class MobileShipControls extends EventDispatcher {
 
         const touch = evt.changedTouches[0];
 
-        if (touch.target == this._btJoystick) {
+        if (touch.target === this._btJoystick) {
 
           const x = touch.clientX - this._btJoystick.offsetLeft - this._btJoystick.offsetWidth / 2 + 1;
           const y = touch.clientY - this._btJoystick.offsetTop - this._btJoystick.offsetHeight / 2 + 1;
@@ -143,14 +143,14 @@ class MobileShipControls extends EventDispatcher {
   
   }
 
-  private connectDirectionalScreen () {
+  private connectDirectionalScreen (): void {
 
     this._directionalScreen.addEventListener('touchstart', evt => {
 
       evt.preventDefault();
       evt.stopPropagation();
 
-      if (evt.changedTouches[0].target == this._directionalScreen) {
+      if (evt.changedTouches[0].target === this._directionalScreen) {
 
         this._previousTouch = evt.changedTouches[0];
       
@@ -165,13 +165,10 @@ class MobileShipControls extends EventDispatcher {
 
       const touch = evt.changedTouches[0];
 
-      if (touch.target == this._directionalScreen) {
+      if (touch.target === this._directionalScreen) {
 
-        let movementX;
-        let movementY;
-
-        movementX = touch.clientX - this._previousTouch.clientX;
-        movementY = touch.clientY - this._previousTouch.clientY;
+        const movementX: number = touch.clientX - this._previousTouch.clientX; ;
+        const movementY: number = touch.clientY - this._previousTouch.clientY;
 
         this._ship.pointTo(movementX, movementY, 0.01);
         this._previousTouch = touch;

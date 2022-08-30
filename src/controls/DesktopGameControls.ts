@@ -26,9 +26,9 @@ class DesktopGameControls {
     }
   };
 
-  onKeyDown (evt: KeyboardEvent) {
+  onKeyDown (evt: KeyboardEvent): void {
 
-    if (evt.ctrlKey && this.keyMethods[<PossibleKeys>evt.key]) {
+    if (evt.ctrlKey && Object.keys(this.keyMethods).includes(<PossibleKeys> evt.key)) {
 
       this.keyMethods[<PossibleKeys>evt.key]();
     

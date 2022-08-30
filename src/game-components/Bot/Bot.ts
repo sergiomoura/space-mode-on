@@ -30,17 +30,17 @@ export default class Bot extends Player {
 
         case Behaviours.FLEE:
           // this.ship.color = 0xFFFF00;
-          this.fleeFrom(this._targetShip as Ship);
+          this.fleeFrom(<Ship> this._targetShip);
           break;
 
         case Behaviours.ATTACK:
           // this.ship.color = 0xFF0000;
-          this.attack(this._targetShip as Ship);
+          this.attack(<Ship> this._targetShip);
           break;
 
         case Behaviours.CHASE:
           // this.ship.color = 0x6666FF;
-          this.chase(this._targetShip as Ship);
+          this.chase(<Ship> this._targetShip);
           break;
 
         case Behaviours.PEACEFULL:
@@ -173,11 +173,12 @@ export default class Bot extends Player {
     let minLength = aimVectors[0] !== undefined ? aimVectors[0].length() : Infinity;
     for (let i = 0; i < aimVectors.length; i++) {
 
-      const length = aimVectors[i] !== undefined ? aimVectors[i]?.length() : Infinity;
-      if ((length as number) < minLength) {
+      const length: number = aimVectors[i] === undefined ? Infinity : (<Vector3> aimVectors[i]).length();
+
+      if (length < minLength) {
 
         index = i;
-        minLength = (length as number);
+        minLength = length;
       
       }
     

@@ -96,7 +96,7 @@ export default class Shot extends Object3D {
             const fi = intersections[0].point;
 
             // Adicionando spinningCube no ponto de colisão
-            ((this._ownerShip.parent as Game)).addSpiningCube(fi.x, fi.y, fi.z);
+            ((<Game> this._ownerShip.parent)).addSpiningCube(fi.x, fi.y, fi.z);
 
             // Causando dano
             damageble.getDamage(this._demage);
@@ -119,7 +119,7 @@ export default class Shot extends Object3D {
 
   private damagebleParent (obj: Object3D): Damageble | undefined {
 
-    if (this.isDamageble(obj)) { return obj as Damageble; };
+    if (this.isDamageble(obj)) { return <Damageble> obj; };
     if (obj.parent == null || obj.parent === undefined) { return undefined; };
     return this.damagebleParent(obj.parent);
   

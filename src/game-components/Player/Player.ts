@@ -3,7 +3,7 @@ import Ship from '../Ship/Ship';
 export default abstract class Player {
 
   protected _ship: Ship;
-  public get ship () { return this._ship; }
+  public get ship (): Ship { return this._ship; }
   public set ship (s: Ship) {
 
     this._ship = s;
@@ -26,13 +26,13 @@ export default abstract class Player {
   
   }
 
-  addEnemies (...players: Player[]) {
+  addEnemies (...players: Player[]): void {
 
     this._enemies.push(...players);
   
   }
 
-  addFriends (...players: Player[]) {
+  addFriends (...players: Player[]): void {
 
     this._friends.push(...players);
   

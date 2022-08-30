@@ -1,5 +1,4 @@
 import {
-  Euler,
   EventDispatcher,
   Vector3
 } from 'three';
@@ -56,10 +55,11 @@ class DesktopShipControls extends EventDispatcher {
   
   }
 
-  onMouseMove (evt: MouseEvent) {
+  onMouseMove (evt: MouseEvent): void {
 
     if (!this.isLocked) return;
 
+    // TODO: Não sei resolver isso aqui sem mouse para testar
     const movementX = evt.movementX || 0;
     const movementY = evt.movementY || 0;
 
@@ -69,7 +69,7 @@ class DesktopShipControls extends EventDispatcher {
   
   }
 
-  onMouseClick (_evt: MouseEvent) {
+  onMouseClick (_evt: MouseEvent): void {
 
     if (this.isLocked) {
 
@@ -79,7 +79,7 @@ class DesktopShipControls extends EventDispatcher {
   
   }
 
-  onPointerlockChange () {
+  onPointerlockChange (): void {
 
     if (this.domElement.ownerDocument.pointerLockElement === this.domElement) {
 
@@ -95,22 +95,22 @@ class DesktopShipControls extends EventDispatcher {
   
   }
 
-  onPointerlockError () {
+  onPointerlockError (): void {
 
     console.error('THREE.PointerLockControls: Unable to use Pointer Lock API');
   
   }
 
-  connect () {
+  connect (): void {
 
     this.domElement.ownerDocument.addEventListener('mousemove', (evt) => { this.onMouseMove(evt); });
     this.domElement.ownerDocument.addEventListener('click', (evt) => { this.onMouseClick(evt); });
     this.domElement.ownerDocument.addEventListener('pointerlockchange', (evt) => { this.onPointerlockChange(); });
-    this.domElement.ownerDocument.addEventListener('pointerlockerror', (evt) => { this.onPointerlockError; });
+    this.domElement.ownerDocument.addEventListener('pointerlockerror', (evt) => { this.onPointerlockError(); });
   
   }
 
-  disconnect () {
+  disconnect (): void {
 
     this.domElement.ownerDocument.removeEventListener('mousemove', this.onMouseMove);
     this.domElement.ownerDocument.removeEventListener('pointerlockchange', this.onPointerlockChange);
@@ -118,13 +118,13 @@ class DesktopShipControls extends EventDispatcher {
   
   };
 
-  dispose () {
+  dispose (): void {
 
     this.disconnect();
   
   };
 
-  getDirection () {
+  getDirection (): (v: Vector3) => Vector3 {
 
     const direction = new Vector3(0, 0, -1);
 
@@ -136,7 +136,7 @@ class DesktopShipControls extends EventDispatcher {
   
   };
 
-  moveForward (distance: number) {
+  moveForward (distance: number): void {
 
     // move forward parallel to the xz-plane
     // assumes camera.up is y-up
@@ -149,33 +149,33 @@ class DesktopShipControls extends EventDispatcher {
   
   };
 
-  moveRight (distance: number) {
+  moveRight (distance: number): void {
 
     _vector.setFromMatrixColumn(this.ship.matrix, 0);
     this.ship.position.addScaledVector(_vector, distance);
   
   };
 
-  lock () {
+  lock (): void {
 
     this.domElement.requestPointerLock();
   
   };
 
-  unlock () {
+  unlock (): void {
 
     this.domElement.ownerDocument.exitPointerLock();
   
   };
 
-  private commandShip (pressedKeys: PressedKeys) {
+  private commandShip (pressedKeys: PressedKeys): void {
 
     pressedKeys.includes(ControlKeys.w) ? this.ship.startMovingForward() : this.ship.stopMovingForward();
     pressedKeys.includes(ControlKeys.s) ? this.ship.startMovingBackwards() : this.ship.stopMovingBackwards();
     pressedKeys.includes(ControlKeys.d) ? this.ship.startMovingRight() : this.ship.stopMovingRight();
     pressedKeys.includes(ControlKeys.a) ? this.ship.startMovingLeft() : this.ship.stopMovingLeft();
-    pressedKeys.includes(ControlKeys.space) ? this.ship.dash() : null;
-    pressedKeys.includes(ControlKeys.q) ? (<Bot[]> this.ship.player.enemies).forEach(e => e.movePointerToChasePoint()) : null;
+    pressedKeys.includes(ControlKeys.space) ? this.ship.dash() : (() => {})();
+    pressedKeys.includes(ControlKeys.q) ? (<Bot[]> this.ship.player.enemies).forEach(e => e.movePointerToChasePoint()) : (() => {})();
   
   }
 
