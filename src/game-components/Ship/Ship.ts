@@ -1,4 +1,4 @@
-import { BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation, ArrowHelper, Material } from 'three'
+import { BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation, ArrowHelper } from 'three'
 import Damageble from '../Damageble/Damageble'
 import DashPill from '../DashPill/DashPill'
 import Player from '../Player/Player'
@@ -172,10 +172,10 @@ export default class Ship extends Group implements Damageble {
   }
 
   drawHitBox (): void {
-    // Limpando o objeto caso exista algo nele
-    (this._hitBoxMesh.material as Material).dispose()
-    this._hitBoxMesh.geometry.dispose()
-    this.remove(this._hitBoxMesh)
+    // TODO: Limpando o objeto caso exista algo nele
+    // (this._hitBoxMesh.material as Material).dispose()
+    // this._hitBoxMesh.geometry.dispose()
+    // this.remove(this._hitBoxMesh)
 
     const material = new MeshPhongMaterial({ color: this._color })
     material.opacity = 0.5

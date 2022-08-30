@@ -7,7 +7,10 @@ class Hall {
   static connect (hallElement: HTMLElement): void {
     hallElement.querySelector('#btJogar')?.addEventListener(
       'click',
-      this.createGame
+      () => {
+        this.createGame()
+        document.getElementById('hall')?.remove()
+      }
     )
   }
 
