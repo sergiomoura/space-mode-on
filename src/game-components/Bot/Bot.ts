@@ -1,16 +1,17 @@
-import { ArrowHelper, ColorRepresentation, Vector3 } from 'three'
+import { ColorRepresentation, Vector3 } from 'three'
 import Player from '../Player/Player'
 import Ship from '../Ship/Ship'
 
-enum Behaviours {FLEE = 'flee', CHASE = 'chase', ATTACK = 'attack', PEACEFULL = 'peacefull'};
-class Decision {
-  behaviour: Behaviours
-  ship: Ship
-}
+enum Behaviours {
+  FLEE = 'flee',
+  CHASE = 'chase',
+  ATTACK = 'attack',
+  PEACEFULL = 'peacefull'
+};
 
 export default class Bot extends Player {
   private readonly _decisionFrequency = 200 // 0.2 seconds
-  private _targetShip: Ship
+  private _targetShip: Ship | undefined
   private readonly _minimunAimingDistance = 2
   private _behaviour: Behaviours = Behaviours.CHASE
   private _chasedPoint: Vector3 = new Vector3(10, 10, 3)
@@ -20,28 +21,26 @@ export default class Bot extends Player {
 
   public get behaviour (): Behaviours { return this._behaviour }
   public set behaviour (value: Behaviours) {
-    if (this._behaviour != value) {
+    if (this._behaviour !== value) {
       this._behaviour = value
       switch (value) {
         case Behaviours.FLEE:
           // this.ship.color = 0xFFFF00;
-          this.fleeFrom(this._targetShip)
+          this.fleeFrom(this._targetShip as Ship)
           break
 
         case Behaviours.ATTACK:
           // this.ship.color = 0xFF0000;
-          this.attack(this._targetShip)
+          this.attack(this._targetShip as Ship)
           break
 
         case Behaviours.CHASE:
           // this.ship.color = 0x6666FF;
-          this.chase(this._targetShip)
+          this.chase(this._targetShip as Ship)
           break
 
         case Behaviours.PEACEFULL:
           // TODO: Decidir o que fazer no modo peacefull
-
-        default:
           break
       }
     }
@@ -61,26 +60,26 @@ export default class Bot extends Player {
     })
   }
 
-  private fleeFrom (ship: Ship) {
+  private fleeFrom (ship: Ship): void {
 
   }
 
-  private attack (ship: Ship) {
+  private attack (ship: Ship): void {
     this._chasedPoint = ship.position
     this._shootInterval = setInterval(() => { this.ship.shoot() }, 5000)
   }
 
-  private chase (ship: Ship) {
+  private chase (ship: Ship): void {
     this._chasedPoint = ship.position
     clearInterval(this._shootInterval)
   }
 
-  private startMovingShip () {
+  private startMovingShip (): void {
     this._rafId = requestAnimationFrame(() => this.startMovingShip())
     this.movePointerToChasePoint()
   }
 
-  public movePointerToChasePoint (pointingSpeed: number = 18) {
+  public movePointerToChasePoint (pointingSpeed: number = 18): void {
     // Declarando vetor que aponta do chasedPoint à posição atual: d
     const d: Vector3 = this._chasedPoint.clone().sub(this.ship.position)
 
@@ -100,42 +99,34 @@ export default class Bot extends Player {
     this.ship.pointTo(t.x, -t.y)
   }
 
-  public init () {
+  public init (): void {
     this.ship.startMovingForward()
-    const decision = this.decideBehaviour()
-    this._targetShip = decision.ship
-    this.behaviour = decision.behaviour
+    this.decideBehaviour()
     this.startMovingShip()
     this.startDescidingBehaviour()
   }
 
-  private startDescidingBehaviour () {
+  private startDescidingBehaviour (): void {
     // Iniciando decisão perpétuo
     this._decisionIntervalId = setInterval(() => {
-      const decision = this.decideBehaviour()
-      this._targetShip = decision.ship
-      this.behaviour = decision.behaviour
+      this.decideBehaviour()
     }, this._decisionFrequency)
   }
 
-  private stopDecindingBehaviour () {
+  private stopDecindingBehaviour (): void {
     clearInterval(this._decisionIntervalId)
   }
 
-  private stopMovingShip () {
+  private stopMovingShip (): void {
     cancelAnimationFrame(this._rafId)
   }
 
-  private decideBehaviour (): Decision {
-    // Determinando as variáveis de retorno
-    const decision: Decision = {
-      behaviour: undefined,
-      ship: undefined
-    }
-
+  private decideBehaviour (): void {
     // Verificando se existem inimigos
-    if (this.enemies.length == 0) {
-      return { behaviour: Behaviours.PEACEFULL, ship: undefined }
+    if (this.enemies.length === 0) {
+      this.behaviour = Behaviours.PEACEFULL
+      this._targetShip = undefined
+      return
     }
 
     // Levantando as naves inimigas
@@ -147,20 +138,20 @@ export default class Bot extends Player {
     // Verificando tamanho de vetores de mira.
     // Quanto menor, mais perigoso
     let index = 0
-    let minLength = aimVectors[0] != undefined ? aimVectors[0].length() : Infinity
+    let minLength = aimVectors[0] !== undefined ? aimVectors[0].length() : Infinity
     for (let i = 0; i < aimVectors.length; i++) {
-      const length = aimVectors[i] != undefined ? aimVectors[i].length() : Infinity
-      if (length < minLength) {
+      const length = aimVectors[i] !== undefined ? aimVectors[i]?.length() : Infinity
+      if ((length as number) < minLength) {
         index = i
-        minLength = length
+        minLength = (length as number)
       }
     }
 
     // Verificando se a menor distância é menor que o tolerável
     if (minLength < this._minimunAimingDistance) {
-      decision.behaviour = Behaviours.FLEE
-      decision.ship = enemyShips[index]
-      return decision
+      this.behaviour = Behaviours.FLEE
+      this._targetShip = enemyShips[index]
+      return
     }
 
     // Distâncias entre as naves inimigas e a própria nave
@@ -168,7 +159,6 @@ export default class Bot extends Player {
       (previous, current, currentIndex) => {
         const previousDistance = previous.ship.position.distanceTo(this.ship.position)
         const currentDistance = current.position.distanceTo(this.ship.position)
-
         if (currentDistance <= previousDistance) {
           return { ship: enemyShips[currentIndex], distance: currentDistance }
         } else {
@@ -182,9 +172,11 @@ export default class Bot extends Player {
     // Se a menor distância entre a própria nave e a nave inimiga for menor que o alcance de ataque, atacar!
     // Caso contrário, perseguir
     if (distance <= this.ship.attackRange) {
-      return { behaviour: Behaviours.ATTACK, ship: closestShip }
+      this.behaviour = Behaviours.ATTACK
+      this._targetShip = closestShip
     } else {
-      return { behaviour: Behaviours.CHASE, ship: closestShip }
+      this.behaviour = Behaviours.CHASE
+      this._targetShip = closestShip
     }
   }
 }

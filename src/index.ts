@@ -1,5 +1,9 @@
 // Importando estilo
 import './styles/style.scss'
+import Hall from './game-components/Hall/Hall'
+
+Hall.connect(document.getElementById('hall') as HTMLElement)
+
 /*
 // Imports
 import Game from "./game-components/Game/Game";

@@ -1,4 +1,4 @@
-import { BoxGeometry, MeshBasicMaterial, Mesh, Vector3, Group, Event, Ray, Raycaster, Object3D } from 'three'
+import { BoxGeometry, MeshBasicMaterial, Mesh, Vector3, Raycaster, Object3D } from 'three'
 import Ship from '../Ship/Ship'
 import Game from '../Game/Game'
 import Damageble from '../Damageble/Damageble'
@@ -41,13 +41,13 @@ export default class Shot extends Object3D {
     this.move()
   }
 
-  drawHitBox () {
+  drawHitBox (): void {
     const material = new MeshBasicMaterial({ color: 0xff0000 })
     this._hitboxMesh = new Mesh(this.hitbox, material)
     this.add(this._hitboxMesh)
   }
 
-  move () {
+  move (): void {
     this._animationFrameId = requestAnimationFrame(() => { this.move() })
     if (this._remainingDistance > 0) {
       this.translateOnAxis(this._direction, this._speed)
@@ -59,7 +59,7 @@ export default class Shot extends Object3D {
     }
   }
 
-  private checkHit () {
+  private checkHit (): void {
     if (this.parent != null) {
       const origin: Vector3 = this.position.clone()
 
@@ -71,12 +71,12 @@ export default class Shot extends Object3D {
           // Verificando se a colisão foi contra algo danificável
           const damageble = this.damagebleParent(intersections[0].object)
 
-          if (damageble != undefined) {
+          if (damageble !== undefined) {
             // Identificando o ponto de colisão
             const fi = intersections[0].point;
 
             // Adicionando spinningCube no ponto de colisão
-            (<Game>(this._ownerShip.parent)).addSpiningCube(fi.x, fi.y, fi.z)
+            ((this._ownerShip.parent as Game)).addSpiningCube(fi.x, fi.y, fi.z)
 
             // Causando dano
             damageble.getDamage(this._demage)
@@ -92,9 +92,9 @@ export default class Shot extends Object3D {
     }
   }
 
-  private damagebleParent (obj: Object3D): Damageble {
-    if (this.isDamageble(obj)) { return <Damageble>obj };
-    if (obj.parent == null || obj.parent == undefined) { return undefined };
+  private damagebleParent (obj: Object3D): Damageble | undefined {
+    if (this.isDamageble(obj)) { return obj as Damageble };
+    if (obj.parent == null || obj.parent === undefined) { return undefined };
     return this.damagebleParent(obj.parent)
   }
 

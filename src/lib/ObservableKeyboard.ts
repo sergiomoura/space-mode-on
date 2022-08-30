@@ -14,19 +14,20 @@ export const ObservableKeyboard = merge(
       const keyPosition = pressedKeys.indexOf(evt.code)
       const keyIsPressed: boolean = keyPosition > -1
 
-      if (evt.type == 'keypress' && keyIsPressed) {
+      if (evt.type === 'keypress' && keyIsPressed) {
         return false
       }
 
-      if (evt.type == 'keypress' && !keyIsPressed) {
+      if (evt.type === 'keypress' && !keyIsPressed) {
         pressedKeys.push(evt.code)
         return true
       }
 
-      if (evt.type == 'keyup') {
+      if (evt.type === 'keyup') {
         pressedKeys.splice(keyPosition, 1)
         return true
       }
+      return false
     }
   ),
   map(

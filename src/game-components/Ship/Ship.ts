@@ -130,7 +130,7 @@ export default class Ship extends Group implements Damageble {
     return this._life
   }
 
-  public getDamage (damage: number) {
+  public getDamage (damage: number): void {
     this._life -= damage
     this.dispatchEvent({ type: 'gotDamage', damage })
     if (this._life <= 0) {
@@ -147,7 +147,7 @@ export default class Ship extends Group implements Damageble {
     cancelAnimationFrame(this._rafId)
   }
 
-  private move () {
+  private move (): void {
     // Iniciando movimento perpétuo
     this._rafId = requestAnimationFrame(() => {
       this.move()
@@ -171,13 +171,11 @@ export default class Ship extends Group implements Damageble {
     this.translateOnAxis(this._left, this._lSpeed)
   }
 
-  drawHitBox () {
+  drawHitBox (): void {
     // Limpando o objeto caso exista algo nele
-    if (this._hitBoxMesh) {
-      (<Material> this._hitBoxMesh.material).dispose()
-      this._hitBoxMesh.geometry.dispose()
-      this.remove(this._hitBoxMesh)
-    }
+    (this._hitBoxMesh.material as Material).dispose()
+    this._hitBoxMesh.geometry.dispose()
+    this.remove(this._hitBoxMesh)
 
     const material = new MeshPhongMaterial({ color: this._color })
     material.opacity = 0.5
@@ -215,55 +213,55 @@ export default class Ship extends Group implements Damageble {
     return this._dashing
   }
 
-  public startMovingForward () {
+  public startMovingForward (): void {
     if (!this._dashing) {
       this._fwAcceleration = this._defaults.fwAcceleration
       this._fwDeacceleration = 0
     }
   }
 
-  public stopMovingForward () {
+  public stopMovingForward (): void {
     if (!this._dashing) {
       this._fwDeacceleration = this._defaults.fwDeacceleration
       this._fwAcceleration = 0
     }
   }
 
-  public startMovingBackwards () {
+  public startMovingBackwards (): void {
     if (!this._dashing) {
       this._bwAcceleration = this._defaults.bwAcceleration
       this._bwDeacceleration = 0
     }
   }
 
-  public stopMovingBackwards () {
+  public stopMovingBackwards (): void {
     if (!this._dashing) {
       this._bwDeacceleration = this._defaults.bwDeacceleration
       this._bwAcceleration = 0
     }
   }
 
-  public startMovingRight () {
+  public startMovingRight (): void {
     this._rAcceleration = this._defaults.rAcceleration
     this._rDeacceleration = 0
   }
 
-  public stopMovingRight () {
+  public stopMovingRight (): void {
     this._rDeacceleration = this._defaults.rDeacceleration
     this._rAcceleration = 0
   }
 
-  public startMovingLeft () {
+  public startMovingLeft (): void {
     this._lAcceleration = this._defaults.lAcceleration
     this._lDeacceleration = 0
   }
 
-  public stopMovingLeft () {
+  public stopMovingLeft (): void {
     this._lDeacceleration = this._defaults.lDeacceleration
     this._lAcceleration = 0
   }
 
-  public pointTo (x: number, y: number, pointingSpeed: number = 0.002) {
+  public pointTo (x: number, y: number, pointingSpeed: number = 0.002): void {
     _euler.setFromQuaternion(this.quaternion)
 
     _euler.y -= x * pointingSpeed * this._defaults.pointingSpeed
@@ -274,26 +272,30 @@ export default class Ship extends Group implements Damageble {
     this.quaternion.setFromEuler(_euler)
   }
 
-  public dash () {
+  public dash (): void {
     if (!this._dashing && this._dashPills.length > 0) {
       const dashPill = this._dashPills.pop()
-      this._dashing = true
 
-      // Determinando a nova velocidade máxima
-      this._fwMaxSpeed = dashPill.speed
+      // Verificando se tem dashPill
+      if (dashPill !== undefined) {
+        this._dashing = true
 
-      // Determinando a nova aceleração
-      this._fwAcceleration = dashPill.acceleration
-      this._fwDeacceleration = 0
+        // Determinando a nova velocidade máxima
+        this._fwMaxSpeed = dashPill.speed
 
-      // Determinandoa hora de parar o dash
-      setTimeout(() => {
-        this.undash()
-      }, dashPill.duration)
+        // Determinando a nova aceleração
+        this._fwAcceleration = dashPill.acceleration
+        this._fwDeacceleration = 0
+
+        // Determinandoa hora de parar o dash
+        setTimeout(() => {
+          this.undash()
+        }, dashPill.duration)
+      }
     }
   }
 
-  public undash () {
+  public undash (): void {
     // Marcando a flag para false
     this._dashing = false
 
@@ -305,21 +307,23 @@ export default class Ship extends Group implements Damageble {
     this._fwDeacceleration = this._defaults.fwDeacceleration
   }
 
-  public shoot () {
+  public shoot (): void {
     const velocity = this._direction.clone().multiplyScalar(1)
     const demage = 10
     const shot: Shot = new Shot(velocity, demage, this._attackRange, this)
     shot.applyMatrix4(this.matrix)
-    this.parent.add(shot)
-    this.dispatchEvent({ type: 'shoot', shot })
+    if (this.parent !== null) {
+      this.parent.add(shot)
+      this.dispatchEvent({ type: 'shoot', shot })
+    }
   }
 
-  public drawDirection () {
+  public drawDirection (): void {
     const helper = new ArrowHelper(this._direction, new Vector3(), 5, 0x333333)
     this.add(helper)
   }
 
-  public drawLocalAxis () {
+  public drawLocalAxis (): void {
     const helperX = new ArrowHelper(new Vector3(1, 0, 0), new Vector3(), 1, 0x0000FF)
     const helperY = new ArrowHelper(new Vector3(0, 1, 0), new Vector3(), 1, 0xFFFF00)
     const helperZ = new ArrowHelper(new Vector3(0, 0, 1), new Vector3(), 1, 0xFF0000)
@@ -327,7 +331,7 @@ export default class Ship extends Group implements Damageble {
     this.add(helperX, helperY, helperZ)
   }
 
-  public getAimVector (s: Ship) {
+  public getAimVector (s: Ship): Vector3 | undefined {
     // Calculando vetor normal ao plano que coincide com a direção da nave
     const normal = this.getWorldDirection(new Vector3()).multiplyScalar(-1)
 
@@ -336,9 +340,11 @@ export default class Ship extends Group implements Damageble {
 
     // Calculando o vetor distância da nave inimiga a reta da minha trajetória
     // Calcular somente se a nave inimiga estiver a frente da nave.
-    let r: Vector3
+    let r: Vector3 | undefined
     if (normal.dot(d) > 0) {
       r = d.clone().projectOnVector(normal).sub(d)
+    } else {
+      r = undefined
     }
 
     /* ================= BLOCO QUE DESENHA OS VETORES ENVOLVIDOS NO CÁLCULO ==================  *
@@ -357,12 +363,12 @@ export default class Ship extends Group implements Damageble {
     return r
   }
 
-  public getAimVectors () {
+  public getAimVectors (): Array<(Vector3 | undefined)> {
     const enemyShips = this.player.enemies.map(e => e.ship)
     return enemyShips.map(s => this.getAimVector(s))
   }
 
-  public get aimVectorsOnMe (): Vector3[] {
+  public get aimVectorsOnMe (): Array<(Vector3 | undefined)> {
     const enemyShips = this.player.enemies.map(e => e.ship)
     return enemyShips.map(s => s.getAimVector(this))
   }
