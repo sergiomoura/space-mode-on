@@ -1,17 +1,16 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const path = require('path');
-
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path')
 
 module.exports = {
-  
+
   plugins: [
-    new HtmlWebpackPlugin({template: './src/index.html'})
+    new HtmlWebpackPlugin({ template: './src/index.html' })
   ],
   mode: 'development',
   entry: './src/index.ts',
   devtool: 'inline-source-map',
   devServer: {
-    static: './dist',
+    static: './dist'
   },
   module: {
     rules: [
@@ -22,8 +21,8 @@ module.exports = {
       },
       {
         test: /\.(s(a|c)ss)$/,
-        use: ['style-loader','css-loader','sass-loader']
-     }
+        use: ['style-loader', 'css-loader', 'sass-loader']
+      }
     ]
   },
   resolve: {
@@ -33,4 +32,4 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve('../back/public')
   }
-};
+}
