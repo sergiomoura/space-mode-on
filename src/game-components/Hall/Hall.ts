@@ -8,6 +8,7 @@ class Hall {
   private readonly btStart: HTMLButtonElement;
   private readonly divHall: HTMLDivElement;
   private readonly formGameSettings: HTMLFormElement;
+  private readonly transitionDuration: number = 0.3;
 
   constructor () {
 
@@ -18,7 +19,8 @@ class Hall {
     this.btStart = <HTMLButtonElement> document.getElementById('start');
     this.divHall = <HTMLDivElement> document.getElementById('hall');
     this.formGameSettings = <HTMLFormElement> document.getElementById('gameSettings');
-
+    this.divHall.style.transition = `opacity linear ${this.transitionDuration}s`;
+  
   }
 
   public connect (): void {
@@ -29,8 +31,8 @@ class Hall {
       evt => {
 
         evt.preventDefault();
-        this.createGame();
         this.hideHall();
+        this.createGame();
       
       }
     );
@@ -58,7 +60,11 @@ class Hall {
 
   private hideHall (): void {
 
-    this.divHall.remove();
+    this.divHall.style.opacity = '0';
+    this.divHall.addEventListener(
+      'transitionend',
+      () => { this.divHall.style.display = 'none'; }
+    );
   
   }
 
