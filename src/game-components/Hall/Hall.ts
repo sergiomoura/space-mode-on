@@ -7,6 +7,8 @@ class Hall {
   private readonly inputPlayerName: HTMLInputElement;
   private readonly btStart: HTMLButtonElement;
   private readonly divHall: HTMLDivElement;
+  private readonly formGameSettings: HTMLFormElement;
+
   constructor () {
 
     // Capturando elementos
@@ -15,20 +17,27 @@ class Hall {
     this.inputPlayerName = <HTMLInputElement> document.getElementById('playerName');
     this.btStart = <HTMLButtonElement> document.getElementById('start');
     this.divHall = <HTMLDivElement> document.getElementById('hall');
+    this.formGameSettings = <HTMLFormElement> document.getElementById('gameSettings');
 
   }
 
   public connect (): void {
      
     // Associando eventos
-    this.btStart.addEventListener(
-      'click',
-      () => {
-        
+    this.formGameSettings.addEventListener(
+      'submit',
+      evt => {
+
+        evt.preventDefault();
         this.createGame();
         this.hideHall();
       
       }
+    );
+
+    window.addEventListener(
+      'load',
+      () => { this.inputPlayerName.focus(); }
     );
 
   }
