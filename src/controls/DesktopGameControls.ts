@@ -1,4 +1,4 @@
-import Game from '../game-components/Game/Game'
+import Game from '../game-components/Game/Game';
 
 enum PossibleKeys {
   ArrowLeft = 'ArrowLeft',
@@ -6,24 +6,36 @@ enum PossibleKeys {
 }
 
 class DesktopGameControls {
+
   constructor (private readonly game: Game) {
-    document.body.addEventListener('keydown', evt => { this.onKeyDown(evt) })
+
+    document.body.addEventListener('keydown', evt => { this.onKeyDown(evt); });
+  
   }
 
   private readonly keyMethods = {
     ArrowLeft: () => {
-      this.game.switchToPreviousCamera()
+
+      this.game.switchToPreviousCamera();
+    
     },
     ArrowRight: () => {
-      this.game.switchNextCamera()
+
+      this.game.switchNextCamera();
+    
     }
-  }
+  };
 
   onKeyDown (evt: KeyboardEvent) {
+
     if (evt.ctrlKey && this.keyMethods[<PossibleKeys>evt.key]) {
-      this.keyMethods[<PossibleKeys>evt.key]()
+
+      this.keyMethods[<PossibleKeys>evt.key]();
+    
     }
+  
   }
+
 }
 
-export default DesktopGameControls
+export default DesktopGameControls;

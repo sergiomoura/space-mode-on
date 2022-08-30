@@ -10,11 +10,11 @@ class Hall {
   constructor () {
 
     // Capturando elementos
-    this.selectEnimies = <HTMLSelectElement>document.getElementById('nEnemies');
-    this.selectFriends = <HTMLSelectElement>document.getElementById('nFriends');
-    this.inputPlayerName = <HTMLInputElement>document.getElementById('playerName');
-    this.btStart = <HTMLButtonElement>document.getElementById('start');
-    this.divHall = <HTMLDivElement>document.getElementById('hall');
+    this.selectEnimies = <HTMLSelectElement> document.getElementById('nEnemies');
+    this.selectFriends = <HTMLSelectElement> document.getElementById('nFriends');
+    this.inputPlayerName = <HTMLInputElement> document.getElementById('playerName');
+    this.btStart = <HTMLButtonElement> document.getElementById('start');
+    this.divHall = <HTMLDivElement> document.getElementById('hall');
 
   }
 
@@ -36,8 +36,8 @@ class Hall {
   private createGame (): void {
 
     // Recuperando os canvas
-    const mainCanvas = <HTMLCanvasElement>document.getElementById('mainCanvas');
-    const auxCanvas = <HTMLCanvasElement>document.getElementById('auxCanvas');
+    const mainCanvas = <HTMLCanvasElement> document.getElementById('mainCanvas');
+    const auxCanvas = <HTMLCanvasElement> document.getElementById('auxCanvas');
 
     // Criando o jogo
     const game = new Game(

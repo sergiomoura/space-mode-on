@@ -1,6 +1,6 @@
-type DamageFunction = (damage: number) => void
+type DamageFunction = (damage: number) => void;
 
-type DieFunction = () => void
+type DieFunction = () => void;
 
 export default interface Damageble {
   life: number

@@ -1,4 +1,5 @@
 export default class DashPill {
+
   constructor (
     private readonly _duration: number,
     private readonly _speed: number,
@@ -6,14 +7,21 @@ export default class DashPill {
   ) {}
 
   public get speed (): number {
-    return this._speed
+
+    return this._speed;
+  
   }
 
   public get duration (): number {
-    return this._duration
+
+    return this._duration;
+  
   }
 
   public get acceleration (): number {
-    return this._acceleration
+
+    return this._acceleration;
+  
   }
+
 }
