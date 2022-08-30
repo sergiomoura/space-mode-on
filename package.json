@@ -1,22 +1,30 @@
 {
-  "name": "space-mode-on",
-  "version": "0.0.0",
-  "private": true,
-  "workspaces": [
-    "front",
-    "back"
-  ],
+  "name": "front-space-mode-on",
+  "version": "1.0.0",
+  "description": "🚀 Space Mode On",
+  "main": "index.js",
   "scripts": {
-    "front:dev": "yarn --cwd ./front/ webpack-dev-server --open --allowed-hosts 192.168.*.*"
+    "dev": "webpack-dev-server --open --allowed-hosts 192.168.*.*",
+    "build": "webpack"
   },
-  "dependencies": {},
+  "author": "Sérgio Moura",
+  "license": "MIT",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "eslint": "^8.0.1",
-    "eslint-config-standard-with-typescript": "^22.0.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-n": "^15.0.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "typescript": "*"
+    "@types/three": "^0.140.0",
+    "css-loader": "^6.7.1",
+    "html-webpack-plugin": "^5.5.0",
+    "node-sass": "^7.0.1",
+    "sass-loader": "^13.0.0",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.3.0",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.0"
+  },
+  "dependencies": {
+    "rxjs": "^7.5.5",
+    "three": "^0.140.2"
   }
 }
