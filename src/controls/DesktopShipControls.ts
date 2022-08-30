@@ -58,13 +58,7 @@ class DesktopShipControls extends EventDispatcher {
   onMouseMove (evt: MouseEvent): void {
 
     if (!this.isLocked) return;
-
-    // TODO: Não sei resolver isso aqui sem mouse para testar
-    const movementX = evt.movementX || 0;
-    const movementY = evt.movementY || 0;
-
-    this.ship.pointTo(movementX, movementY);
-
+    this.ship.pointTo(evt.movementX, evt.movementY);
     this.dispatchEvent(_changeEvent);
   
   }
