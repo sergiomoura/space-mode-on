@@ -30,8 +30,8 @@ export default class Game extends Scene {
 
   private readonly _mainRenderer: WebGLRenderer;
   private readonly _auxRenderer: WebGLRenderer;
-  private readonly _shipControls: EventDispatcher;
-  private readonly _gameControls: DesktopGameControls;
+  private _shipControls: EventDispatcher;
+  private _gameControls: DesktopGameControls;
   private readonly _cameras: PerspectiveCamera[] = Cameras;
   private _showingCamera: PerspectiveCamera = this._cameras[0];
   private readonly _mainPlayer: Player;
@@ -40,14 +40,17 @@ export default class Game extends Scene {
   public get ships (): Ship[] { return this._ships; };
 
   constructor (
-    mainCanvas: HTMLCanvasElement,
-    auxCanvas: HTMLCanvasElement,
     playerName: string,
     nEnimies: number,
-    nFriends: number
+    nFriends: number,
+    demoMode: boolean = false
   ) {
     
     super();
+
+    // Recuperando os canvas
+    const mainCanvas = <HTMLCanvasElement> document.getElementById('mainCanvas');
+    const auxCanvas = <HTMLCanvasElement> document.getElementById('auxCanvas');
 
     // Criando Jogador Principal
     this._mainPlayer = new User(playerName);
@@ -85,18 +88,17 @@ export default class Game extends Scene {
     // Criando o renderer auxiliar
     this._auxRenderer = new WebGLRenderer({ antialias: false, canvas: auxCanvas });
 
-    // Verificando o tipo de dispositivo para definir os controles.
-    switch (GetDeviceType()) {
+    // Verificando se está em modo demo ou não
+    if (demoMode) {
 
-      case DeviceType.TABLET:
-      case DeviceType.MOBILE:
-        this._shipControls = new MobileShipControls(this._mainPlayer.ship);
-        break;
-      default:
-        this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this._mainRenderer.domElement);
-        this._gameControls = new DesktopGameControls(this);
+      // Está em modo demo. Escondendo mini mapa
+      auxCanvas.style.display = 'none';
+      
+    } else {
 
-        break;
+      // Não está em demo. Conectando controles
+      this.connectControls();
+      auxCanvas.style.display = 'block';
     
     }
 
@@ -135,6 +137,26 @@ export default class Game extends Scene {
 
     // Renderizando continuamente
     this.renderContinuous();
+  
+  }
+
+  public connectControls (): void {
+
+    // Verificando o tipo de dispositivo para definir os controles.
+    switch (GetDeviceType()) {
+  
+      case DeviceType.TABLET:
+      case DeviceType.MOBILE:
+        this._shipControls = new MobileShipControls(this._mainPlayer.ship);
+        break;
+      default:
+        this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this._mainRenderer.domElement);
+        (<DesktopShipControls> this._shipControls).lock();
+        this._gameControls = new DesktopGameControls(this);
+
+        break;
+    
+    }
   
   }
 

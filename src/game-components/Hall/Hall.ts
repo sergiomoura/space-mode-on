@@ -44,21 +44,15 @@ class Hall {
 
   private createGame (): void {
 
-    // Recuperando os canvas
-    const mainCanvas = <HTMLCanvasElement> document.getElementById('mainCanvas');
-    const auxCanvas = <HTMLCanvasElement> document.getElementById('auxCanvas');
-
     // Criando o jogo
     const game = new Game(
-      mainCanvas,
-      auxCanvas,
       this.inputPlayerName.value,
       Number(this.selectEnemies.value),
       Number(this.selectFriends.value)
     );
 
-    // Imprimindo mensagem no console
-    console.log(`Jogo começou com ${game.ships.length} naves.`);
+    // Conectando controles do jogo
+    game.connectControls();
   
   }
 
