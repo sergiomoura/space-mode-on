@@ -10,7 +10,8 @@ import {
   BufferGeometry,
   Line,
   ColorRepresentation,
-  ArrowHelper
+  ArrowHelper,
+  EventDispatcher
 } from 'three'
 import { GetDeviceType, DeviceType } from '../../lib/GetDeviceType'
 
@@ -28,7 +29,7 @@ import User from '../User/User'
 export default class Game extends Scene {
   private readonly _mainRenderer: WebGLRenderer
   private readonly _auxRenderer: WebGLRenderer
-  private readonly _shipControls: DesktopShipControls
+  private readonly _shipControls: EventDispatcher
   private readonly _gameControls: DesktopGameControls
   private readonly _cameras: PerspectiveCamera[] = Cameras
   private _showingCamera: PerspectiveCamera = this._cameras[0]
@@ -82,8 +83,7 @@ export default class Game extends Scene {
     switch (GetDeviceType()) {
       case DeviceType.TABLET:
       case DeviceType.MOBILE:
-        new MobileShipControls(this._mainPlayer.ship)
-        // return;
+        this._shipControls = new MobileShipControls(this._mainPlayer.ship)
         break
       default:
         this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this._mainRenderer.domElement)
@@ -127,37 +127,38 @@ export default class Game extends Scene {
     this.renderContinuous()
   }
 
-  public setSize (height: number, width: number) {
+  public setSize (height: number, width: number): void {
     this._mainRenderer.setSize(width, height)
   }
 
-  public addShip (ship: Ship) {
+  public addShip (ship: Ship): void {
     this.add(ship)
     this._ships.push(ship)
     this.handleShipEvents(ship)
   }
 
-  private handleShipEvents (ship: Ship) {
+  private handleShipEvents (ship: Ship): void {
     // ship.addEventListener('shoot', this.onShipShoot);
     ship.addEventListener('gotDamage', this.onShipGotDamage)
     ship.addEventListener('died', this.onShipDeath)
   }
 
-  private onShipDeath (evt: Event & {type: 'died'} & {target: Ship}) {
+  private onShipDeath (evt: Event & {type: 'died'} & {target: Ship}): void {
     console.log(`${evt.target.name} foi destruída.`)
     evt.target.player.enemies.forEach(
       e => {
         e.enemies.splice(e.enemies.indexOf(evt.target.player), 1)
       }
     )
-    delete evt.target
+    // delete evt.target
+    // TODO: Descobrir como remover a nave...
   }
 
-  private onShipGotDamage (evt: Event & {type: 'gotDamage'} & {target: Ship}) {
+  private onShipGotDamage (evt: Event & {type: 'gotDamage'} & {target: Ship}): void {
     console.log(`${evt.target.name} sofreu dano de ___.`) // TODO: mostrar o dano sofrido
   }
 
-  public addSpiningCube (x: number = 0, y: number = 0, z: number = 0, color: ColorRepresentation = 0xff0000) {
+  public addSpiningCube (x: number = 0, y: number = 0, z: number = 0, color: ColorRepresentation = 0xff0000): void {
     const geometry = new BoxGeometry(0.1, 0.1, 0.1)
     const material = new MeshPhongMaterial({ color })
     material.opacity = 0.5
@@ -168,7 +169,7 @@ export default class Game extends Scene {
     cube.receiveShadow = true
     this.add(cube)
 
-    const animate = () => {
+    const animate = (): void => {
       requestAnimationFrame(animate)
       cube.rotation.x += 0.03
       cube.rotation.y += 0.06
@@ -178,7 +179,7 @@ export default class Game extends Scene {
     animate()
   }
 
-  public drawAxis (size: number) {
+  public drawAxis (size: number): void {
     const helperX = new ArrowHelper(new Vector3(1, 0, 0), new Vector3(), size, 0x0000FF)
     const helperY = new ArrowHelper(new Vector3(0, 1, 0), new Vector3(), size, 0xFFFF00)
     const helperZ = new ArrowHelper(new Vector3(0, 0, 1), new Vector3(), size, 0xFF0000)
@@ -186,18 +187,16 @@ export default class Game extends Scene {
     this.add(helperX, helperY, helperZ)
   }
 
-  public drawLine (color: ColorRepresentation, ...points: Vector3[]) {
+  public drawLine (color: ColorRepresentation, ...points: Vector3[]): void {
     const material = new LineBasicMaterial({ color })
 
-    let geometry: BufferGeometry
-    let line: Line
+    const geometry: BufferGeometry = new BufferGeometry().setFromPoints(points)
+    const line: Line = new Line(geometry, material)
 
-    geometry = new BufferGeometry().setFromPoints(points)
-    line = new Line(geometry, material)
     this.add(line)
   }
 
-  public drawGrid (size: number, step: number) {
+  public drawGrid (size: number, step: number): void {
     for (let i = -size; i <= size; i += step) {
       this.drawLine(0x003300, new Vector3(-size, i, 0), new Vector3(size, i, 0))
       this.drawLine(0x003300, new Vector3(i, -size, 0), new Vector3(i, size, 0))
@@ -219,24 +218,24 @@ export default class Game extends Scene {
     }
   }
 
-  public renderContinuous () {
+  public renderContinuous (): void {
     requestAnimationFrame(() => { this.renderContinuous() })
-    this._mainRenderer.render(this, (<FirstPersonShip> this._mainPlayer.ship).camera)
+    this._mainRenderer.render(this, (this._mainPlayer.ship as FirstPersonShip).camera)
     this._auxRenderer.render(this, this._showingCamera)
   }
 
-  switchNextCamera () {
+  switchNextCamera (): void {
     const pos = this._cameras.indexOf(this._showingCamera)
-    if (pos == this._cameras.length - 1) {
+    if (pos === this._cameras.length - 1) {
       this._showingCamera = this._cameras[0]
     } else {
       this._showingCamera = this._cameras[pos + 1]
     }
   }
 
-  switchToPreviousCamera () {
+  switchToPreviousCamera (): void {
     const pos = this._cameras.indexOf(this._showingCamera)
-    if (pos == 0) {
+    if (pos === 0) {
       this._showingCamera = this._cameras[this._cameras.length - 1]
     } else {
       this._showingCamera = this._cameras[pos - 1]

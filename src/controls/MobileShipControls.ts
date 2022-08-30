@@ -1,10 +1,11 @@
+import { EventDispatcher } from 'three'
 import Ship from '../game-components/Ship/Ship'
 
 const frac = Math.PI / 8
 const MaxTanDireita = Math.tan(3 * frac)
 const MinTanDireita = -Math.tan(3 * frac)
 
-class MobileShipControls {
+class MobileShipControls extends EventDispatcher{
   private readonly _directionalScreen: HTMLDivElement
   private readonly _btShooter: HTMLButtonElement
   private readonly _btDasher: HTMLButtonElement
@@ -12,6 +13,7 @@ class MobileShipControls {
   private _previousTouch: Touch
 
   constructor (private readonly _ship: Ship) {
+    super()
     this._directionalScreen = <HTMLDivElement>document.getElementById('mobile-controls')
     this._btShooter = <HTMLButtonElement>document.getElementById('shooter')
     this._btDasher = <HTMLButtonElement>document.getElementById('dasher')
