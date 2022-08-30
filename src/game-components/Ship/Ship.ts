@@ -1,13 +1,14 @@
-import { BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation, ArrowHelper } from 'three'
-import Damageble from '../Damageble/Damageble'
-import DashPill from '../DashPill/DashPill'
-import Player from '../Player/Player'
-import Shot from '../Shot/Shot'
+import { BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation, ArrowHelper } from 'three';
+import Damageble from '../Damageble/Damageble';
+import DashPill from '../DashPill/DashPill';
+import Player from '../Player/Player';
+import Shot from '../Shot/Shot';
 
-const _euler = new Euler(0, 0, 0, 'YXZ')
-const _PI_2 = Math.PI / 2
+const _euler = new Euler(0, 0, 0, 'YXZ');
+const _PI_2 = Math.PI / 2;
 
 export default class Ship extends Group implements Damageble {
+
   private readonly _defaults = {
     fwMaxSpeed: 0.1,
     bwMaxSpeed: 0.1,
@@ -25,173 +26,198 @@ export default class Ship extends Group implements Damageble {
     maxPolarAngle: Math.PI,
     pointingSpeed: 1,
     attakRange: 20
-  }
+  };
 
-  private _attackRange: number = this._defaults.attakRange
-  private _rafId: number
-  public set attackRange (value: number) { this._attackRange = value }
-  public get attackRange (): number { return this._attackRange }
+  private _attackRange: number = this._defaults.attakRange;
+  private _rafId: number;
+  public set attackRange (value: number) { this._attackRange = value; }
+  public get attackRange (): number { return this._attackRange; }
 
-  private readonly _hitBoxGeometry: BoxGeometry
-  private _hitBoxMesh: Mesh
-  private _life: number = 50
+  private readonly _hitBoxGeometry: BoxGeometry;
+  private _hitBoxMesh: Mesh;
+  private _life: number = 50;
 
-  private readonly _direction: Vector3 = new Vector3(0, 0, 0)
+  private readonly _direction: Vector3 = new Vector3(0, 0, 0);
   public get direction (): Vector3 {
-    return this.localToWorld(new Vector3(0, 0, -1)).sub(this.position)
+
+    return this.localToWorld(new Vector3(0, 0, -1)).sub(this.position);
+  
   }
 
-  private readonly _oposite: Vector3 = new Vector3(0, 0, 0)
-  private readonly _right: Vector3 = new Vector3(0, 0, 0)
-  private readonly _left: Vector3 = new Vector3(0, 0, 0)
+  private readonly _oposite: Vector3 = new Vector3(0, 0, 0);
+  private readonly _right: Vector3 = new Vector3(0, 0, 0);
+  private readonly _left: Vector3 = new Vector3(0, 0, 0);
 
-  private _fwSpeed: number = 0
-  private _bwSpeed: number = 0
-  private _rSpeed: number = 0
-  private _lSpeed: number = 0
+  private _fwSpeed: number = 0;
+  private _bwSpeed: number = 0;
+  private _rSpeed: number = 0;
+  private _lSpeed: number = 0;
 
-  private _fwAcceleration: number = 0
-  private _bwAcceleration: number = 0
-  private _rAcceleration: number = 0
-  private _lAcceleration: number = 0
+  private _fwAcceleration: number = 0;
+  private _bwAcceleration: number = 0;
+  private _rAcceleration: number = 0;
+  private _lAcceleration: number = 0;
 
-  private _fwDeacceleration: number = 0
-  private _bwDeacceleration: number = 0
-  private _rDeacceleration: number = 0
-  private _lDeacceleration: number = 0
+  private _fwDeacceleration: number = 0;
+  private _bwDeacceleration: number = 0;
+  private _rDeacceleration: number = 0;
+  private _lDeacceleration: number = 0;
 
-  private _fwMaxSpeed: number
-  private readonly _bwMaxSpeed: number
-  private readonly _rMaxSpeed: number
-  private readonly _lMaxSpeed: number
+  private _fwMaxSpeed: number;
+  private readonly _bwMaxSpeed: number;
+  private readonly _rMaxSpeed: number;
+  private readonly _lMaxSpeed: number;
 
-  private _color: ColorRepresentation
+  private _color: ColorRepresentation;
   public get color (): ColorRepresentation {
-    return this._color
+
+    return this._color;
+  
   }
 
   public set color (value: ColorRepresentation) {
-    this._color = value
-    this.drawHitBox()
+
+    this._color = value;
+    this.drawHitBox();
+  
   }
 
-  private _player: Player
-  public get player (): Player { return this._player }
-  public set player (value: Player) { this._player = value }
+  private _player: Player;
+  public get player (): Player { return this._player; }
+  public set player (value: Player) { this._player = value; }
 
-  private _dashing: boolean = false
+  private _dashing: boolean = false;
   private readonly _dashPills: DashPill[] = [
     new DashPill(5000, 1, 0.1),
     new DashPill(5000, 1, 0.1),
     new DashPill(5000, 1, 0.1),
     new DashPill(5000, 1, 0.1)
-  ]
+  ];
 
   constructor (_color: ColorRepresentation, initiateMoving: boolean = true) {
+
     // Chamando contrutor do pai
-    super()
+    super();
 
     // Definindo a cor
-    this._color = _color
+    this._color = _color;
 
     // Definindo e desenhando hitBox
-    this._hitBoxGeometry = new BoxGeometry(1, 1, 2)
-    this.drawHitBox()
+    this._hitBoxGeometry = new BoxGeometry(1, 1, 2);
+    this.drawHitBox();
 
     // Determinando o vetor da direção da câmera
-    this.getWorldDirection(this._direction).multiplyScalar(-1)
+    this.getWorldDirection(this._direction).multiplyScalar(-1);
 
     // Determinando o vetor oposto à direção da câmera
-    this._oposite = this._direction.clone().multiplyScalar(-1)
+    this._oposite = this._direction.clone().multiplyScalar(-1);
 
     // Determinando o vetor da posição;
-    this.getWorldPosition(this.position)
+    this.getWorldPosition(this.position);
 
     // Determinando vetor para a direita
-    this._right = this.localToWorld(new Vector3(1, 0, 0)).sub(this.position)
+    this._right = this.localToWorld(new Vector3(1, 0, 0)).sub(this.position);
 
     // Determinando o vetor para a esquerda;
-    this._left = this._right.clone().multiplyScalar(-1)
+    this._left = this._right.clone().multiplyScalar(-1);
 
     // Determinando valores padrão
-    this._fwMaxSpeed = this._defaults.fwMaxSpeed
-    this._bwMaxSpeed = this._defaults.bwMaxSpeed
-    this._rMaxSpeed = this._defaults.rMaxSpeed
-    this._lMaxSpeed = this._defaults.lMaxSpeed
+    this._fwMaxSpeed = this._defaults.fwMaxSpeed;
+    this._bwMaxSpeed = this._defaults.bwMaxSpeed;
+    this._rMaxSpeed = this._defaults.rMaxSpeed;
+    this._lMaxSpeed = this._defaults.lMaxSpeed;
 
     // Iniciando movimento perpétuo caso tenha sido construido com
     // initiateMoving true
     if (initiateMoving) {
-      this.move()
+
+      this.move();
+    
     }
+  
   }
 
   public get life (): number {
-    return this._life
+
+    return this._life;
+  
   }
 
   public getDamage (damage: number): void {
-    this._life -= damage
-    this.dispatchEvent({ type: 'gotDamage', damage })
+
+    this._life -= damage;
+    this.dispatchEvent({ type: 'gotDamage', damage });
     if (this._life <= 0) {
-      this.die()
+
+      this.die();
+    
     }
+  
   }
 
   public die (): void {
-    this._hitBoxGeometry.dispose()
-    this._hitBoxMesh.removeFromParent()
-    this.clear()
-    this.removeFromParent()
-    this.dispatchEvent({ type: 'died' })
-    cancelAnimationFrame(this._rafId)
+
+    this._hitBoxGeometry.dispose();
+    this._hitBoxMesh.removeFromParent();
+    this.clear();
+    this.removeFromParent();
+    this.dispatchEvent({ type: 'died' });
+    cancelAnimationFrame(this._rafId);
+  
   }
 
   private move (): void {
+
     // Iniciando movimento perpétuo
     this._rafId = requestAnimationFrame(() => {
-      this.move()
-    })
+
+      this.move();
+    
+    });
 
     // Atualizando velocidade com aceleração
-    if (this._fwSpeed < this._fwMaxSpeed) { this._fwSpeed += this._fwAcceleration }
-    if (this._bwSpeed < this._bwMaxSpeed) { this._bwSpeed += this._bwAcceleration }
-    if (this._rSpeed < this._rMaxSpeed) { this._rSpeed += this._rAcceleration }
-    if (this._lSpeed < this._lMaxSpeed) { this._lSpeed += this._lAcceleration }
+    if (this._fwSpeed < this._fwMaxSpeed) { this._fwSpeed += this._fwAcceleration; }
+    if (this._bwSpeed < this._bwMaxSpeed) { this._bwSpeed += this._bwAcceleration; }
+    if (this._rSpeed < this._rMaxSpeed) { this._rSpeed += this._rAcceleration; }
+    if (this._lSpeed < this._lMaxSpeed) { this._lSpeed += this._lAcceleration; }
 
-    if (this._fwSpeed > 0) { this._fwSpeed -= this._fwDeacceleration }
-    if (this._bwSpeed > 0) { this._bwSpeed -= this._bwDeacceleration }
-    if (this._rSpeed > 0) { this._rSpeed -= this._rDeacceleration }
-    if (this._lSpeed > 0) { this._lSpeed -= this._lDeacceleration }
+    if (this._fwSpeed > 0) { this._fwSpeed -= this._fwDeacceleration; }
+    if (this._bwSpeed > 0) { this._bwSpeed -= this._bwDeacceleration; }
+    if (this._rSpeed > 0) { this._rSpeed -= this._rDeacceleration; }
+    if (this._lSpeed > 0) { this._lSpeed -= this._lDeacceleration; }
 
     // Atualizando posição com velocidade
-    this.translateOnAxis(this._direction, this._fwSpeed)
-    this.translateOnAxis(this._oposite, this._bwSpeed)
-    this.translateOnAxis(this._right, this._rSpeed)
-    this.translateOnAxis(this._left, this._lSpeed)
+    this.translateOnAxis(this._direction, this._fwSpeed);
+    this.translateOnAxis(this._oposite, this._bwSpeed);
+    this.translateOnAxis(this._right, this._rSpeed);
+    this.translateOnAxis(this._left, this._lSpeed);
+  
   }
 
   drawHitBox (): void {
+
     // TODO: Limpando o objeto caso exista algo nele
     // (this._hitBoxMesh.material as Material).dispose()
     // this._hitBoxMesh.geometry.dispose()
     // this.remove(this._hitBoxMesh)
 
-    const material = new MeshPhongMaterial({ color: this._color })
-    material.opacity = 0.5
-    material.transparent = true
-    this._hitBoxMesh = new Mesh(this._hitBoxGeometry, material)
+    const material = new MeshPhongMaterial({ color: this._color });
+    material.opacity = 0.5;
+    material.transparent = true;
+    this._hitBoxMesh = new Mesh(this._hitBoxGeometry, material);
 
-    this._hitBoxMesh.castShadow = true
-    this._hitBoxMesh.receiveShadow = true
+    this._hitBoxMesh.castShadow = true;
+    this._hitBoxMesh.receiveShadow = true;
 
-    this.add(this._hitBoxMesh)
+    this.add(this._hitBoxMesh);
+  
   }
 
   public get velocity (): Vector3 {
-    const result = new Vector3()
-    const resultP1 = new Vector3()
-    const resultP2 = new Vector3()
+
+    const result = new Vector3();
+    const resultP1 = new Vector3();
+    const resultP2 = new Vector3();
 
     result.addVectors(
 
@@ -204,147 +230,199 @@ export default class Ship extends Group implements Damageble {
         this._left.clone().multiplyScalar(this._lSpeed),
         this._right.clone().multiplyScalar(this._rSpeed)
       )
-    )
+    );
 
-    return result.applyEuler(this.rotation)
+    return result.applyEuler(this.rotation);
+  
   }
 
   public get dashing (): boolean {
-    return this._dashing
+
+    return this._dashing;
+  
   }
 
   public startMovingForward (): void {
+
     if (!this._dashing) {
-      this._fwAcceleration = this._defaults.fwAcceleration
-      this._fwDeacceleration = 0
+
+      this._fwAcceleration = this._defaults.fwAcceleration;
+      this._fwDeacceleration = 0;
+    
     }
+  
   }
 
   public stopMovingForward (): void {
+
     if (!this._dashing) {
-      this._fwDeacceleration = this._defaults.fwDeacceleration
-      this._fwAcceleration = 0
+
+      this._fwDeacceleration = this._defaults.fwDeacceleration;
+      this._fwAcceleration = 0;
+    
     }
+  
   }
 
   public startMovingBackwards (): void {
+
     if (!this._dashing) {
-      this._bwAcceleration = this._defaults.bwAcceleration
-      this._bwDeacceleration = 0
+
+      this._bwAcceleration = this._defaults.bwAcceleration;
+      this._bwDeacceleration = 0;
+    
     }
+  
   }
 
   public stopMovingBackwards (): void {
+
     if (!this._dashing) {
-      this._bwDeacceleration = this._defaults.bwDeacceleration
-      this._bwAcceleration = 0
+
+      this._bwDeacceleration = this._defaults.bwDeacceleration;
+      this._bwAcceleration = 0;
+    
     }
+  
   }
 
   public startMovingRight (): void {
-    this._rAcceleration = this._defaults.rAcceleration
-    this._rDeacceleration = 0
+
+    this._rAcceleration = this._defaults.rAcceleration;
+    this._rDeacceleration = 0;
+  
   }
 
   public stopMovingRight (): void {
-    this._rDeacceleration = this._defaults.rDeacceleration
-    this._rAcceleration = 0
+
+    this._rDeacceleration = this._defaults.rDeacceleration;
+    this._rAcceleration = 0;
+  
   }
 
   public startMovingLeft (): void {
-    this._lAcceleration = this._defaults.lAcceleration
-    this._lDeacceleration = 0
+
+    this._lAcceleration = this._defaults.lAcceleration;
+    this._lDeacceleration = 0;
+  
   }
 
   public stopMovingLeft (): void {
-    this._lDeacceleration = this._defaults.lDeacceleration
-    this._lAcceleration = 0
+
+    this._lDeacceleration = this._defaults.lDeacceleration;
+    this._lAcceleration = 0;
+  
   }
 
   public pointTo (x: number, y: number, pointingSpeed: number = 0.002): void {
-    _euler.setFromQuaternion(this.quaternion)
 
-    _euler.y -= x * pointingSpeed * this._defaults.pointingSpeed
-    _euler.x -= y * pointingSpeed * this._defaults.pointingSpeed
+    _euler.setFromQuaternion(this.quaternion);
 
-    _euler.x = Math.max(_PI_2 - this._defaults.maxPolarAngle, Math.min(_PI_2 - this._defaults.minPolarAngle, _euler.x))
+    _euler.y -= x * pointingSpeed * this._defaults.pointingSpeed;
+    _euler.x -= y * pointingSpeed * this._defaults.pointingSpeed;
 
-    this.quaternion.setFromEuler(_euler)
+    _euler.x = Math.max(_PI_2 - this._defaults.maxPolarAngle, Math.min(_PI_2 - this._defaults.minPolarAngle, _euler.x));
+
+    this.quaternion.setFromEuler(_euler);
+  
   }
 
   public dash (): void {
+
     if (!this._dashing && this._dashPills.length > 0) {
-      const dashPill = this._dashPills.pop()
+
+      const dashPill = this._dashPills.pop();
 
       // Verificando se tem dashPill
       if (dashPill !== undefined) {
-        this._dashing = true
+
+        this._dashing = true;
 
         // Determinando a nova velocidade máxima
-        this._fwMaxSpeed = dashPill.speed
+        this._fwMaxSpeed = dashPill.speed;
 
         // Determinando a nova aceleração
-        this._fwAcceleration = dashPill.acceleration
-        this._fwDeacceleration = 0
+        this._fwAcceleration = dashPill.acceleration;
+        this._fwDeacceleration = 0;
 
         // Determinandoa hora de parar o dash
         setTimeout(() => {
-          this.undash()
-        }, dashPill.duration)
+
+          this.undash();
+        
+        }, dashPill.duration);
+      
       }
+    
     }
+  
   }
 
   public undash (): void {
+
     // Marcando a flag para false
-    this._dashing = false
+    this._dashing = false;
 
     // Retornando a velocidade normal
-    this._fwMaxSpeed = this._defaults.fwMaxSpeed
+    this._fwMaxSpeed = this._defaults.fwMaxSpeed;
 
     // Setando a aceleração para 0 e desaceleração para valor padrão
-    this._fwAcceleration = 0
-    this._fwDeacceleration = this._defaults.fwDeacceleration
+    this._fwAcceleration = 0;
+    this._fwDeacceleration = this._defaults.fwDeacceleration;
+  
   }
 
   public shoot (): void {
-    const velocity = this._direction.clone().multiplyScalar(1)
-    const demage = 10
-    const shot: Shot = new Shot(velocity, demage, this._attackRange, this)
-    shot.applyMatrix4(this.matrix)
+
+    const velocity = this._direction.clone().multiplyScalar(1);
+    const demage = 10;
+    const shot: Shot = new Shot(velocity, demage, this._attackRange, this);
+    shot.applyMatrix4(this.matrix);
     if (this.parent !== null) {
-      this.parent.add(shot)
-      this.dispatchEvent({ type: 'shoot', shot })
+
+      this.parent.add(shot);
+      this.dispatchEvent({ type: 'shoot', shot });
+    
     }
+  
   }
 
   public drawDirection (): void {
-    const helper = new ArrowHelper(this._direction, new Vector3(), 5, 0x333333)
-    this.add(helper)
+
+    const helper = new ArrowHelper(this._direction, new Vector3(), 5, 0x333333);
+    this.add(helper);
+  
   }
 
   public drawLocalAxis (): void {
-    const helperX = new ArrowHelper(new Vector3(1, 0, 0), new Vector3(), 1, 0x0000FF)
-    const helperY = new ArrowHelper(new Vector3(0, 1, 0), new Vector3(), 1, 0xFFFF00)
-    const helperZ = new ArrowHelper(new Vector3(0, 0, 1), new Vector3(), 1, 0xFF0000)
 
-    this.add(helperX, helperY, helperZ)
+    const helperX = new ArrowHelper(new Vector3(1, 0, 0), new Vector3(), 1, 0x0000FF);
+    const helperY = new ArrowHelper(new Vector3(0, 1, 0), new Vector3(), 1, 0xFFFF00);
+    const helperZ = new ArrowHelper(new Vector3(0, 0, 1), new Vector3(), 1, 0xFF0000);
+
+    this.add(helperX, helperY, helperZ);
+  
   }
 
   public getAimVector (s: Ship): Vector3 | undefined {
+
     // Calculando vetor normal ao plano que coincide com a direção da nave
-    const normal = this.getWorldDirection(new Vector3()).multiplyScalar(-1)
+    const normal = this.getWorldDirection(new Vector3()).multiplyScalar(-1);
 
     // Calculando o vetor da posição da nave inimiga com relação a nave
-    const d = s.position.clone().sub(this.position)
+    const d = s.position.clone().sub(this.position);
 
     // Calculando o vetor distância da nave inimiga a reta da minha trajetória
     // Calcular somente se a nave inimiga estiver a frente da nave.
-    let r: Vector3 | undefined
+    let r: Vector3 | undefined;
     if (normal.dot(d) > 0) {
-      r = d.clone().projectOnVector(normal).sub(d)
+
+      r = d.clone().projectOnVector(normal).sub(d);
+    
     } else {
-      r = undefined
+
+      r = undefined;
+    
     }
 
     /* ================= BLOCO QUE DESENHA OS VETORES ENVOLVIDOS NO CÁLCULO ==================  *
@@ -360,16 +438,22 @@ export default class Ship extends Group implements Damageble {
         }
         /* ================= BLOCO QUE DESENHA OS VETORES ENVOLVIDOS NO CÁLCULO ==================  */
 
-    return r
+    return r;
+  
   }
 
   public getAimVectors (): Array<(Vector3 | undefined)> {
-    const enemyShips = this.player.enemies.map(e => e.ship)
-    return enemyShips.map(s => this.getAimVector(s))
+
+    const enemyShips = this.player.enemies.map(e => e.ship);
+    return enemyShips.map(s => this.getAimVector(s));
+  
   }
 
   public get aimVectorsOnMe (): Array<(Vector3 | undefined)> {
-    const enemyShips = this.player.enemies.map(e => e.ship)
-    return enemyShips.map(s => s.getAimVector(this))
+
+    const enemyShips = this.player.enemies.map(e => e.ship);
+    return enemyShips.map(s => s.getAimVector(this));
+  
   }
+
 }

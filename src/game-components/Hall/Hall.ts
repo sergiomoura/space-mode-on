@@ -1,23 +1,43 @@
-import Game from '../Game/Game'
+import Game from '../Game/Game';
 
 class Hall {
-  private readonly nEnimies: number
-  private readonly nFriends: number
 
-  static connect (hallElement: HTMLElement): void {
-    hallElement.querySelector('#btJogar')?.addEventListener(
-      'click',
-      () => {
-        this.createGame()
-        document.getElementById('hall')?.remove()
-      }
-    )
+  private readonly selectEnimies: HTMLSelectElement;
+  private readonly selectFriends: HTMLSelectElement;
+  private readonly inputPlayerName: HTMLInputElement;
+  private readonly btStart: HTMLButtonElement;
+  private readonly divHall: HTMLDivElement;
+  constructor () {
+
+    // Capturando elementos
+    this.selectEnimies = <HTMLSelectElement>document.getElementById('nEnemies');
+    this.selectFriends = <HTMLSelectElement>document.getElementById('nFriends');
+    this.inputPlayerName = <HTMLInputElement>document.getElementById('playerName');
+    this.btStart = <HTMLButtonElement>document.getElementById('start');
+    this.divHall = <HTMLDivElement>document.getElementById('hall');
+
   }
 
-  private static createGame (): void {
+  public connect (): void {
+     
+    // Associando eventos
+    this.btStart.addEventListener(
+      'click',
+      () => {
+        
+        this.createGame();
+        this.hideHall();
+      
+      }
+    );
+
+  }
+
+  private createGame (): void {
+
     // Recuperando os canvas
-    const mainCanvas = document.getElementById('mainCanvas') as HTMLCanvasElement
-    const auxCanvas = document.getElementById('auxCanvas') as HTMLCanvasElement
+    const mainCanvas = <HTMLCanvasElement>document.getElementById('mainCanvas');
+    const auxCanvas = <HTMLCanvasElement>document.getElementById('auxCanvas');
 
     // Criando o jogo
     const game = new Game(
@@ -26,9 +46,19 @@ class Hall {
       mainCanvas,
       auxCanvas,
       'Sérgio Moura'
-    )
-    console.log(game)
+    );
+
+    // Imprimindo mensagem no console
+    console.log(`Jogo começou com ${game.ships.length} naves.`);
+  
   }
+
+  private hideHall (): void {
+
+    this.divHall.remove();
+  
+  }
+
 }
 
-export default Hall
+export default Hall;

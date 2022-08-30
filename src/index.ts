@@ -1,8 +1,9 @@
 // Importando estilo
-import './styles/style.scss'
-import Hall from './game-components/Hall/Hall'
+import './styles/style.scss';
+import Hall from './game-components/Hall/Hall';
 
-Hall.connect(document.getElementById('hall') as HTMLElement)
+const hall = new Hall();
+hall.connect();
 
 /*
 // Imports
