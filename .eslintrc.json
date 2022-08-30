@@ -11,5 +11,9 @@
         "project": ["tsconfig.json"]
     },
     "rules": {
+        "padded-blocks":["error","always",{"allowSingleLineBlocks": true}],
+        "no-trailing-spaces":["error",{"skipBlankLines":true}],
+        "@typescript-eslint/consistent-type-assertions": ["error",{"assertionStyle":"angle-bracket"}],
+        "@typescript-eslint/semi": ["error","always"]
     }
 }
