@@ -64,7 +64,9 @@ class Hall {
 
         this.showHall();
         this.game.suspend();
-        this.inputPlayerName.focus();
+        
+        // Artasando o foco no input do nome
+        setTimeout(() => { this.inputPlayerName.focus(); }, 500);
       
       }
     );
