@@ -26,10 +26,14 @@ import Bot from '../Bot/Bot';
 import Player from '../Player/Player';
 import User from '../User/User';
 
+// const COLOR_MAIN_PLAYER: number = 0xCCCCCC;
+const COLOR_ENEMIES: number = 0xFF0000;
+const COLOR_FRIENDS: number = 0x6666FF;
+
 export default class Game extends Scene {
 
-  private readonly _mainRenderer: WebGLRenderer;
-  private readonly _auxRenderer: WebGLRenderer;
+  private mainRenderer: WebGLRenderer;
+  private auxRenderer: WebGLRenderer;
   private _shipControls: EventDispatcher;
   private _gameControls: DesktopGameControls;
   private readonly _cameras: PerspectiveCamera[] = Cameras;
@@ -41,7 +45,7 @@ export default class Game extends Scene {
 
   constructor (
     playerName: string,
-    nEnimies: number,
+    nEnemies: number,
     nFriends: number,
     demoMode: boolean = false
   ) {
@@ -53,51 +57,24 @@ export default class Game extends Scene {
     const auxCanvas = <HTMLCanvasElement> document.getElementById('auxCanvas');
 
     // Criando Jogador Principal
-    this._mainPlayer = new User(playerName);
-
-    // Adicionando listeners à nave do player
-    this._mainPlayer.ship.addEventListener(
-      'died',
-      () => {
-
-        this.dispatchEvent({ type: 'died' });
-      
-      }
-    );
+    this._mainPlayer = this.createMainPlayer(playerName);
 
     // Criando Time A
-    const teamA: Player[] = [];
-    teamA.push(this._mainPlayer);
-    for (let i = 0; i < nFriends; i++) {
-
-      const bot = new Bot(0x6666FF);
-      teamA.push(bot);
-      this.addShip(bot.ship);
-    
-    }
+    const teamA: Player[] = this.createTeam(nFriends, true);
 
     // Criando Time B
-    const teamB: Player[] = [];
-    for (let i = 0; i < nEnimies; i++) {
+    const teamB: Player[] = this.createTeam(nEnemies, false);
 
-      const bot = new Bot(0xFF0000);
-      teamB.push(bot);
-      this.addShip(bot.ship);
-      bot.ship.position.set(5 * (Math.random() - 0.5), 5 * (Math.random() - 0.5), 5 * (Math.random() - 0.5));
-      bot.ship.pointTo(500 * (Math.random() - 0.5), 500 * (Math.random() - 0.5));
-    
-    }
-
-    // Configurando amizades e inimizades
+    // Configurando amizades e inimizades entre times
     teamA.forEach(p => { p.addEnemies(...teamB); p.addFriends(...teamA); });
     teamB.forEach(p => { p.addEnemies(...teamA); p.addFriends(...teamB); });
 
-    // Criando o renderer principal
-    this._mainRenderer = new WebGLRenderer({ antialias: true, canvas: mainCanvas });
+    // Criando e configurando renders
+    this.setRenders(mainCanvas, auxCanvas);
 
-    // Criando o renderer auxiliar
-    this._auxRenderer = new WebGLRenderer({ antialias: false, canvas: auxCanvas });
-
+    // Adicionando Iluminação
+    this.add(...Lights);
+    
     // Verificando se está em modo demo ou não
     if (demoMode) {
 
@@ -111,28 +88,12 @@ export default class Game extends Scene {
       auxCanvas.style.display = 'block';
     
     }
-
-    // Instanciando controles de nave de do jogo
-
-    // Determinando dimensões do renderer principal
-    this.setSize(window.innerHeight, window.innerWidth);
-
-    // Adicionando Iluminação
-    this.add(...Lights);
-
-    // Adicionando Nave do Main Player
-    this._mainPlayer.ship.position.x = 5;
-    this._mainPlayer.ship.position.y = 5;
-    this._mainPlayer.ship.position.z = 5;
-    this._mainPlayer.ship.rotateX(-0.3);
+    
     // this._mainPlayer.ship.rotateY(Math.PI)
     this.addShip(this._mainPlayer.ship);
 
-    // Configurando renderizadores
-    this._auxRenderer.setClearColor(0x333333, 0.5);
-
     // Extras
-    this.addSpiningCube(10, 10, 3, 0xFF0000);
+    // this.addSpiningCube(10, 10, 3, 0xFF0000);
     this.drawAxis(5);
     // this.drawGrid(100,1);
 
@@ -150,6 +111,66 @@ export default class Game extends Scene {
   
   }
 
+  private createMainPlayer (playerName: string): Player {
+
+    const player = new User(playerName);
+
+    // Adicionando listeners à nave do player
+    player.ship.addEventListener(
+      'died',
+      () => { this.dispatchEvent({ type: 'died' }); }
+    );
+
+    // Definindo posição inicial da nave do player
+    player.ship.position.x = 5;
+    player.ship.position.y = 5;
+    player.ship.position.z = 5;
+    player.ship.rotateX(-0.3);
+
+    return player;
+    
+  }
+
+  private createTeam (nPlayers: number, friendly: boolean): Player[] {
+
+    const team: Player[] = [];
+    let color: number = COLOR_ENEMIES;
+
+    if (friendly) {
+
+      team.push(this._mainPlayer);
+      color = COLOR_FRIENDS;
+    
+    }
+    
+    for (let i = 0; i < nPlayers; i++) {
+
+      const bot = new Bot(color);
+      team.push(bot);
+
+      // Posicionando bot em local aleatório
+      bot.ship.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
+
+      this.addShip(bot.ship);
+    
+    }
+    console.log(team);
+    return team;
+     
+  }
+
+  private setRenders (mainCanvas: HTMLCanvasElement, auxCanvas: HTMLCanvasElement): void {
+
+    // Criando o renderer principal
+    this.mainRenderer = new WebGLRenderer({ antialias: true, canvas: mainCanvas });
+    this.mainRenderer.setSize(window.innerWidth, window.innerHeight);
+
+    // Criando o renderer auxiliar
+    this.auxRenderer = new WebGLRenderer({ antialias: false, canvas: auxCanvas });
+    this.auxRenderer.setClearColor(0x333333, 0.5);
+
+  }
+
   public connectControls (): void {
 
     // Verificando o tipo de dispositivo para definir os controles.
@@ -160,26 +181,13 @@ export default class Game extends Scene {
         this._shipControls = new MobileShipControls(this._mainPlayer.ship);
         break;
       default:
-        this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this._mainRenderer.domElement);
+        this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this.mainRenderer.domElement);
         (<DesktopShipControls> this._shipControls).lock();
         this._gameControls = new DesktopGameControls(this);
 
         break;
     
     }
-  
-  }
-
-  public suspend (): void {
-    
-    // TODO: Fazer para mobile
-    (<DesktopShipControls> this._shipControls).unlock();
-        
-  }
-
-  public setSize (height: number, width: number): void {
-
-    this._mainRenderer.setSize(width, height);
   
   }
 
@@ -295,8 +303,8 @@ export default class Game extends Scene {
   public renderContinuous (): void {
 
     requestAnimationFrame(() => { this.renderContinuous(); });
-    this._mainRenderer.render(this, (<FirstPersonShip> this._mainPlayer.ship).camera);
-    this._auxRenderer.render(this, this._showingCamera);
+    this.mainRenderer.render(this, (<FirstPersonShip> this._mainPlayer.ship).camera);
+    this.auxRenderer.render(this, this._showingCamera);
   
   }
 
@@ -328,6 +336,13 @@ export default class Game extends Scene {
     
     }
   
+  }
+  
+  public suspend (): void {
+    
+    // TODO: Fazer para mobile
+    (<DesktopShipControls> this._shipControls).unlock();
+        
   }
 
 }
