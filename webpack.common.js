@@ -6,9 +6,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({ template: './src/index.html' })
   ],
-  mode: 'development',
   entry: './src/index.ts',
-  devtool: 'inline-source-map',
   devServer: {
     static: './dist'
   },
@@ -29,7 +27,8 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js']
   },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve('../back/public')
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    clean: true
   }
 };

@@ -4,8 +4,8 @@
   "description": "🚀 Space Mode On",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --open --allowed-hosts 192.168.*.*",
-    "build": "webpack"
+    "dev": "webpack-dev-server --open --allowed-hosts 192.168.*.* --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
   },
   "author": "Sérgio Moura",
   "license": "MIT",
@@ -27,7 +27,8 @@
     "typescript": "*",
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.9.0"
+    "webpack-dev-server": "^4.9.0",
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "rxjs": "^7.5.5",

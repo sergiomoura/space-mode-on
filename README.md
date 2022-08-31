@@ -1,18 +1,19 @@
 # Space Mode On
 
-Jogo ainda em desenvolvimento. Para rodar em sua máquina você precisa ter o yarn instalado globalmente. Para isso, execute o comando:
+Jogo em desenvolvimento. Para fazê-lo funcionar localmente em modo desenvolvimento execute o comando:
 
 ```bash
 
-npm install -g yarn
+npm install
+npm dev
 
 ```
 
-Para rodar localmente em modo de desenvolvimento:
+Para gerar os bundles na pasta ./dist, execute:
 
 ```bash
 
-yarn install
-yarn dev
+npm install
+npm build
 
 ```
