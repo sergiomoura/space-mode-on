@@ -34,11 +34,13 @@ export default class Game extends Scene {
 
   private mainRenderer: WebGLRenderer;
   private auxRenderer: WebGLRenderer;
+  private readonly mainCanvas: HTMLCanvasElement;
+  private readonly auxCanvas: HTMLCanvasElement;
   private _shipControls: EventDispatcher;
   private _gameControls: DesktopGameControls;
   private readonly _cameras: PerspectiveCamera[] = Cameras;
   private _showingCamera: PerspectiveCamera = this._cameras[0];
-  private readonly _mainPlayer: Player;
+  private _mainPlayer: Player;
 
   private readonly _ships: Ship[] = [];
   public get ships (): Ship[] { return this._ships; };
@@ -53,8 +55,31 @@ export default class Game extends Scene {
     super();
 
     // Recuperando os canvas
-    const mainCanvas = <HTMLCanvasElement> document.getElementById('mainCanvas');
-    const auxCanvas = <HTMLCanvasElement> document.getElementById('auxCanvas');
+    this.mainCanvas = <HTMLCanvasElement> document.getElementById('mainCanvas');
+    this.auxCanvas = <HTMLCanvasElement> document.getElementById('auxCanvas');
+
+    // Criando e configurando renders
+    this.setRenders(this.mainCanvas, this.auxCanvas);
+
+    // Adicionando Iluminação
+    this.add(...Lights);
+
+    // Extras
+    // this.addSpiningCube(10, 10, 3, 0xFF0000);
+    this.drawAxis(5);
+    // this.drawGrid(100,1);
+
+    // Renderizando continuamente
+    this.renderContinuous();
+  
+  }
+
+  start (
+    playerName: string,
+    nEnemies: number,
+    nFriends: number,
+    demoMode: boolean = false
+  ): void {
 
     // Criando Jogador Principal
     this._mainPlayer = this.createMainPlayer(playerName);
@@ -69,33 +94,22 @@ export default class Game extends Scene {
     teamA.forEach(p => { p.addEnemies(...teamB); p.addFriends(...teamA); });
     teamB.forEach(p => { p.addEnemies(...teamA); p.addFriends(...teamB); });
 
-    // Criando e configurando renders
-    this.setRenders(mainCanvas, auxCanvas);
-
-    // Adicionando Iluminação
-    this.add(...Lights);
-    
     // Verificando se está em modo demo ou não
     if (demoMode) {
 
       // Está em modo demo. Escondendo mini mapa
-      auxCanvas.style.display = 'none';
+      this.auxCanvas.style.display = 'none';
       
     } else {
 
       // Não está em demo. Conectando controles
       this.connectControls();
-      auxCanvas.style.display = 'block';
+      this.auxCanvas.style.display = 'block';
     
     }
     
-    // this._mainPlayer.ship.rotateY(Math.PI)
+    // Adicionando nave do mainPlayer
     this.addShip(this._mainPlayer.ship);
-
-    // Extras
-    // this.addSpiningCube(10, 10, 3, 0xFF0000);
-    this.drawAxis(5);
-    // this.drawGrid(100,1);
 
     // Iniciando bots
     [...teamA, ...teamB].forEach(
@@ -106,9 +120,6 @@ export default class Game extends Scene {
       }
     );
 
-    // Renderizando continuamente
-    this.renderContinuous();
-  
   }
 
   private createMainPlayer (playerName: string): Player {
@@ -154,7 +165,6 @@ export default class Game extends Scene {
       this.addShip(bot.ship);
     
     }
-    console.log(team);
     return team;
      
   }
@@ -191,11 +201,15 @@ export default class Game extends Scene {
   
   }
 
-  public addShip (ship: Ship): void {
+  private addShip (...ships: Ship[]): void {
 
-    this.add(ship);
-    this._ships.push(ship);
-    this.handleShipEvents(ship);
+    this.add(...ships);
+    this._ships.push(...ships);
+    
+    // Adicionando listeners para as naves
+    ships.forEach(
+      ship => { this.handleShipEvents(ship); }
+    );
   
   }
 
