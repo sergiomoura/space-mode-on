@@ -212,31 +212,24 @@ export default class Game extends Scene {
 
     // ship.addEventListener('shoot', this.onShipShoot);
     ship.addEventListener('gotDamage', this.onShipGotDamage);
-    ship.addEventListener('died', this.onShipDeath);
+    ship.addEventListener('died', evt => { this.onShipDeath(evt.target); });
   
   }
 
-  private onShipDeath (evt: Event & {type: 'died'} & {target: Ship}): void {
+  private onShipDeath (ship: Ship): void {
 
-    console.log(`${evt.target.name} foi destruída.`);
+    console.log(`${ship.name} foi destruída.`);
 
     // Caso nave destruída tenha sido do mainPlayer, dispare evento 'mainPlayerDied'
-    if (evt.target.player === this.mainPlayer) {
+    if (ship.player === this.mainPlayer) {
 
-      console.log('MAIN PLAYER MORREU');
       this.dispatchEvent({ type: 'mainPlayerDied' });
-    
-    } else {
-
-      console.log(this);
-      console.log(`${this.mainPlayer.name} vive...`);
-      console.log(`Quem morreu foi ${evt.target.player.name}`);
     
     }
 
     // Removendo nave morta do vetor de inimigo dos bots
-    evt.target.player.enemies.forEach(
-      e => { e.enemies.splice(e.enemies.indexOf(evt.target.player), 1); }
+    ship.player.enemies.forEach(
+      e => { e.enemies.splice(e.enemies.indexOf(ship.player), 1); }
     );
 
     // delete evt.target

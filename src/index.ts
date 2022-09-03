@@ -15,8 +15,8 @@ hall.onFormSubmit = () => {
   game = new Game();
   game.addEventListener('mainPlayerDied', () => {
 
-    console.log('Ele morreu?');
     hall.show(true);
+    game.suspend();
   
   });
   game.start(

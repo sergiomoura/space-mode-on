@@ -170,7 +170,7 @@ export default class Ship extends Group implements Damageble {
     this._hitBoxMesh.removeFromParent();
     this.clear();
     this.removeFromParent();
-    this.dispatchEvent({ type: 'died', ship: this });
+    this.dispatchEvent({ type: 'died' });
     cancelAnimationFrame(this._rafId);
   
   }
