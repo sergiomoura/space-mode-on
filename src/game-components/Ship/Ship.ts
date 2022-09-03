@@ -8,6 +8,7 @@ import {
   ColorRepresentation,
   ArrowHelper
 } from 'three';
+import GameEvents from '../../lib/GameEvents';
 import Damageble from '../Damageble/Damageble';
 import DashPill from '../DashPill/DashPill';
 import Player from '../Player/Player';
@@ -155,7 +156,7 @@ export default class Ship extends Group implements Damageble {
   public getDamage (damage: number): void {
 
     this._life -= damage;
-    this.dispatchEvent({ type: 'gotDamage', damage });
+    this.dispatchEvent({ type: GameEvents.SHIP_GOT_DAMAGE, damage });
     if (this._life <= 0) {
 
       this.die();
@@ -170,7 +171,7 @@ export default class Ship extends Group implements Damageble {
     this._hitBoxMesh.removeFromParent();
     this.clear();
     this.removeFromParent();
-    this.dispatchEvent({ type: 'died' });
+    this.dispatchEvent({ type: GameEvents.SHIP_DESTROYED });
     cancelAnimationFrame(this._rafId);
   
   }

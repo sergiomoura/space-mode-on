@@ -25,6 +25,7 @@ import FirstPersonShip from '../FirstPersonShip/FirstPersonShip';
 import Bot from '../Bot/Bot';
 import Player from '../Player/Player';
 import User from '../User/User';
+import GameEvents from '../../lib/GameEvents';
 
 // const COLOR_MAIN_PLAYER: number = 0xCCCCCC;
 const COLOR_ENEMIES: number = 0xFF0000;
@@ -211,12 +212,12 @@ export default class Game extends Scene {
   private handleShipEvents (ship: Ship): void {
 
     // ship.addEventListener('shoot', this.onShipShoot);
-    ship.addEventListener('gotDamage', this.onShipGotDamage);
-    ship.addEventListener('died', evt => { this.onShipDeath(evt.target); });
+    ship.addEventListener(GameEvents.SHIP_GOT_DAMAGE, evt => { this.onShipGotDamage(evt.target, evt.damage); });
+    ship.addEventListener(GameEvents.SHIP_DESTROYED, evt => { this.onShipDestroyed(evt.target); });
   
   }
 
-  private onShipDeath (ship: Ship): void {
+  private onShipDestroyed (ship: Ship): void {
 
     console.log(`${ship.name} foi destruída.`);
 
@@ -237,9 +238,9 @@ export default class Game extends Scene {
   
   }
 
-  private onShipGotDamage (evt: Event & {type: 'gotDamage'} & {target: Ship}): void {
+  private onShipGotDamage (ship: Ship, damage: number): void {
 
-    console.log(`${evt.target.name} sofreu dano de ___.`); // TODO: mostrar o dano sofrido
+    console.log(`${ship.name} sofreu dano de ${damage}.`); // TODO: mostrar o dano sofrido
   
   }
 

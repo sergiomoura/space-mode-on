@@ -2,6 +2,7 @@
 import './styles/style.scss';
 import Hall from './game-components/Hall/Hall';
 import Game from './game-components/Game/Game';
+import GameEvents from './lib/GameEvents';
 
 // Iniciando jogo de background
 let game: Game = new Game();
@@ -13,7 +14,7 @@ hall.connect();
 hall.onFormSubmit = () => {
 
   game = new Game();
-  game.addEventListener('mainPlayerDied', () => {
+  game.addEventListener(GameEvents.MAIN_PLAYER_DIED, () => {
 
     hall.show(true);
     game.suspend();
