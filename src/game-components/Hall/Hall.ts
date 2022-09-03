@@ -1,5 +1,3 @@
-import Game from '../Game/Game';
-
 class Hall {
 
   private readonly selectEnemies: HTMLSelectElement;
@@ -8,8 +6,7 @@ class Hall {
   private readonly divHall: HTMLDivElement;
   private readonly formGameSettings: HTMLFormElement;
   private readonly transitionDuration: number = 0.3;
-  private game: Game;
-
+  
   constructor () {
 
     // Capturando elementos
@@ -30,8 +27,7 @@ class Hall {
       evt => {
 
         evt.preventDefault();
-        this.hide();
-        this.createNewGame();
+        this.onFormSubmit();
       
       }
     );
@@ -42,43 +38,33 @@ class Hall {
     );
 
   }
+  
+  public get nEnemies (): number {
 
-  private createNewGame (): void {
+    return parseInt(this.selectEnemies.value);
+  
+  }
+  
+  public get nFriends (): number {
 
-    // Criando o jogo
-    this.game = new Game(
-      this.inputPlayerName.value,
-      Number(this.selectEnemies.value),
-      Number(this.selectFriends.value)
-    );
+    return parseInt(this.selectFriends.value);
+  
+  }
+  
+  public get playerName (): string {
 
-    // Conectando controles do jogo
-    this.game.connectControls();
-
-    // Associando evento... se morrer, volta para o hall!
-    this.game.addEventListener(
-      'died',
-      (evt) => {
-
-        this.show();
-        this.game.suspend();
-        
-        // Artasando o foco no input do nome
-        setTimeout(() => { this.inputPlayerName.focus(); }, 500);
-      
-      }
-    );
+    return this.inputPlayerName.value;
   
   }
 
-  private show (died: boolean = true): void {
+  public show (died: boolean = true): void {
     
     this.divHall.style.display = 'flex';
     this.divHall.style.opacity = '1';
   
   }
 
-  private hide (): void {
+  public hide (): void {
 
     this.divHall.style.opacity = '0';
     this.divHall.addEventListener(
@@ -87,6 +73,8 @@ class Hall {
     );
   
   }
+
+  public onFormSubmit: () => void = () => { console.log('começou'); };
 
 }
 

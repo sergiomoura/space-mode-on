@@ -1,4 +1,13 @@
-import { BoxGeometry, Group, MeshPhongMaterial, Mesh, Vector3, Euler, ColorRepresentation, ArrowHelper } from 'three';
+import {
+  BoxGeometry,
+  Group,
+  MeshPhongMaterial,
+  Mesh,
+  Vector3,
+  Euler,
+  ColorRepresentation,
+  ArrowHelper
+} from 'three';
 import Damageble from '../Damageble/Damageble';
 import DashPill from '../DashPill/DashPill';
 import Player from '../Player/Player';
@@ -161,7 +170,7 @@ export default class Ship extends Group implements Damageble {
     this._hitBoxMesh.removeFromParent();
     this.clear();
     this.removeFromParent();
-    this.dispatchEvent({ type: 'died' });
+    this.dispatchEvent({ type: 'died', ship: this });
     cancelAnimationFrame(this._rafId);
   
   }

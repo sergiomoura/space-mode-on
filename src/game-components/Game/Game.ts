@@ -40,17 +40,12 @@ export default class Game extends Scene {
   private _gameControls: DesktopGameControls;
   private readonly _cameras: PerspectiveCamera[] = Cameras;
   private _showingCamera: PerspectiveCamera = this._cameras[0];
-  private _mainPlayer: Player;
+  private mainPlayer: Player;
 
   private readonly _ships: Ship[] = [];
   public get ships (): Ship[] { return this._ships; };
 
-  constructor (
-    playerName: string,
-    nEnemies: number,
-    nFriends: number,
-    demoMode: boolean = false
-  ) {
+  constructor () {
     
     super();
 
@@ -68,9 +63,6 @@ export default class Game extends Scene {
     // this.addSpiningCube(10, 10, 3, 0xFF0000);
     this.drawAxis(5);
     // this.drawGrid(100,1);
-
-    // Renderizando continuamente
-    this.renderContinuous();
   
   }
 
@@ -82,7 +74,7 @@ export default class Game extends Scene {
   ): void {
 
     // Criando Jogador Principal
-    this._mainPlayer = this.createMainPlayer(playerName);
+    this.mainPlayer = this.createMainPlayer(playerName);
 
     // Criando Time A
     const teamA: Player[] = this.createTeam(nFriends, true);
@@ -109,7 +101,7 @@ export default class Game extends Scene {
     }
     
     // Adicionando nave do mainPlayer
-    this.addShip(this._mainPlayer.ship);
+    this.addShip(this.mainPlayer.ship);
 
     // Iniciando bots
     [...teamA, ...teamB].forEach(
@@ -119,6 +111,9 @@ export default class Game extends Scene {
       
       }
     );
+
+    // Renderizando continuamente
+    this.renderContinuous();
 
   }
 
@@ -149,7 +144,7 @@ export default class Game extends Scene {
 
     if (friendly) {
 
-      team.push(this._mainPlayer);
+      team.push(this.mainPlayer);
       color = COLOR_FRIENDS;
     
     }
@@ -188,10 +183,10 @@ export default class Game extends Scene {
   
       case DeviceType.TABLET:
       case DeviceType.MOBILE:
-        this._shipControls = new MobileShipControls(this._mainPlayer.ship);
+        this._shipControls = new MobileShipControls(this.mainPlayer.ship);
         break;
       default:
-        this._shipControls = new DesktopShipControls(this._mainPlayer.ship, this.mainRenderer.domElement);
+        this._shipControls = new DesktopShipControls(this.mainPlayer.ship, this.mainRenderer.domElement);
         (<DesktopShipControls> this._shipControls).lock();
         this._gameControls = new DesktopGameControls(this);
 
@@ -224,13 +219,26 @@ export default class Game extends Scene {
   private onShipDeath (evt: Event & {type: 'died'} & {target: Ship}): void {
 
     console.log(`${evt.target.name} foi destruída.`);
-    evt.target.player.enemies.forEach(
-      e => {
 
-        e.enemies.splice(e.enemies.indexOf(evt.target.player), 1);
-      
-      }
+    // Caso nave destruída tenha sido do mainPlayer, dispare evento 'mainPlayerDied'
+    if (evt.target.player === this.mainPlayer) {
+
+      console.log('MAIN PLAYER MORREU');
+      this.dispatchEvent({ type: 'mainPlayerDied' });
+    
+    } else {
+
+      console.log(this);
+      console.log(`${this.mainPlayer.name} vive...`);
+      console.log(`Quem morreu foi ${evt.target.player.name}`);
+    
+    }
+
+    // Removendo nave morta do vetor de inimigo dos bots
+    evt.target.player.enemies.forEach(
+      e => { e.enemies.splice(e.enemies.indexOf(evt.target.player), 1); }
     );
+
     // delete evt.target
     // TODO: Descobrir como remover a nave...
   
@@ -317,7 +325,7 @@ export default class Game extends Scene {
   public renderContinuous (): void {
 
     requestAnimationFrame(() => { this.renderContinuous(); });
-    this.mainRenderer.render(this, (<FirstPersonShip> this._mainPlayer.ship).camera);
+    this.mainRenderer.render(this, (<FirstPersonShip> this.mainPlayer.ship).camera);
     this.auxRenderer.render(this, this._showingCamera);
   
   }
