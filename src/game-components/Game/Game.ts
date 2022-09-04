@@ -46,13 +46,13 @@ export default class Game extends Scene {
   private readonly _ships: Ship[] = [];
   public get ships (): Ship[] { return this._ships; };
 
-  constructor () {
+  constructor (mainCanvas: HTMLCanvasElement, auxCanvas: HTMLCanvasElement) {
     
     super();
 
-    // Recuperando os canvas
-    this.mainCanvas = <HTMLCanvasElement> document.getElementById('mainCanvas');
-    this.auxCanvas = <HTMLCanvasElement> document.getElementById('auxCanvas');
+    // Associando canvas
+    this.mainCanvas = mainCanvas;
+    this.auxCanvas = auxCanvas;
 
     // Criando e configurando renders
     this.setRenders(this.mainCanvas, this.auxCanvas);
