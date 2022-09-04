@@ -26,7 +26,7 @@ class DesktopShipControls extends EventDispatcher {
   private isLocked: boolean;
 
   constructor (private readonly ship: Ship, domElement: HTMLElement) {
-
+    
     super();
     
     ObservableKeyboard.subscribe((pressedKeys: PressedKeys) => { this.commandShip(pressedKeys); });
@@ -40,17 +40,6 @@ class DesktopShipControls extends EventDispatcher {
 
     this.domElement = domElement;
     this.isLocked = false;
-
-    document.body.addEventListener(
-      'click',
-      () => {
-
-        this.lock();
-      
-      },
-      false
-    );
-
     this.connect();
   
   }
