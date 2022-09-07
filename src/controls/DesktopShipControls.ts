@@ -1,5 +1,4 @@
 import {
-  EventDispatcher,
   Vector3
 } from 'three';
 import Bot from '../game-components/Bot/Bot';
@@ -7,9 +6,6 @@ import Ship from '../game-components/Ship/Ship';
 import { PressedKeys, ObservableKeyboard } from '../lib/ObservableKeyboard';
 
 const _vector = new Vector3();
-const _changeEvent = { type: 'change' };
-const _lockEvent = { type: 'lock' };
-const _unlockEvent = { type: 'unlock' };
 
 enum ControlKeys {
   w = 'KeyW',
@@ -20,14 +16,12 @@ enum ControlKeys {
   space = 'Space'
 }
 
-class DesktopShipControls extends EventDispatcher {
+class DesktopShipControls {
 
   private readonly domElement: HTMLElement;
   private isLocked: boolean;
 
   constructor (private readonly ship: Ship, domElement: HTMLElement) {
-    
-    super();
     
     ObservableKeyboard.subscribe((pressedKeys: PressedKeys) => { this.commandShip(pressedKeys); });
 
@@ -48,7 +42,6 @@ class DesktopShipControls extends EventDispatcher {
 
     if (!this.isLocked) return;
     this.ship.pointTo(evt.movementX, evt.movementY);
-    this.dispatchEvent(_changeEvent);
   
   }
 
@@ -66,12 +59,10 @@ class DesktopShipControls extends EventDispatcher {
 
     if (this.domElement.ownerDocument.pointerLockElement === this.domElement) {
 
-      this.dispatchEvent(_lockEvent);
       this.isLocked = true;
     
     } else {
 
-      this.dispatchEvent(_unlockEvent);
       this.isLocked = false;
     
     }

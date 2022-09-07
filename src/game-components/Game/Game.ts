@@ -10,15 +10,14 @@ import {
   BufferGeometry,
   Line,
   ColorRepresentation,
-  ArrowHelper,
-  EventDispatcher
+  ArrowHelper
 } from 'three';
 import { GetDeviceType, DeviceType } from '../../lib/GetDeviceType';
 
 import Lights from '../Lights/Lights';
 import Cameras from '../Cameras/Cameras';
 import Ship from '../Ship/Ship';
-import MobileShipControls from '../../controls/MobileShipControls';
+// import MobileShipControls from '../../controls/MobileShipControls';
 import DesktopShipControls from '../../controls/DesktopShipControls';
 import DesktopGameControls from '../../controls/DesktopGameControls';
 import FirstPersonShip from '../FirstPersonShip/FirstPersonShip';
@@ -37,7 +36,7 @@ export default class Game extends Scene {
   private auxRenderer: WebGLRenderer;
   private readonly mainCanvas: HTMLCanvasElement;
   private readonly auxCanvas: HTMLCanvasElement;
-  private _shipControls: EventDispatcher;
+  private _shipControls: DesktopShipControls;
   private _gameControls: DesktopGameControls;
   private readonly _cameras: PerspectiveCamera[] = Cameras;
   private _showingCamera: PerspectiveCamera = this._cameras[0];
@@ -184,11 +183,11 @@ export default class Game extends Scene {
   
       case DeviceType.TABLET:
       case DeviceType.MOBILE:
-        this._shipControls = new MobileShipControls(this.mainPlayer.ship);
+        // this._shipControls = new MobileShipControls(this.mainPlayer.ship);
         break;
       default:
         this._shipControls = new DesktopShipControls(this.mainPlayer.ship, this.mainRenderer.domElement);
-        (<DesktopShipControls> this._shipControls).lock();
+        (this._shipControls).lock();
         this._gameControls = new DesktopGameControls(this);
 
         break;
@@ -357,7 +356,7 @@ export default class Game extends Scene {
   public suspend (): void {
     
     // TODO: Fazer para mobile
-    (<DesktopShipControls> this._shipControls).unlock();
+    (this._shipControls).unlock();
         
   }
 
