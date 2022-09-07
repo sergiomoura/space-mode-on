@@ -57,7 +57,7 @@ class Hall {
   
   }
 
-  public show (died: boolean = true): void {
+  public show (victory: boolean = true): void {
     
     this.divHall.style.display = 'flex';
     this.divHall.style.opacity = '1';

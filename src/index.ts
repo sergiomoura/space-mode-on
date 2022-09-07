@@ -18,12 +18,21 @@ hall.connect();
 hall.onFormSubmit = () => {
 
   const game = new Game(mainCanvas, auxCanvas);
+
   game.addEventListener(GameEvents.MAIN_PLAYER_DIED, () => {
+
+    hall.show(false);
+    game.suspend();
+  
+  });
+
+  game.addEventListener(GameEvents.MAIN_PLAYER_WON, () => {
 
     hall.show(true);
     game.suspend();
   
   });
+
   game.start(
     hall.playerName,
     hall.nEnemies,

@@ -222,9 +222,9 @@ export default class Game extends Scene {
     console.log(`${ship.name} foi destruída.`);
 
     // Caso nave destruída tenha sido do mainPlayer, dispare evento 'mainPlayerDied'
-    if (ship.player === this._mainPlayer) {
+    if (ship.player === this.mainPlayer) {
 
-      this.dispatchEvent({ type: 'mainPlayerDied' });
+      this.dispatchEvent({ type: GameEvents.MAIN_PLAYER_DIED });
       this._shipControls.disconnect();
     
     }
@@ -233,6 +233,14 @@ export default class Game extends Scene {
     ship.player.enemies.forEach(
       e => { e.enemies.splice(e.enemies.indexOf(ship.player), 1); }
     );
+
+    // Verificando se o mainPlayer ainda tem inimigos
+    if (this.mainPlayer.enemies.length === 0) {
+
+      this.dispatchEvent({ type: GameEvents.MAIN_PLAYER_WON });
+      this._shipControls.disconnect();
+    
+    }
 
     // delete evt.target
     // TODO: Descobrir como remover a nave...
