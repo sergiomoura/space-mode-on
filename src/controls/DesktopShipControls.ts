@@ -1,9 +1,12 @@
+import { Subscription } from 'rxjs';
 import {
   Vector3
 } from 'three';
 import Bot from '../game-components/Bot/Bot';
+import Game from '../game-components/Game/Game';
 import Ship from '../game-components/Ship/Ship';
 import { PressedKeys, ObservableKeyboard } from '../lib/ObservableKeyboard';
+import { Controls } from './Controls';
 
 const _vector = new Vector3();
 
@@ -16,36 +19,29 @@ enum ControlKeys {
   space = 'Space'
 }
 
-class DesktopShipControls {
+class DesktopShipControls implements Controls {
 
-  private readonly domElement: HTMLElement;
+  private readonly gameElement: HTMLElement;
+  private readonly ship: Ship;
   private isLocked: boolean;
+  private keyboarSubscription: Subscription;
 
-  constructor (private readonly ship: Ship, domElement: HTMLElement) {
+  constructor (game: Game, gameElement: HTMLElement) {
     
-    ObservableKeyboard.subscribe((pressedKeys: PressedKeys) => { this.commandShip(pressedKeys); });
-
-    if (domElement === undefined) {
-
-      console.warn('THREE.PointerLockControls: The second parameter "domElement" is now mandatory.');
-      domElement = document.body;
-    
-    }
-
-    this.domElement = domElement;
+    this.ship = game.mainPlayer.ship;
+    this.gameElement = gameElement;
     this.isLocked = false;
-    this.connect();
-  
+
   }
 
-  onMouseMove (evt: MouseEvent): void {
+  private readonly onMouseMove = (evt: MouseEvent): void => {
 
     if (!this.isLocked) return;
     this.ship.pointTo(evt.movementX, evt.movementY);
   
-  }
+  };
 
-  onMouseClick (_evt: MouseEvent): void {
+  private readonly onMouseClick = (_evt: MouseEvent): void => {
 
     if (this.isLocked) {
 
@@ -53,11 +49,11 @@ class DesktopShipControls {
     
     }
   
-  }
+  };
 
-  onPointerlockChange (): void {
+  private readonly onPointerlockChange = (): void => {
 
-    if (this.domElement.ownerDocument.pointerLockElement === this.domElement) {
+    if (this.gameElement.ownerDocument.pointerLockElement === this.gameElement) {
 
       this.isLocked = true;
     
@@ -67,28 +63,33 @@ class DesktopShipControls {
     
     }
   
-  }
+  };
 
-  onPointerlockError (): void {
+  private readonly onPointerlockError = (): void => {
 
     console.error('THREE.PointerLockControls: Unable to use Pointer Lock API');
   
-  }
+  };
 
   connect (): void {
-
-    this.domElement.ownerDocument.addEventListener('mousemove', (evt) => { this.onMouseMove(evt); });
-    this.domElement.ownerDocument.addEventListener('click', (evt) => { this.onMouseClick(evt); });
-    this.domElement.ownerDocument.addEventListener('pointerlockchange', (evt) => { this.onPointerlockChange(); });
-    this.domElement.ownerDocument.addEventListener('pointerlockerror', (evt) => { this.onPointerlockError(); });
+    
+    this.keyboarSubscription = ObservableKeyboard.subscribe((pressedKeys: PressedKeys) => { this.commandShip(pressedKeys); });
+    this.gameElement.ownerDocument.addEventListener('mousemove', this.onMouseMove);
+    this.gameElement.ownerDocument.addEventListener('click', this.onMouseClick);
+    this.gameElement.ownerDocument.addEventListener('pointerlockchange', this.onPointerlockChange);
+    this.gameElement.ownerDocument.addEventListener('pointerlockerror', this.onPointerlockError);
+    this.lock();
   
   }
 
   disconnect (): void {
 
-    this.domElement.ownerDocument.removeEventListener('mousemove', this.onMouseMove);
-    this.domElement.ownerDocument.removeEventListener('pointerlockchange', this.onPointerlockChange);
-    this.domElement.ownerDocument.removeEventListener('pointerlockerror', this.onPointerlockError);
+    this.keyboarSubscription.unsubscribe();
+    this.gameElement.ownerDocument.removeEventListener('mousemove', this.onMouseMove);
+    this.gameElement.ownerDocument.removeEventListener('click', this.onMouseClick);
+    this.gameElement.ownerDocument.removeEventListener('pointerlockchange', this.onPointerlockChange);
+    this.gameElement.ownerDocument.removeEventListener('pointerlockerror', this.onPointerlockError);
+    this.unlock();
   
   };
 
@@ -130,15 +131,15 @@ class DesktopShipControls {
   
   };
 
-  lock (): void {
+  private lock (): void {
 
-    this.domElement.requestPointerLock();
+    this.gameElement.requestPointerLock();
   
   };
 
   unlock (): void {
 
-    this.domElement.ownerDocument.exitPointerLock();
+    this.gameElement.ownerDocument.exitPointerLock();
   
   };
 

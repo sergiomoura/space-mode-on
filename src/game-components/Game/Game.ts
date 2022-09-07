@@ -40,7 +40,8 @@ export default class Game extends Scene {
   private _gameControls: DesktopGameControls;
   private readonly _cameras: PerspectiveCamera[] = Cameras;
   private _showingCamera: PerspectiveCamera = this._cameras[0];
-  private mainPlayer: Player;
+  private _mainPlayer: Player;
+  public get mainPlayer (): Player { return this._mainPlayer; }
 
   private readonly _ships: Ship[] = [];
   public get ships (): Ship[] { return this._ships; };
@@ -74,7 +75,7 @@ export default class Game extends Scene {
   ): void {
 
     // Criando Jogador Principal
-    this.mainPlayer = this.createMainPlayer(playerName);
+    this._mainPlayer = this.createMainPlayer(playerName);
 
     // Criando Time A
     const teamA: Player[] = this.createTeam(nFriends, true);
@@ -101,7 +102,7 @@ export default class Game extends Scene {
     }
     
     // Adicionando nave do mainPlayer
-    this.addShip(this.mainPlayer.ship);
+    this.addShip(this._mainPlayer.ship);
 
     // Iniciando bots
     [...teamA, ...teamB].forEach(
@@ -144,7 +145,7 @@ export default class Game extends Scene {
 
     if (friendly) {
 
-      team.push(this.mainPlayer);
+      team.push(this._mainPlayer);
       color = COLOR_FRIENDS;
     
     }
@@ -186,8 +187,8 @@ export default class Game extends Scene {
         // this._shipControls = new MobileShipControls(this.mainPlayer.ship);
         break;
       default:
-        this._shipControls = new DesktopShipControls(this.mainPlayer.ship, this.mainRenderer.domElement);
-        (this._shipControls).lock();
+        this._shipControls = new DesktopShipControls(this, this.mainRenderer.domElement);
+        this._shipControls.connect();
         this._gameControls = new DesktopGameControls(this);
 
         break;
@@ -221,9 +222,10 @@ export default class Game extends Scene {
     console.log(`${ship.name} foi destruída.`);
 
     // Caso nave destruída tenha sido do mainPlayer, dispare evento 'mainPlayerDied'
-    if (ship.player === this.mainPlayer) {
+    if (ship.player === this._mainPlayer) {
 
       this.dispatchEvent({ type: 'mainPlayerDied' });
+      this._shipControls.disconnect();
     
     }
 
@@ -318,7 +320,7 @@ export default class Game extends Scene {
   public renderContinuous (): void {
 
     requestAnimationFrame(() => { this.renderContinuous(); });
-    this.mainRenderer.render(this, (<FirstPersonShip> this.mainPlayer.ship).camera);
+    this.mainRenderer.render(this, (<FirstPersonShip> this._mainPlayer.ship).camera);
     this.auxRenderer.render(this, this._showingCamera);
   
   }
