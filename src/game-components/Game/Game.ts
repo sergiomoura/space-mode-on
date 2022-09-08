@@ -19,7 +19,6 @@ import Cameras from '../Cameras/Cameras';
 import Ship from '../Ship/Ship';
 // import MobileShipControls from '../../controls/MobileShipControls';
 import DesktopShipControls from '../../controls/DesktopShipControls';
-import DesktopGameControls from '../../controls/DesktopGameControls';
 import FirstPersonShip from '../FirstPersonShip/FirstPersonShip';
 import Bot from '../Bot/Bot';
 import Player from '../Player/Player';
@@ -33,11 +32,9 @@ const COLOR_FRIENDS: number = 0x6666FF;
 export default class Game extends Scene {
 
   private mainRenderer: WebGLRenderer;
-  private auxRenderer: WebGLRenderer;
   private readonly mainCanvas: HTMLCanvasElement;
   private readonly auxCanvas: HTMLCanvasElement;
   private _shipControls: DesktopShipControls;
-  private _gameControls: DesktopGameControls;
   private readonly _cameras: PerspectiveCamera[] = Cameras;
   private _showingCamera: PerspectiveCamera = this._cameras[0];
   private _mainPlayer: Player;
@@ -55,7 +52,7 @@ export default class Game extends Scene {
     this.auxCanvas = auxCanvas;
 
     // Criando e configurando renders
-    this.setRenders(this.mainCanvas, this.auxCanvas);
+    this.setRenders(this.mainCanvas);
 
     // Adicionando Iluminação
     this.add(...Lights);
@@ -165,15 +162,11 @@ export default class Game extends Scene {
      
   }
 
-  private setRenders (mainCanvas: HTMLCanvasElement, auxCanvas: HTMLCanvasElement): void {
+  private setRenders (mainCanvas: HTMLCanvasElement): void {
 
     // Criando o renderer principal
     this.mainRenderer = new WebGLRenderer({ antialias: true, canvas: mainCanvas });
     this.mainRenderer.setSize(window.innerWidth, window.innerHeight);
-
-    // Criando o renderer auxiliar
-    this.auxRenderer = new WebGLRenderer({ antialias: false, canvas: auxCanvas });
-    this.auxRenderer.setClearColor(0x333333, 0.5);
 
   }
 
@@ -189,8 +182,6 @@ export default class Game extends Scene {
       default:
         this._shipControls = new DesktopShipControls(this, this.mainRenderer.domElement);
         this._shipControls.connect();
-        this._gameControls = new DesktopGameControls(this);
-
         break;
     
     }
@@ -329,7 +320,6 @@ export default class Game extends Scene {
 
     requestAnimationFrame(() => { this.renderContinuous(); });
     this.mainRenderer.render(this, (<FirstPersonShip> this._mainPlayer.ship).camera);
-    this.auxRenderer.render(this, this._showingCamera);
   
   }
 
