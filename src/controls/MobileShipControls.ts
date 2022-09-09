@@ -28,7 +28,6 @@ class MobileShipControls extends EventDispatcher {
   private associateEvents (): void {
 
     this.connectBtShooter();
-    this.connectBtDasher();
     this.connectBtJoystick();
     this.connectDirectionalScreen();
   
@@ -43,22 +42,6 @@ class MobileShipControls extends EventDispatcher {
         evt.cancelBubble = true;
         evt.stopPropagation();
         this._ship.shoot();
-      
-      }
-    );
-  
-  }
-
-  private connectBtDasher (): void {
-
-    this._btDasher.addEventListener(
-      'touchend',
-      evt => {
-
-        evt.cancelBubble = true;
-        evt.stopPropagation();
-
-        this._ship.dash();
       
       }
     );

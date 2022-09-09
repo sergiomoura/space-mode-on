@@ -10,7 +10,6 @@ import {
 } from 'three';
 import GameEvents from '../../lib/GameEvents';
 import Damageble from '../Damageble/Damageble';
-import DashPill from '../DashPill/DashPill';
 import Player from '../Player/Player';
 import Shot from '../Shot/Shot';
 
@@ -73,7 +72,7 @@ export default class Ship extends Group implements Damageble {
   private _rDeacceleration: number = 0;
   private _lDeacceleration: number = 0;
 
-  private _fwMaxSpeed: number;
+  private readonly _fwMaxSpeed: number;
   private readonly _bwMaxSpeed: number;
   private readonly _rMaxSpeed: number;
   private readonly _lMaxSpeed: number;
@@ -95,14 +94,6 @@ export default class Ship extends Group implements Damageble {
   private _player: Player;
   public get player (): Player { return this._player; }
   public set player (value: Player) { this._player = value; }
-
-  private _dashing: boolean = false;
-  private readonly _dashPills: DashPill[] = [
-    new DashPill(5000, 1, 0.1),
-    new DashPill(5000, 1, 0.1),
-    new DashPill(5000, 1, 0.1),
-    new DashPill(5000, 1, 0.1)
-  ];
 
   constructor (_color: ColorRepresentation, initiateMoving: boolean = true) {
 
@@ -246,53 +237,31 @@ export default class Ship extends Group implements Damageble {
   
   }
 
-  public get dashing (): boolean {
-
-    return this._dashing;
-  
-  }
-
   public startMovingForward (): void {
 
-    if (!this._dashing) {
-
-      this._fwAcceleration = this._defaults.fwAcceleration;
-      this._fwDeacceleration = 0;
-    
-    }
+    this._fwAcceleration = this._defaults.fwAcceleration;
+    this._fwDeacceleration = 0;
   
   }
 
   public stopMovingForward (): void {
 
-    if (!this._dashing) {
-
-      this._fwDeacceleration = this._defaults.fwDeacceleration;
-      this._fwAcceleration = 0;
+    this._fwDeacceleration = this._defaults.fwDeacceleration;
+    this._fwAcceleration = 0;
     
-    }
-  
   }
 
   public startMovingBackwards (): void {
 
-    if (!this._dashing) {
-
-      this._bwAcceleration = this._defaults.bwAcceleration;
-      this._bwDeacceleration = 0;
-    
-    }
+    this._bwAcceleration = this._defaults.bwAcceleration;
+    this._bwDeacceleration = 0;
   
   }
 
   public stopMovingBackwards (): void {
 
-    if (!this._dashing) {
-
-      this._bwDeacceleration = this._defaults.bwDeacceleration;
-      this._bwAcceleration = 0;
-    
-    }
+    this._bwDeacceleration = this._defaults.bwDeacceleration;
+    this._bwAcceleration = 0;
   
   }
 
@@ -334,51 +303,6 @@ export default class Ship extends Group implements Damageble {
     _euler.x = Math.max(_PI_2 - this._defaults.maxPolarAngle, Math.min(_PI_2 - this._defaults.minPolarAngle, _euler.x));
 
     this.quaternion.setFromEuler(_euler);
-  
-  }
-
-  public dash (): void {
-
-    if (!this._dashing && this._dashPills.length > 0) {
-
-      const dashPill = this._dashPills.pop();
-
-      // Verificando se tem dashPill
-      if (dashPill !== undefined) {
-
-        this._dashing = true;
-
-        // Determinando a nova velocidade máxima
-        this._fwMaxSpeed = dashPill.speed;
-
-        // Determinando a nova aceleração
-        this._fwAcceleration = dashPill.acceleration;
-        this._fwDeacceleration = 0;
-
-        // Determinandoa hora de parar o dash
-        setTimeout(() => {
-
-          this.undash();
-        
-        }, dashPill.duration);
-      
-      }
-    
-    }
-  
-  }
-
-  public undash (): void {
-
-    // Marcando a flag para false
-    this._dashing = false;
-
-    // Retornando a velocidade normal
-    this._fwMaxSpeed = this._defaults.fwMaxSpeed;
-
-    // Setando a aceleração para 0 e desaceleração para valor padrão
-    this._fwAcceleration = 0;
-    this._fwDeacceleration = this._defaults.fwDeacceleration;
   
   }
 
