@@ -85,16 +85,10 @@ export default class Game extends Scene {
     teamB.forEach(p => { p.addEnemies(...teamA); p.addFriends(...teamB); });
 
     // Verificando se está em modo demo ou não
-    if (demoMode) {
-
-      // Está em modo demo. Escondendo mini mapa
-      this.auxCanvas.style.display = 'none';
-      
-    } else {
+    if (!demoMode) {
 
       // Não está em demo. Conectando controles
       this.connectControls();
-      this.auxCanvas.style.display = 'block';
     
     }
     
