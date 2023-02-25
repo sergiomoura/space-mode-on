@@ -45,6 +45,14 @@ export default class Ship extends Group implements Damageble {
   private readonly _hitBoxGeometry: BoxGeometry;
   private _hitBoxMesh: Mesh;
   private _life: number = 50;
+  private _alive: boolean;
+  public get alive (): boolean { return this._alive; }
+  public set alive (value: boolean) {
+
+    console.log(`${this.name} setando alive como ${value.toString()}`);
+    this._alive = value;
+  
+  }
 
   private readonly _direction: Vector3 = new Vector3(0, 0, 0);
   public get direction (): Vector3 {
@@ -132,6 +140,7 @@ export default class Ship extends Group implements Damageble {
     // initiateMoving true
     if (initiateMoving) {
 
+      this.alive = true;
       this.move();
     
     }
@@ -158,40 +167,53 @@ export default class Ship extends Group implements Damageble {
 
   public die (): void {
 
+    this.alive = false;
     this._hitBoxGeometry.dispose();
     this._hitBoxMesh.removeFromParent();
     this.clear();
     this.removeFromParent();
     this.dispatchEvent({ type: GameEvents.SHIP_DESTROYED });
-    cancelAnimationFrame(this._rafId);
+    console.log('--------------------------------');
+    console.log('Morreu');
+    console.log(this.alive);
   
   }
 
   private move (): void {
-
-    // Iniciando movimento perpétuo
-    this._rafId = requestAnimationFrame(() => {
-
-      this.move();
     
-    });
+    if (this._alive) {
 
-    // Atualizando velocidade com aceleração
-    if (this._fwSpeed < this._fwMaxSpeed) { this._fwSpeed += this._fwAcceleration; }
-    if (this._bwSpeed < this._bwMaxSpeed) { this._bwSpeed += this._bwAcceleration; }
-    if (this._rSpeed < this._rMaxSpeed) { this._rSpeed += this._rAcceleration; }
-    if (this._lSpeed < this._lMaxSpeed) { this._lSpeed += this._lAcceleration; }
+      // Iniciando movimento perpétuo
+      this._rafId = requestAnimationFrame(() => { this.move(); });
+  
+      // Atualizando velocidade com aceleração
+      if (this._fwSpeed < this._fwMaxSpeed) { this._fwSpeed += this._fwAcceleration; }
+      if (this._bwSpeed < this._bwMaxSpeed) { this._bwSpeed += this._bwAcceleration; }
+      if (this._rSpeed < this._rMaxSpeed) { this._rSpeed += this._rAcceleration; }
+      if (this._lSpeed < this._lMaxSpeed) { this._lSpeed += this._lAcceleration; }
+  
+      if (this._fwSpeed > 0) { this._fwSpeed -= this._fwDeacceleration; }
+      if (this._bwSpeed > 0) { this._bwSpeed -= this._bwDeacceleration; }
+      if (this._rSpeed > 0) { this._rSpeed -= this._rDeacceleration; }
+      if (this._lSpeed > 0) { this._lSpeed -= this._lDeacceleration; }
+  
+      // Atualizando posição com velocidade
+      this.translateOnAxis(this._direction, this._fwSpeed);
+      this.translateOnAxis(this._oposite, this._bwSpeed);
+      this.translateOnAxis(this._right, this._rSpeed);
+      this.translateOnAxis(this._left, this._lSpeed);
+      if (this.player?.name === '') {
+  
+        console.log(this._rafId);
+        console.log(this._alive);
+      
+      }
 
-    if (this._fwSpeed > 0) { this._fwSpeed -= this._fwDeacceleration; }
-    if (this._bwSpeed > 0) { this._bwSpeed -= this._bwDeacceleration; }
-    if (this._rSpeed > 0) { this._rSpeed -= this._rDeacceleration; }
-    if (this._lSpeed > 0) { this._lSpeed -= this._lDeacceleration; }
+    } else {
 
-    // Atualizando posição com velocidade
-    this.translateOnAxis(this._direction, this._fwSpeed);
-    this.translateOnAxis(this._oposite, this._bwSpeed);
-    this.translateOnAxis(this._right, this._rSpeed);
-    this.translateOnAxis(this._left, this._lSpeed);
+      cancelAnimationFrame(this._rafId);
+    
+    }
   
   }
 
