@@ -4,13 +4,9 @@ import Hall from './game-components/Hall/Hall';
 import Game from './game-components/Game/Game';
 import GameEvents from './lib/GameEvents';
 
-// Capturando elementos de interesse
+// Capturando canvas
 const mainCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('mainCanvas');
 const auxCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('auxCanvas');
-
-// Iniciando jogo de background
-const demoGame: Game = new Game(mainCanvas, auxCanvas);
-demoGame.start('', 6, 6, true);
 
 // Conectando hall
 const hall = new Hall(
@@ -20,10 +16,13 @@ const hall = new Hall(
   <HTMLDivElement> document.getElementById('hall'),
   <HTMLFormElement> document.getElementById('gameSettings')
 );
-hall.connect();
-hall.onFormSubmit = () => {
 
-  const game = new Game(mainCanvas, auxCanvas);
+// Criando jogo
+let game: Game;
+
+hall.addEventListener(Hall.SUBMIT, () => {
+
+  game = new Game(mainCanvas, auxCanvas);
 
   game.addEventListener(GameEvents.MAIN_PLAYER_DIED, () => {
 
@@ -48,4 +47,6 @@ hall.onFormSubmit = () => {
 
   hall.hide();
 
-};
+});
+
+hall.connect();

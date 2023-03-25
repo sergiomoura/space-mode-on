@@ -1,6 +1,6 @@
-class Hall {
-  
-  private readonly transitionDuration: number = 0.3;
+class Hall extends EventTarget {
+
+  public static readonly SUBMIT: string = 'submit';
   
   constructor (
     private readonly selectEnemies: HTMLSelectElement,
@@ -8,7 +8,11 @@ class Hall {
     private readonly inputPlayerName: HTMLInputElement,
     private readonly divHall: HTMLDivElement,
     private readonly formGameSettings: HTMLFormElement
-  ) {}
+  ) {
+    
+    super();
+  
+  }
 
   public connect (): void {
      
@@ -18,15 +22,12 @@ class Hall {
       evt => {
 
         evt.preventDefault();
-        this.onFormSubmit();
+        this.dispatchEvent(new Event(Hall.SUBMIT));
       
       }
     );
 
-    window.addEventListener(
-      'load',
-      () => { this.inputPlayerName.focus(); }
-    );
+    this.inputPlayerName.focus();
 
   }
   
@@ -64,8 +65,6 @@ class Hall {
     );
   
   }
-
-  public onFormSubmit: () => void = () => { console.log('começou'); };
 
 }
 
