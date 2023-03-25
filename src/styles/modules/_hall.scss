@@ -12,6 +12,7 @@
     justify-content: center;
     align-items: center;
     opacity: $default_hall_opacity;
+    transition: opacity linear $transition_duration;
 
     form {
         border: 2px solid $primary-color;

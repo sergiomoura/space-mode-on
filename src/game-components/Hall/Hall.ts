@@ -8,11 +8,7 @@ class Hall {
     private readonly inputPlayerName: HTMLInputElement,
     private readonly divHall: HTMLDivElement,
     private readonly formGameSettings: HTMLFormElement
-  ) {
-
-    this.divHall.style.transition = `opacity linear ${this.transitionDuration}s`;
-  
-  }
+  ) {}
 
   public connect (): void {
      
