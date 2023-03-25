@@ -1,20 +1,15 @@
 class Hall {
-
-  private readonly selectEnemies: HTMLSelectElement;
-  private readonly selectFriends: HTMLSelectElement;
-  private readonly inputPlayerName: HTMLInputElement;
-  private readonly divHall: HTMLDivElement;
-  private readonly formGameSettings: HTMLFormElement;
+  
   private readonly transitionDuration: number = 0.3;
   
-  constructor () {
+  constructor (
+    private readonly selectEnemies: HTMLSelectElement,
+    private readonly selectFriends: HTMLSelectElement,
+    private readonly inputPlayerName: HTMLInputElement,
+    private readonly divHall: HTMLDivElement,
+    private readonly formGameSettings: HTMLFormElement
+  ) {
 
-    // Capturando elementos
-    this.selectEnemies = <HTMLSelectElement> document.getElementById('nEnemies');
-    this.selectFriends = <HTMLSelectElement> document.getElementById('nFriends');
-    this.inputPlayerName = <HTMLInputElement> document.getElementById('playerName');
-    this.divHall = <HTMLDivElement> document.getElementById('hall');
-    this.formGameSettings = <HTMLFormElement> document.getElementById('gameSettings');
     this.divHall.style.transition = `opacity linear ${this.transitionDuration}s`;
   
   }

@@ -13,7 +13,13 @@ const demoGame: Game = new Game(mainCanvas, auxCanvas);
 demoGame.start('', 6, 6, true);
 
 // Conectando hall
-const hall = new Hall();
+const hall = new Hall(
+  <HTMLSelectElement> document.getElementById('nEnemies'),
+  <HTMLSelectElement> document.getElementById('nFriends'),
+  <HTMLInputElement> document.getElementById('playerName'),
+  <HTMLDivElement> document.getElementById('hall'),
+  <HTMLFormElement> document.getElementById('gameSettings')
+);
 hall.connect();
 hall.onFormSubmit = () => {
 
