@@ -1,9 +1,11 @@
 # Space Mode On
+
 Space Mode On is a space game developed in TypeScript with ThreeJS.
 
 The objective of the game is to control a spaceship and shoot enemies while avoiding get shot.
 
 ## Technologies used
+
 The game was developed using the following technologies:
 
 - TypeScript
@@ -13,7 +15,7 @@ The game was developed using the following technologies:
 
 ## How to play
 
-You can play Space Mode On online through the link: https://sergiomoura.github.io/space-mode-on/
+You can play Space Mode On online through the link: <https://sergiomoura.github.io/space-mode-on/>
 
 To run the game locally, follow the instructions below:
 
