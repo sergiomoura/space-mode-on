@@ -1,6 +1,5 @@
 import { BoxGeometry, MeshBasicMaterial, Mesh, Vector3, Raycaster, Object3D } from 'three';
 import Ship from '../Ship/Ship';
-import Game from '../Game/Game';
 import Damageble from '../Damageble/Damageble';
 
 export default class Shot extends Object3D {
@@ -91,12 +90,6 @@ export default class Shot extends Object3D {
           const damageble = this.damagebleParent(intersections[0].object);
 
           if (damageble !== undefined) {
-
-            // Identificando o ponto de colisão
-            const fi = intersections[0].point;
-
-            // Adicionando spinningCube no ponto de colisão
-            ((<Game> this._ownerShip.parent)).addSpiningCube(fi.x, fi.y, fi.z);
 
             // Causando dano
             damageble.getDamage(this._demage);
