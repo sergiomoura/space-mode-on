@@ -10,7 +10,9 @@ import {
   BufferGeometry,
   Line,
   ColorRepresentation,
-  ArrowHelper
+  ArrowHelper,
+  Object3DEventMap,
+  Object3D
 } from 'three';
 import { GetDeviceType, DeviceType } from '../../lib/GetDeviceType';
 
@@ -23,13 +25,15 @@ import FirstPersonShip from '../FirstPersonShip/FirstPersonShip';
 import Bot from '../Bot/Bot';
 import Player from '../Player/Player';
 import User from '../User/User';
-import GameEvents from '../../lib/GameEvents';
+import GameEvents, { GameEventsMap } from '../../lib/GameEvents';
+import { ShipEvents } from '../Ship/ShipEvents';
 
 // const COLOR_MAIN_PLAYER: number = 0xCCCCCC;
 const COLOR_ENEMIES: number = 0xFF0000;
 const COLOR_FRIENDS: number = 0x6666FF;
 
-export default class Game extends Scene {
+
+export default class Game extends Object3D<GameEventsMap> {
 
   private mainRenderer: WebGLRenderer;
   private readonly mainCanvas: HTMLCanvasElement;
@@ -115,8 +119,8 @@ export default class Game extends Scene {
 
     // Adicionando listeners à nave do player
     player.ship.addEventListener(
-      'died',
-      () => { this.dispatchEvent({ type: 'died' }); }
+      ShipEvents.SHIP_DESTROYED,
+      () => { this.dispatchEvent({ type: GameEvents.MAIN_PLAYER_DIED }); }
     );
 
     // Definindo posição inicial da nave do player
@@ -197,8 +201,8 @@ export default class Game extends Scene {
   private handleShipEvents (ship: Ship): void {
 
     // ship.addEventListener('shoot', this.onShipShoot);
-    ship.addEventListener(GameEvents.SHIP_GOT_DAMAGE, evt => { this.onShipGotDamage(evt.target, evt.damage); });
-    ship.addEventListener(GameEvents.SHIP_DESTROYED, evt => { this.onShipDestroyed(evt.target); });
+    ship.addEventListener(ShipEvents.SHIP_GOT_DAMAGE, evt => { this.onShipGotDamage(evt.target, evt.damage); });
+    ship.addEventListener(ShipEvents.SHIP_DESTROYED, evt => { this.onShipDestroyed(evt.target); });
   
   }
 

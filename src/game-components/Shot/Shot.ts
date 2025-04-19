@@ -1,6 +1,7 @@
 import { BoxGeometry, MeshBasicMaterial, Mesh, Vector3, Raycaster, Object3D } from 'three';
 import Ship from '../Ship/Ship';
 import Damageble from '../Damageble/Damageble';
+import { ShipEvents } from '../Ship/ShipEvents';
 
 export default class Shot extends Object3D {
 
@@ -35,7 +36,7 @@ export default class Shot extends Object3D {
     this._remainingDistance = _reach;
     this._intersectables = _ownerShip.player.enemies.map(b => b.ship);
     _ownerShip.addEventListener(
-      'shoot',
+      ShipEvents.SHIP_SHOOT,
       () => {
 
         this._origin = _ownerShip.position.clone();

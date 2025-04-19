@@ -1,6 +1,7 @@
 import { ColorRepresentation, Vector3 } from 'three';
 import Player from '../Player/Player';
 import Ship from '../Ship/Ship';
+import { ShipEvents } from '../Ship/ShipEvents';
 
 enum Behaviours {
   FLEE = 'flee',
@@ -62,7 +63,7 @@ export default class Bot extends Player {
     this.ship.drawLocalAxis();
     this.ship.drawDirection();
     this.ship.name = `SHIP-OF-${this.name}`;
-    this.ship.addEventListener('died', evt => {
+    this.ship.addEventListener(ShipEvents.SHIP_DESTROYED, evt => {
 
       this.stopDecindingBehaviour();
       this.stopMovingShip();

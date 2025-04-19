@@ -12,11 +12,12 @@ import GameEvents from '../../lib/GameEvents';
 import Damageble from '../Damageble/Damageble';
 import Player from '../Player/Player';
 import Shot from '../Shot/Shot';
+import { ShipEvents, ShipEventsMap } from './ShipEvents';
 
 const _euler = new Euler(0, 0, 0, 'YXZ');
 const _PI_2 = Math.PI / 2;
 
-export default class Ship extends Group implements Damageble {
+export default class Ship extends Group<ShipEventsMap> implements Damageble {
 
   private readonly _defaults = {
     fwMaxSpeed: 0.1,
@@ -156,7 +157,7 @@ export default class Ship extends Group implements Damageble {
   public getDamage (damage: number): void {
 
     this._life -= damage;
-    this.dispatchEvent({ type: GameEvents.SHIP_GOT_DAMAGE, damage });
+    this.dispatchEvent({ type: ShipEvents.SHIP_GOT_DAMAGE, damage });
     if (this._life <= 0) {
 
       this.die();
@@ -172,7 +173,7 @@ export default class Ship extends Group implements Damageble {
     this._hitBoxMesh.removeFromParent();
     this.clear();
     this.removeFromParent();
-    this.dispatchEvent({ type: GameEvents.SHIP_DESTROYED });
+    this.dispatchEvent({ type: ShipEvents.SHIP_DESTROYED });
     console.log('--------------------------------');
     console.log('Morreu');
     console.log(this.alive);
@@ -337,7 +338,7 @@ export default class Ship extends Group implements Damageble {
     if (this.parent !== null) {
 
       this.parent.add(shot);
-      this.dispatchEvent({ type: 'shoot', shot });
+      this.dispatchEvent({ type: ShipEvents.SHIP_SHOOT, shot });
     
     }
   
