@@ -2,6 +2,7 @@ import { ColorRepresentation, Vector3 } from 'three';
 import Player from '../Player/Player';
 import Ship from '../Ship/Ship';
 import { ShipEvents } from '../Ship/ShipEvents';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 enum Behaviours {
   FLEE = 'flee',
@@ -54,12 +55,12 @@ export default class Bot extends Player {
   
   }
 
-  constructor (color: ColorRepresentation) {
+  constructor (color: ColorRepresentation, model: GLTF) {
 
     super(`BOT-${Math.round(Math.random() * 10000)}`);
 
     // Criando a nave
-    this.ship = new Ship(color);
+    this.ship = new Ship(color, model);
     this.ship.drawLocalAxis();
     this.ship.drawDirection();
     this.ship.name = `SHIP-OF-${this.name}`;

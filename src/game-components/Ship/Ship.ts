@@ -8,11 +8,11 @@ import {
   ColorRepresentation,
   ArrowHelper
 } from 'three';
-import GameEvents from '../../lib/GameEvents';
 import Damageble from '../Damageble/Damageble';
 import Player from '../Player/Player';
 import Shot from '../Shot/Shot';
 import { ShipEvents, ShipEventsMap } from './ShipEvents';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 const _euler = new Euler(0, 0, 0, 'YXZ');
 const _PI_2 = Math.PI / 2;
@@ -97,17 +97,26 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
 
     this._color = value;
     this.drawHitBox();
-  
+    
   }
-
+  
   private _player: Player;
   public get player (): Player { return this._player; }
   public set player (value: Player) { this._player = value; }
-
-  constructor (_color: ColorRepresentation, initiateMoving: boolean = true) {
-
+  
+  constructor (_color: ColorRepresentation,  model: GLTF) {
+    
     // Chamando contrutor do pai
     super();
+
+    // Adicionando model
+    model.scene.castShadow = true;
+    model.scene.receiveShadow = true;
+    model.scene.position.set(0, -3, 1);
+    model.scene.rotation.set(0, 0, 0);
+    this.add(model.scene);
+
+    const initiateMoving = true;
 
     // Definindo a cor
     this._color = _color;
@@ -136,6 +145,7 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
     this._bwMaxSpeed = this._defaults.bwMaxSpeed;
     this._rMaxSpeed = this._defaults.rMaxSpeed;
     this._lMaxSpeed = this._defaults.lMaxSpeed;
+
 
     // Iniciando movimento perpétuo caso tenha sido construido com
     // initiateMoving true

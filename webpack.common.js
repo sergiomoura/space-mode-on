@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -15,6 +16,14 @@ module.exports = {
         removeStyleLinkTypeAttributes: true,
         useShortDoctype: true
       }
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { 
+          from: 'src/models',
+          to: 'models'
+        }
+      ]
     })
   ],
   entry: './src/index.ts',

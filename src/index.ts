@@ -3,6 +3,7 @@ import './styles/style.scss';
 import Hall from './game-components/Hall/Hall';
 import Game from './game-components/Game/Game';
 import GameEvents from './lib/GameEvents';
+import { GameModels } from './models/GameModels';
 
 // Capturando canvas
 const mainCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('mainCanvas');
@@ -19,10 +20,11 @@ const hall = new Hall(
 
 // Criando jogo
 let game: Game;
+const models = new GameModels();
 
 hall.addEventListener(Hall.SUBMIT, () => {
 
-  game = new Game(mainCanvas, auxCanvas);
+  game = new Game(mainCanvas, auxCanvas, models);
 
   game.addEventListener(GameEvents.MAIN_PLAYER_DIED, () => {
 

@@ -27,6 +27,7 @@ import Player from '../Player/Player';
 import User from '../User/User';
 import GameEvents, { GameEventsMap } from '../../lib/GameEvents';
 import { ShipEvents } from '../Ship/ShipEvents';
+import { GameModels } from '../../models/GameModels';
 
 // const COLOR_MAIN_PLAYER: number = 0xCCCCCC;
 const COLOR_ENEMIES: number = 0xFF0000;
@@ -47,7 +48,7 @@ export default class Game extends Object3D<GameEventsMap> {
   private readonly _ships: Ship[] = [];
   public get ships (): Ship[] { return this._ships; };
 
-  constructor (mainCanvas: HTMLCanvasElement, auxCanvas: HTMLCanvasElement) {
+  constructor (mainCanvas: HTMLCanvasElement, auxCanvas: HTMLCanvasElement, private models: GameModels) {
     
     super();
 
@@ -79,14 +80,14 @@ export default class Game extends Object3D<GameEventsMap> {
     this._mainPlayer = this.createMainPlayer(playerName);
 
     // Criando Time A
-    const teamA: Player[] = this.createTeam(nFriends, true);
+    // const teamA: Player[] = this.createTeam(nFriends, true);
 
     // Criando Time B
-    const teamB: Player[] = this.createTeam(nEnemies, false);
+    // const teamB: Player[] = this.createTeam(nEnemies, false);
 
     // Configurando amizades e inimizades entre times
-    teamA.forEach(p => { p.addEnemies(...teamB); p.addFriends(...teamA); });
-    teamB.forEach(p => { p.addEnemies(...teamA); p.addFriends(...teamB); });
+    // teamA.forEach(p => { p.addEnemies(...teamB); p.addFriends(...teamA); });
+    // teamB.forEach(p => { p.addEnemies(...teamA); p.addFriends(...teamB); });
 
     // Verificando se está em modo demo ou não
     if (!demoMode) {
@@ -100,13 +101,11 @@ export default class Game extends Object3D<GameEventsMap> {
     this.addShip(this._mainPlayer.ship);
 
     // Iniciando bots
-    [...teamA, ...teamB].forEach(
-      (p: Player) => {
-
-        if (p instanceof Bot) { p.init(); }
-      
-      }
-    );
+    // [...teamA, ...teamB].forEach(
+    //  (p: Player) => {
+    //    if (p instanceof Bot) { p.init(); }
+    //  }
+    // );
 
     // Renderizando continuamente
     this.renderContinuous();
@@ -115,7 +114,7 @@ export default class Game extends Object3D<GameEventsMap> {
 
   private createMainPlayer (playerName: string): Player {
 
-    const player = new User(playerName);
+    const player = new User(playerName, this.models.ship);
 
     // Adicionando listeners à nave do player
     player.ship.addEventListener(
@@ -147,7 +146,7 @@ export default class Game extends Object3D<GameEventsMap> {
     
     for (let i = 0; i < nPlayers; i++) {
 
-      const bot = new Bot(color);
+      const bot = new Bot(color, this.models.ship);
       team.push(bot);
 
       // Posicionando bot em local aleatório

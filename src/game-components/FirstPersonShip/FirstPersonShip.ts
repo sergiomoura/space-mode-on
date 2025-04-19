@@ -1,11 +1,12 @@
 import { PerspectiveCamera } from 'three';
 import Ship from '../Ship/Ship';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export default class FirstPersonShip extends Ship {
 
-  constructor (private readonly _camera: PerspectiveCamera) {
+  constructor (private readonly _camera: PerspectiveCamera, model: GLTF) {
 
-    super(0xF0F0F0);
+    super(0xF0F0F0, model);
 
     // Definindo e posicionando camera
     this._camera.position.z = 7;
