@@ -1,3 +1,4 @@
+import { ArrowHelper, Vector3 } from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 interface GameModelsMap {
@@ -13,11 +14,17 @@ export class GameModels implements GameModelsMap {
     }
         
     private load() {
+        this.loadShip();
+    }
+
+    private loadShip() {
         const loader = new GLTFLoader();
         loader.setPath('../models');
         loader.load('/ship/scene.gltf',
             (gltf) => {
-                this.ship = gltf
+                this.ship = gltf;
+                this.ship.scene.castShadow = true;
+                this.ship.scene.receiveShadow = true;
             },
             (xhr) => {
                 console.log((xhr.loaded / xhr.total * 100) + '% loaded');

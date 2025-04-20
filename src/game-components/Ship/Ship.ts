@@ -110,11 +110,8 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
     super();
 
     // Adicionando model
-    model.scene.castShadow = true;
-    model.scene.receiveShadow = true;
-    model.scene.position.set(0, -3, 1);
-    model.scene.rotation.set(0, 0, 0);
-    this.add(model.scene);
+    
+    this.add(model.scene.clone());
 
     const initiateMoving = true;
 
@@ -213,12 +210,6 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
       this.translateOnAxis(this._oposite, this._bwSpeed);
       this.translateOnAxis(this._right, this._rSpeed);
       this.translateOnAxis(this._left, this._lSpeed);
-      if (this.player?.name === '') {
-  
-        console.log(this._rafId);
-        console.log(this._alive);
-      
-      }
 
     } else {
 

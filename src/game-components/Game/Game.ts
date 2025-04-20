@@ -80,14 +80,14 @@ export default class Game extends Object3D<GameEventsMap> {
     this._mainPlayer = this.createMainPlayer(playerName);
 
     // Criando Time A
-    // const teamA: Player[] = this.createTeam(nFriends, true);
+    const teamA: Player[] = this.createTeam(nFriends, true);
 
     // Criando Time B
-    // const teamB: Player[] = this.createTeam(nEnemies, false);
+    const teamB: Player[] = this.createTeam(nEnemies, false);
 
     // Configurando amizades e inimizades entre times
-    // teamA.forEach(p => { p.addEnemies(...teamB); p.addFriends(...teamA); });
-    // teamB.forEach(p => { p.addEnemies(...teamA); p.addFriends(...teamB); });
+    teamA.forEach(p => { p.addEnemies(...teamB); p.addFriends(...teamA); });
+    teamB.forEach(p => { p.addEnemies(...teamA); p.addFriends(...teamB); });
 
     // Verificando se está em modo demo ou não
     if (!demoMode) {
@@ -101,11 +101,11 @@ export default class Game extends Object3D<GameEventsMap> {
     this.addShip(this._mainPlayer.ship);
 
     // Iniciando bots
-    // [...teamA, ...teamB].forEach(
-    //  (p: Player) => {
-    //    if (p instanceof Bot) { p.init(); }
-    //  }
-    // );
+     [...teamA, ...teamB].forEach(
+      (p: Player) => {
+        if (p instanceof Bot) { p.init(); }
+     }
+    );
 
     // Renderizando continuamente
     this.renderContinuous();
