@@ -215,7 +215,7 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
     // this.remove(this._hitBoxMesh)
 
     const material = new MeshPhongMaterial({ color: this._color });
-    material.opacity = 0.5;
+    material.opacity = 0.0;
     material.transparent = true;
     this._hitBoxMesh = new Mesh(this._hitBoxGeometry, material);
 
