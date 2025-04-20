@@ -135,18 +135,17 @@ export default class Game extends Object3D<GameEventsMap> {
   private createTeam (nPlayers: number, friendly: boolean): Player[] {
 
     const team: Player[] = [];
-    let color: number = COLOR_ENEMIES;
+    const model = friendly ? this.models.friendShip : this.models.enemyShip;
 
     if (friendly) {
 
       team.push(this._mainPlayer);
-      color = COLOR_FRIENDS;
     
     }
     
     for (let i = 0; i < nPlayers; i++) {
 
-      const bot = new Bot(color, this.models.ship);
+      const bot = new Bot(model);
       team.push(bot);
 
       // Posicionando bot em local aleatório

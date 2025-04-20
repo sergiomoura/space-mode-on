@@ -55,7 +55,7 @@ export default class Bot extends Player {
   
   }
 
-  constructor (color: ColorRepresentation, model: GLTF) {
+  constructor (model: GLTF) {
 
     super(`BOT-${Math.round(Math.random() * 10000)}`);
 
