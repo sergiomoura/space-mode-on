@@ -6,7 +6,7 @@ export default class FirstPersonShip extends Ship {
 
   constructor (private readonly _camera: PerspectiveCamera, model: GLTF) {
 
-    super(0xF0F0F0, model);
+    super(model);
 
     // Definindo e posicionando camera
     this._camera.position.z = 7;

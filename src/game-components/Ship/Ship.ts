@@ -87,24 +87,12 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
   private readonly _lMaxSpeed: number;
 
   private _color: ColorRepresentation;
-  public get color (): ColorRepresentation {
-
-    return this._color;
-  
-  }
-
-  public set color (value: ColorRepresentation) {
-
-    this._color = value;
-    this.drawHitBox();
-    
-  }
   
   private _player: Player;
   public get player (): Player { return this._player; }
   public set player (value: Player) { this._player = value; }
   
-  constructor (_color: ColorRepresentation,  model: GLTF) {
+  constructor (model: GLTF) {
     
     // Chamando contrutor do pai
     super();
@@ -116,7 +104,7 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
     const initiateMoving = true;
 
     // Definindo a cor
-    this._color = _color;
+    this._color = 0xff0000;
 
     // Definindo e desenhando hitBox
     this._hitBoxGeometry = new BoxGeometry(1, 1, 2);

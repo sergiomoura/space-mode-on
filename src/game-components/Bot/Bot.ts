@@ -60,7 +60,7 @@ export default class Bot extends Player {
     super(`BOT-${Math.round(Math.random() * 10000)}`);
 
     // Criando a nave
-    this.ship = new Ship(color, model);
+    this.ship = new Ship(model);
     this.ship.drawLocalAxis();
     this.ship.drawDirection();
     this.ship.name = `SHIP-OF-${this.name}`;
