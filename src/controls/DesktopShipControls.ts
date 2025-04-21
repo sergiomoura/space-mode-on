@@ -43,8 +43,8 @@ class DesktopShipControls implements Controls {
 
   private readonly onMouseClick = (_evt: MouseEvent): void => {
 
-    if (this.isLocked) {
-
+    if (this.isLocked && _evt.button === 0) {
+      
       this.ship.shoot();
     
     }
