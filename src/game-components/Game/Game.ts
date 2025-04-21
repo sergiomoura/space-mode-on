@@ -149,7 +149,7 @@ export default class Game extends Object3D<GameEventsMap> {
       team.push(bot);
 
       // Posicionando bot em local aleatório
-      bot.ship.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
+      bot.ship.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 100);
 
       this.addShip(bot.ship);
     
