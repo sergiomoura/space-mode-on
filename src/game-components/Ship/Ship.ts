@@ -35,7 +35,10 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
     minPolarAngle: 0,
     maxPolarAngle: Math.PI,
     pointingSpeed: 1,
-    attakRange: 20
+    attakRange: 20,
+    dashDuration: 3000,
+    dashSpeed: 0.5,
+    dashCooldown: 5000,
   };
 
   private _attackRange: number = this._defaults.attakRange;
@@ -87,10 +90,10 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
   private _rDeacceleration: number = 0;
   private _lDeacceleration: number = 0;
 
-  private readonly _fwMaxSpeed: number;
-  private readonly _bwMaxSpeed: number;
-  private readonly _rMaxSpeed: number;
-  private readonly _lMaxSpeed: number;
+  private _fwMaxSpeed: number;
+  private _bwMaxSpeed: number;
+  private _rMaxSpeed: number;
+  private _lMaxSpeed: number;
 
   private _color: ColorRepresentation;
   
@@ -414,4 +417,23 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
   
   }
 
+  public dash(): void {
+
+    this.dispatchEvent({ type: ShipEvents.SHIP_STARTED_DASH, duration: this._defaults.dashDuration, cooldown: this._defaults.dashCooldown });
+
+    this._fwMaxSpeed = this._defaults.dashSpeed;
+    this._bwMaxSpeed = this._defaults.dashSpeed;
+    this._rMaxSpeed = this._defaults.dashSpeed;
+    this._lMaxSpeed = this._defaults.dashSpeed;
+
+    setTimeout(() => {
+
+      this._fwMaxSpeed = this._defaults.fwMaxSpeed;
+      this._bwMaxSpeed = this._defaults.bwMaxSpeed;
+      this._rMaxSpeed = this._defaults.rMaxSpeed;
+      this._lMaxSpeed = this._defaults.lMaxSpeed;
+
+    }, this._defaults.dashDuration);
+  
+  }
 }

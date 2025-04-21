@@ -150,6 +150,7 @@ class DesktopShipControls implements Controls {
     pressedKeys.includes(ControlKeys.d) ? this.ship.startMovingRight() : this.ship.stopMovingRight();
     pressedKeys.includes(ControlKeys.a) ? this.ship.startMovingLeft() : this.ship.stopMovingLeft();
     pressedKeys.includes(ControlKeys.q) ? (<Bot[]> this.ship.player.enemies).forEach(e => e.movePointerToChasePoint()) : (() => {})();
+    pressedKeys.includes(ControlKeys.space) ? this.ship.dash() : (() => {})();
   
   }
 

@@ -22,7 +22,10 @@ const hall = new Hall(
 // Criando jogo
 let game: Game;
 const models = new GameModels();
-const overlay = new Overlay(<HTMLDivElement>document.getElementById('overlay'));
+const healthBar = new Overlay(
+    <HTMLDivElement>document.getElementById('health-bar'),
+    <HTMLDivElement>document.getElementById('dash-bar')
+  );
 
 hall.addEventListener(Hall.SUBMIT, () => {
 
@@ -49,7 +52,7 @@ hall.addEventListener(Hall.SUBMIT, () => {
     false
   );
 
-  overlay.connect(game);
+  healthBar.connect(game);
 
   hall.hide();
 
