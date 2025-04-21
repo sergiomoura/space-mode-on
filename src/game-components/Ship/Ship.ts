@@ -39,9 +39,14 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
   };
 
   private _attackRange: number = this._defaults.attakRange;
+  private _minTimeBetweenShots: number = 500; // in milliseconds
+  private _readyToShoot: boolean = true;
+  private _damage: number = 20;
+  private _attack: number = 1000;
   private _rafId: number;
   public set attackRange (value: number) { this._attackRange = value; }
   public get attackRange (): number { return this._attackRange; }
+
 
   private readonly _hitBoxGeometry: BoxGeometry;
   private _hitBoxMesh: Mesh;
@@ -319,10 +324,10 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
   }
 
   public shoot (): void {
+    if (!this._readyToShoot) { return; }
 
     const velocity = this._direction.clone().multiplyScalar(1);
-    const demage = 10;
-    const shot: Shot = new Shot(velocity, demage, this._attackRange, this);
+    const shot: Shot = new Shot(velocity, this._damage, this._attackRange, this);
     shot.applyMatrix4(this.matrix);
     if (this.parent !== null) {
 
@@ -330,6 +335,12 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
       this.dispatchEvent({ type: ShipEvents.SHIP_SHOOT, shot });
     
     }
+
+    this._readyToShoot = false;
+    setTimeout(() => {
+      this._readyToShoot = true;
+    }
+    , this._minTimeBetweenShots);
   
   }
 
