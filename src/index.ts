@@ -4,6 +4,7 @@ import Hall from './game-components/Hall/Hall';
 import Game from './game-components/Game/Game';
 import GameEvents from './lib/GameEvents';
 import { GameModels } from './models/GameModels';
+import { Overlay } from './game-components/Overlay/Overlay';
 
 // Capturando canvas
 const mainCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('mainCanvas');
@@ -21,6 +22,7 @@ const hall = new Hall(
 // Criando jogo
 let game: Game;
 const models = new GameModels();
+const overlay = new Overlay(<HTMLDivElement>document.getElementById('overlay'));
 
 hall.addEventListener(Hall.SUBMIT, () => {
 
@@ -46,6 +48,8 @@ hall.addEventListener(Hall.SUBMIT, () => {
     hall.nFriends,
     false
   );
+
+  overlay.connect(game);
 
   hall.hide();
 

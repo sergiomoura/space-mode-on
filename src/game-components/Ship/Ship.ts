@@ -50,7 +50,8 @@ export default class Ship extends Group<ShipEventsMap> implements Damageble {
 
   private readonly _hitBoxGeometry: BoxGeometry;
   private _hitBoxMesh: Mesh;
-  private _life: number = 50;
+  public readonly maxLife: number = 100;
+  private _life: number = 100;
   private _alive: boolean;
   public get alive (): boolean { return this._alive; }
   public set alive (value: boolean) {

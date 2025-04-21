@@ -122,6 +122,15 @@ export default class Game extends Object3D<GameEventsMap> {
       () => { this.dispatchEvent({ type: GameEvents.MAIN_PLAYER_DIED }); }
     );
 
+    player.ship.addEventListener(
+      ShipEvents.SHIP_GOT_DAMAGE,
+      (evt) => {
+        const newHealthPecents = (player.ship.life / player.ship.maxLife) * 100;
+        this.dispatchEvent({ type: GameEvents.MAIN_PLAYER_HEALTH_CHANGED, newHealthPecents });
+      }
+    );
+
+
     // Definindo posição inicial da nave do player
     player.ship.position.x = 5;
     player.ship.position.y = 5;
